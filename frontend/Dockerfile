@@ -13,7 +13,7 @@ RUN apt -y update && apt -y upgrade && \
 RUN npm install -U npm -g
 RUN rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/SUNET/edusign-app@release /tmp
+RUN git clone -b release https://github.com/SUNET/edusign-app /tmp
 RUN mv -f /tmp/edusign-app/frontend /opt
 RUN rm -rf /tmp/edusign-app
 
