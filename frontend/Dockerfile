@@ -21,4 +21,6 @@ WORKDIR /opt/frontend
 
 RUN npm install && npm run build-pro && rm -rf node_modules
 
-ENTRYPOINT ["bash", "/opt/frontend/install.sh"]
+COPY ./install.sh /install.sh
+
+ENTRYPOINT ["bash", "/install.sh"]

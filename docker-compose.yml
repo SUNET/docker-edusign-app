@@ -7,7 +7,7 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - jsbuild:/opt/jsbuild
+        - jsbuild:/opt/jsbuild:rw
     stdin_open: false
     tty: true
 
