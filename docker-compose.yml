@@ -12,7 +12,7 @@ services:
     tty: true
 
   sp:
-    build: ./edusign/
+    build: ./nginx/
     expose:
       - 80
       - 443

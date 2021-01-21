@@ -22,7 +22,7 @@ Prerequisites
 * Docker daemon running on the server, and docker-compose available (tested with docker engine 20.10.2
   and 20.20.2, and docker-compose 1.27.4).
 * A SAML2 IdP/federation that has established trust with the API and is ready to do the same with us.
-* A clone of the SUNET/edusign-app repository in the server.
+* A clone of the SUNET/docker-edusign-app repository in the server.
 
 Configuration
 .............
@@ -33,7 +33,7 @@ SP. These need to be named :code:`nginx.crt`, :code:`nginx.key`, :code:`sp-cert.
 
 .. code-block:: bash
 
- $ cd edusign-app
+ $ cd docker-edusign-app
  $ mkdir -p config-current/ssl
  $ cp <wherever>/nginx.* config-current/ssl/
  $ cp <wherever>/sp-* config-current/ssl/
