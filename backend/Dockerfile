@@ -34,7 +34,7 @@ RUN mkdir -p /opt/edusign/run
 RUN chown -R edusign: /opt/edusign/run
 RUN chmod -R 770 /opt/edusign/run
 
-RUN git clone https://github.com/SUNET/edusign-app@release /tmp
+RUN git clone -b release https://github.com/SUNET/edusign-app /tmp
 RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp
 RUN rm -rf /tmp/edusign-app
 
