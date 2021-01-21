@@ -22,18 +22,25 @@ Prerequisites
 * Docker daemon running on the server, and docker-compose available (tested with docker engine 20.10.2
   and 20.20.2, and docker-compose 1.27.4).
 * A SAML2 IdP/federation that has established trust with the API and is ready to do the same with us.
-* A clone of the SUNET/docker-edusign-app repository in the server.
 
 Configuration
 .............
 
-First we need to provide the SSL certificates for NGINX and for the Shibboleth
-SP. These need to be named :code:`nginx.crt`, :code:`nginx.key`, :code:`sp-cert.pem`, and
-:code:`sp-key.pem`.
+First we clone the repo:
 
 .. code-block:: bash
 
+ $ git clone https://github.com/SUNET/docker-edusign-app
  $ cd docker-edusign-app
+
+Now we need to provide the SSL certificates for NGINX and for the Shibboleth
+SP. These need to be named :code:`nginx.crt`, :code:`nginx.key`,
+:code:`sp-cert.pem`, and :code:`sp-key.pem`. The certificate for Shibboleth can
+be self signed and can be created with the :code:`shib-keygen` tool distributed
+with Shibboleth.
+
+.. code-block:: bash
+
  $ mkdir -p config-current/ssl
  $ cp <wherever>/nginx.* config-current/ssl/
  $ cp <wherever>/sp-* config-current/ssl/
