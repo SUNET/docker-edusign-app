@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Compose a few needed variables, and start the gunicorn
+# daemon driving the edusign backend app.
+
 set -e
 set -x
 

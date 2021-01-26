@@ -2,7 +2,13 @@ FROM debian:buster
 
 MAINTAINER eperez@emergya.com
 
+# This will create an image with a virtualenv containing the edusign backend
+# sources and gunicorn, and with a script to start a gunicorn process running
+# the edusign backend app.
+
 ENV DEBIAN_FRONTEND noninteractive
+
+# Install needed software
 
 RUN /bin/sed -i s/deb.debian.org/ftp.se.debian.org/g /etc/apt/sources.list
 
@@ -17,14 +23,19 @@ RUN apt clean
 RUN rm -rf /var/lib/apt/lists/*
 
 # Set the locale
+
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
     locale-gen
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
+# Add edusign user to run the service as
+
 RUN addgroup --system edusign
 RUN adduser --system --shell /bin/false edusign
+
+# Create run and log directories
 
 RUN mkdir -p /var/log/edusign
 RUN chown -R edusign: /var/log/edusign
@@ -34,17 +45,25 @@ RUN mkdir -p /opt/edusign/run
 RUN chown -R edusign: /opt/edusign/run
 RUN chmod -R 770 /opt/edusign/run
 
+# Get the edusign sources from github, pick the backend sources
+# and put them in /opt/edusign, and throw away the rest.
+
 RUN git clone -b release https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp
 RUN rm -rf /tmp/edusign-app
 
 WORKDIR /opt/edusign/edusign-webapp
 
+# Make a python virtualenv, update pip, and install the edusign backend code
+# and gunicorn.
+
 RUN python3 -m venv venv
 RUN venv/bin/pip install -U pip wheel
 
 RUN venv/bin/python setup.py install
 RUN venv/bin/pip install gunicorn
+
+# Add the script with the main command.
 
 COPY ./start.sh /start.sh
 
