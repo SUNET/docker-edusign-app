@@ -16,7 +16,7 @@ args=`arg="$(filter-out $@,$(MAKECMDGOALS))" && echo $${arg:-${1}}`
 ## Build configuration with values from env file (environment-current). If file provided, vars in the diff with the environment-devel provided file must be in the environment. Otherwise environment-devel is used.
 .PHONY: config-build
 config-build:
-	@if [ ! -f environment-current ]; then cp environment-devel environment-current; fi && \
+	@if [ ! -f environment-current ]; then cp environment environment-current; fi && \
 	  if ! grep -q 'DUMMY=dummy' environment-current; then export $$(cat environment-current | xargs); fi && \
 		if [ ! -d config-current ]; then mkdir -p config-current/ssl; fi && \
 		if [ ! -e config-current/supervisord.conf ]; then cp config-templates/supervisord.conf config-current/supervisord.conf; fi && \
