@@ -46,6 +46,11 @@ config-build-from-env:
 config-clean:
 	@rm -rf config-current/ nginx/config-current/ .env
 
+## Build the docker images
+.PHONY: build
+build:
+	@docker-compose build
+
 ## Start the docker environment
 .PHONY: env-start
 env-start:
