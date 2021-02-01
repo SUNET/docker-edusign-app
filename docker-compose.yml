@@ -2,18 +2,6 @@
 version: '3.8'
 services:
 
-  # Container that will build the frontend JS app bundle, put it in the jsbuild
-  # volume, and exit.
- 
-  build-front:
-    build: ./frontend/.
-    environment:
-      - NODE_ENV=production
-    volumes:
-        - jsbuild:/opt/jsbuild:rw
-    stdin_open: false
-    tty: true
-
   # Container that will execute a supervisor with 4 child processes:
   # shibauthorizer, shibresponder, and shibd (which together will act as a SAML
   # SP) and an NGINX, that will use Shibboleth to secure certain locations,
@@ -27,14 +15,13 @@ services:
       - 443
     networks:
       edusign:
-        ipv4_address: 172.20.10.203
+        ipv4_address: 172.20.10.201
     volumes:
-      - jsbuild:/opt/edusign/jsbuild:ro
       - edusignlogs:/var/log/edusign:rw
     environment:
-      - "HOSTNAME=${SERVER_NAME}"
-    depends_on:
-      - build-front
+      - SP_HOSTNAME
+      - DISCO_URL
+      - METADATA_FILE
 
   # Container that will execute a gunicorn process driving the edusign backen
   # app.
@@ -43,28 +30,29 @@ services:
     build: ./backend/.
     networks:
       edusign:
-        ipv4_address: 172.20.10.204
+        ipv4_address: 172.20.10.202
     expose:
       - 8080
     volumes:
       - edusignlogs:/var/log/edusign:rw
     environment:
       - "PYTHONPATH=/opt/edusign/edusign-webapp/src"
-    env_file: .env
+      - SERVER_NAME
+      - SECRET_KEY
+      - EDUSIGN_API_BASE_URL
+      - EDUSIGN_API_PROFILE
+      - EDUSIGN_API_USERNAME
+      - EDUSIGN_API_PASSOWRD
+      - SIGNER_ATTRIBUTES
     depends_on:
       - sp
 
 volumes:
 
-  # Volume to hold all the interestingg logs
+  # Volume to hold all the interesting logs
 
   edusignlogs:
     name: edusignlogs
-
-  # Volume to hold the frontend app js bundles.
-
-  jsbuild:
-    name: jsbuild
 
 networks:
   edusign:

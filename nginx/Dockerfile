@@ -1,6 +1,59 @@
-FROM debian:buster
+FROM debian:buster AS builder
 
 MAINTAINER eperez@emergya.com
+
+# In this temp container we build the frontside bundle and
+# the NGINX modules nginx-http-shibboleth and headers-more-nginx
+
+ENV DEBIAN_FRONTEND noninteractive
+
+# Install needed software
+
+RUN /bin/sed -i s/deb.debian.org/ftp.se.debian.org/g /etc/apt/sources.list
+
+RUN apt -y update && apt -y upgrade && \
+    apt -y install npm git nginx build-essential fakeroot \
+                       libpcre3 libpcre3-dev libpcrecpp0v5 libssl-dev \
+                       openssl zlib1g-dev tar gzip mercurial wget libxml2-utils xsltproc && \
+    apt -y clean
+
+RUN npm install -U npm -g
+RUN rm -rf /var/lib/apt/lists/*
+
+# Get the edusign code from github, pick just the frontend code, and remove the
+# rest.
+
+RUN git clone -b release https://github.com/SUNET/edusign-app /tmp/edusign-app
+RUN mv -f /tmp/edusign-app/frontend /opt
+RUN rm -rf /tmp/edusign-app
+
+WORKDIR /opt/frontend
+
+# Install the needed JS dependencies, build the bundle, and remove said
+# dependencies
+
+RUN npm install && npm run build-pro && rm -rf node_modules
+
+# Get software that builds NGINX modules
+
+RUN mkdir -p /opt/backend/build
+WORKDIR /opt/backend
+
+RUN curl -OL http://hg.nginx.org/pkg-oss/archive/tip.tar.gz
+RUN tar -xzf tip.tar.gz
+RUN mv pkg-* tip
+
+# Build the NGINX modules nginx-http-shibboleth and headers-more-nginx
+# see https://tcg.stanford.edu/?p=131
+
+RUN ./tip/build_module.sh -v 1.18.0 https://github.com/nginx-shib/nginx-http-shibboleth.git
+RUN mv build-module-artifacts/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb build/
+RUN rm -rf build-module-artifacts
+RUN ./tip/build_module.sh -v 1.18.0 https://github.com/openresty/headers-more-nginx-module.git
+RUN mv build-module-artifacts/nginx-module-headersmore_1.18.0-1~buster_amd64.deb build/
+RUN rm -rf build-module-artifacts
+
+FROM debian:buster AS sp
 
 # This will produce an image to create containers that run a supervisor
 # process, supervising 4 child processes:
@@ -14,25 +67,6 @@ MAINTAINER eperez@emergya.com
 #    locations.
 
 ENV DEBIAN_FRONTEND noninteractive
-
-# Install needed software.
-
-RUN /bin/sed -i s/deb.debian.org/ftp.se.debian.org/g /etc/apt/sources.list
-
-RUN apt update -y && apt upgrade -y && \
-    apt install -y apt-utils  opensaml2-schemas opensaml2-tools xmltooling-schemas libshibsp8 \
-        libshibsp-plugins shibboleth-sp2-common shibboleth-sp2-utils procps curl git \
-        build-essential fakeroot libpcre3 libpcre3-dev libpcrecpp0v5 libssl-dev \
-        openssl zlib1g-dev tar gzip apt-utils mercurial wget libxml2-utils xsltproc \
-        lsb-release devscripts quilt supervisor locales
-
-# Set the locale
-#
-RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
-    locale-gen
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
 
 # Add the official NGINX sources repositories and public signing key
 
@@ -49,32 +83,33 @@ RUN echo "Package: nginx" >> /etc/apt/preferences.d/nginx
 RUN echo "Pin: release o=nginx" >> /etc/apt/preferences.d/nginx
 RUN echo "Pin-Priority: 600" >> /etc/apt/preferences.d/nginx
 
-# Install NGINX
+# Install needed software.
 
-RUN apt update -y && \
-        apt install -y nginx && \
+RUN /bin/sed -i s/deb.debian.org/ftp.se.debian.org/g /etc/apt/sources.list
+
+RUN apt update -y && apt upgrade -y && \
+    apt install -y apt-utils  opensaml2-schemas opensaml2-tools xmltooling-schemas \
+        libshibsp8 libshibsp-plugins shibboleth-sp2-common shibboleth-sp2-utils procps curl \
+        libpcre3 libpcrecpp0v5 openssl libxml2-utils xsltproc supervisor locales nginx && \
         apt clean -y && \
         rm -rf /var/lib/apt/lists/*
 
-# Provide Shibboleth with their SSL certificate
+# Set the locale
+#
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 
-COPY ./config-current/ssl/sp-* /etc/shibboleth/
+# Install the NGINX modules nginx-http-shibboleth and headers-more-nginx
 
-# Get software that builds NGINX modules
+COPY --from=builder /opt/backend/build .
+RUN dpkg -i build/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb build/nginx-module-headersmore_1.18.0-1~buster_amd64.deb
 
-RUN curl -OL http://hg.nginx.org/pkg-oss/archive/tip.tar.gz
-RUN tar -xzf tip.tar.gz
-RUN mv pkg-* tip
-
-# Build and install the NGINX modules nginx-http-shibboleth and headers-more-nginx
-
-RUN ./tip/build_module.sh -v 1.18.0 https://github.com/nginx-shib/nginx-http-shibboleth.git
-RUN mv build-module-artifacts/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb .
-RUN rm -rf build-module-artifacts
-RUN ./tip/build_module.sh -v 1.18.0 https://github.com/openresty/headers-more-nginx-module.git
-RUN mv build-module-artifacts/nginx-module-headersmore_1.18.0-1~buster_amd64.deb .
-RUN rm -rf build-module-artifacts
-RUN dpkg -i nginx-module-shibboleth_1.18.0-1~buster_amd64.deb nginx-module-headersmore_1.18.0-1~buster_amd64.deb
+# Get the js bundle built in the builder image
+#
+COPY --from=builder /opt/frontend/build jsbuild
 
 # Create run directory for shibboleth
 
@@ -82,28 +117,19 @@ RUN mkdir -p /var/run/shibboleth
 
 # Copy NGINX configuration files into /etc/nginx/
 
-COPY ./config-current/nginx.conf /etc/nginx/
-COPY ./config-current/shib_fastcgi_params /etc/nginx/
-COPY ./config-current/shib_clear_headers /etc/nginx/
-COPY ./config-current/fastcgi.conf /etc/nginx/
+COPY ./docker/shib_fastcgi_params /etc/nginx/
+COPY ./docker/shib_clear_headers /etc/nginx/
 
 # Copy the supervisor configuration file into its place
 
-COPY ./config-current/supervisord.conf /etc/supervisor/conf.d/
+COPY ./docker/supervisord.conf /etc/supervisor/conf.d/
 
-# Add the SSL certificate for HTTPS at NGINX
+# Add the shibboleth attribute map
 
-RUN mkdir /etc/nginx/ssl/
+COPY ./docker/attribute-map.xml /etc/shibboleth/
 
-COPY ./config-current/ssl/nginx.* /etc/nginx/ssl/
+# Copy start script and set it as entry point
+#
+COPY start.sh /start.sh
 
-# Add the shibboleth configuration files
-
-COPY ./config-current/shibboleth2.xml /etc/shibboleth/
-COPY ./config-current/attribute-map.xml /etc/shibboleth/
-COPY ./config-current/idp-metadata.xml /etc/shibboleth/
-COPY ./config-current/shibd.logger /etc/shibboleth/
-
-# Set supervisord as default main process in containers.
-
-CMD ["/usr/bin/supervisord"]
+CMD ["bash", "/start.sh"]
