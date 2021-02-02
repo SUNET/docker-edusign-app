@@ -42,13 +42,20 @@ publish-sp: build-sp push-sp
 ## Build the SP image
 .PHONY: build-sp
 build-sp:
-	docker build --no-cache=false -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
+	docker build --no-cache=false \
+	             --env SP_HOSTNAME \
+	             --env DISCO_URL \
+	             --env METADATA_FILE \
+	             -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
 	docker tag $(NAME_SP):$(VERSION_SP) docker.sunet.se/$(NAME_SP):$(VERSION_SP)
 
 ## Update the SP image
 .PHONY: update-sp
 update-sp:
-	docker build -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
+	docker build --env SP_HOSTNAME \
+	             --env DISCO_URL \
+	             --env METADATA_FILE \
+	             -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
 	docker tag $(NAME_SP):$(VERSION_SP) docker.sunet.se/$(NAME_SP):$(VERSION_SP)
 
 ## Publish the SP image to docker.sunet.se
@@ -60,7 +67,7 @@ push-sp:
 .PHONY: env-start
 env-start:
 	@docker-compose rm -s -f; \
-		docker-compose up --build --detach
+		docker-compose up --detach
 
 ## Stop the docker environment
 .PHONY: env-stop
