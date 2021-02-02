@@ -187,8 +187,8 @@ http {
       server_name ${SP_HOSTNAME};
       root /opt/edusign/frontend/public;
 
-      ssl_certificate $KEYDIR/certs/${CERTNAME}.crt;
-      ssl_certificate_key $KEYDIR/private/${CERTNAME}.key;
+      ssl_certificate ${KEYDIR}/certs/${CERTNAME}.crt;
+      ssl_certificate_key ${KEYDIR}/private/${CERTNAME}.key;
       ssl_session_timeout 1d;
       ssl_session_cache shared:SSL:50m;
       ssl_session_tickets off;

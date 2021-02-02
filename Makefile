@@ -21,21 +21,18 @@ publish-app: build-app push-app
 ## Build the APP image
 .PHONY: build-app
 build-app:
-	@cd $(DIR_APP)
-	docker build --no-cache=false -t $(NAME_APP):$(VERSION_APP) .
+	docker build --no-cache=false -t $(NAME_APP):$(VERSION_APP) $(DIR_APP)
 	docker tag $(NAME_APP):$(VERSION_APP) docker.sunet.se/$(NAME_APP):$(VERSION_APP)
 
 ## Update the APP image
 .PHONY: update-app
 update-app:
-	@cd $(DIR_APP)
-	docker build -t $(NAME_APP):$(VERSION_APP) .
+	docker build -t $(NAME_APP):$(VERSION_APP) $(DIR_APP)
 	docker tag $(NAME_APP):$(VERSION_APP) docker.sunet.se/$(NAME_APP):$(VERSION_APP)
 
 ## Publish the APP image to docker.sunet.se
 .PHONY: push-app
 push-app:
-	@cd $(DIR_APP)
 	docker push docker.sunet.se/$(NAME_APP):$(VERSION_APP)
 
 ## Build and publish to docker.sunet.se the SP image
@@ -45,21 +42,18 @@ publish-sp: build-sp push-sp
 ## Build the SP image
 .PHONY: build-sp
 build-sp:
-	@cd $(DIR_SP)
-	docker build --no-cache=false -t $(NAME_SP):$(VERSION_SP) .
+	docker build --no-cache=false -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
 	docker tag $(NAME_SP):$(VERSION_SP) docker.sunet.se/$(NAME_SP):$(VERSION_SP)
 
 ## Update the SP image
 .PHONY: update-sp
 update-sp:
-	@cd $(DIR_SP)
-	docker build -t $(NAME_SP):$(VERSION_SP) .
+	docker build -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
 	docker tag $(NAME_SP):$(VERSION_SP) docker.sunet.se/$(NAME_SP):$(VERSION_SP)
 
 ## Publish the SP image to docker.sunet.se
 .PHONY: push-sp
 push-sp:
-	@cd $(DIR_SP)
 	docker push docker.sunet.se/$(NAME_SP):$(VERSION_SP)
 
 ## Start the docker environment
