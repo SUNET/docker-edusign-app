@@ -8,12 +8,15 @@ MAINTAINER eperez@emergya.com
 
 ENV DEBIAN_FRONTEND noninteractive
 
+# Environment attributes
+
 ENV SERVER_NAME=sp.edusign.docker
 ENV SECRET_KEY=supersecret
 ENV EDUSIGN_API_BASE_URL=https://sig.idsec.se/signint/v1/
 ENV EDUSIGN_API_PROFILE=edusign-test
 ENV EDUSIGN_API_USERNAME=dummy
-ENV EDUSIGN_API_PASSOWRD=dummy
+ENV EDUSIGN_API_PASSWORD=dummy
+ENV SIGNER_ATTRIBUTES=urn:oid:2.5.4.42,givenName;urn:oid:2.5.4.4,sn;urn:oid:0.9.2342.19200300.100.1.3,mail
 
 # Install needed software
 

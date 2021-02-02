@@ -22,6 +22,7 @@ services:
       - SP_HOSTNAME
       - DISCO_URL
       - METADATA_FILE
+      - SP_ABOUT
 
   # Container that will execute a gunicorn process driving the edusign backen
   # app.
@@ -42,7 +43,7 @@ services:
       - EDUSIGN_API_BASE_URL
       - EDUSIGN_API_PROFILE
       - EDUSIGN_API_USERNAME
-      - EDUSIGN_API_PASSOWRD
+      - EDUSIGN_API_PASSWORD
       - SIGNER_ATTRIBUTES
     depends_on:
       - sp
