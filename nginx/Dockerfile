@@ -14,7 +14,8 @@ RUN /bin/sed -i s/deb.debian.org/ftp.se.debian.org/g /etc/apt/sources.list
 RUN apt -y update && apt -y upgrade && \
     apt -y install npm git nginx build-essential fakeroot \
                        libpcre3 libpcre3-dev libpcrecpp0v5 libssl-dev \
-                       openssl zlib1g-dev tar gzip mercurial wget libxml2-utils xsltproc && \
+                       openssl zlib1g-dev tar gzip mercurial curl wget libxml2-utils xsltproc \
+                       apt-utils lsb-release devscripts quilt && \
     apt -y clean
 
 RUN npm install -U npm -g
@@ -70,6 +71,8 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Add the official NGINX sources repositories and public signing key
 
+RUN apt update && apt install -y curl gnupg
+
 RUN touch /etc/apt/sources.list.d/nginx.list
 RUN echo "deb http://nginx.org/packages/debian/ buster nginx" >> /etc/apt/sources.list.d/nginx.list
 RUN echo "deb-src http://nginx.org/packages/debian/ buster nginx" >> /etc/apt/sources.list.d/nginx.list
@@ -89,7 +92,7 @@ RUN /bin/sed -i s/deb.debian.org/ftp.se.debian.org/g /etc/apt/sources.list
 
 RUN apt update -y && apt upgrade -y && \
     apt install -y apt-utils  opensaml2-schemas opensaml2-tools xmltooling-schemas \
-        libshibsp8 libshibsp-plugins shibboleth-sp2-common shibboleth-sp2-utils procps curl \
+        libshibsp8 libshibsp-plugins shibboleth-sp2-common shibboleth-sp2-utils procps \
         libpcre3 libpcrecpp0v5 openssl libxml2-utils xsltproc supervisor locales nginx && \
         apt clean -y && \
         rm -rf /var/lib/apt/lists/*
@@ -104,7 +107,9 @@ ENV LC_ALL en_US.UTF-8
 
 # Install the NGINX modules nginx-http-shibboleth and headers-more-nginx
 
-COPY --from=builder /opt/backend/build .
+RUN mkdir build
+COPY --from=builder /opt/backend/build/* build/
+RUN ls build
 RUN dpkg -i build/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb build/nginx-module-headersmore_1.18.0-1~buster_amd64.deb
 
 # Get the js bundle built in the builder image
