@@ -52,10 +52,7 @@ build-sp:
 ## Update the SP image
 .PHONY: update-sp
 update-sp:
-	docker build --env SP_HOSTNAME \
-	             --env DISCO_URL \
-	             --env METADATA_FILE \
-	             -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
+	docker build -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
 	docker tag $(NAME_SP):$(VERSION_SP) docker.sunet.se/$(NAME_SP):$(VERSION_SP)
 
 ## Publish the SP image to docker.sunet.se
