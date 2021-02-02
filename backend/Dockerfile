@@ -8,6 +8,13 @@ MAINTAINER eperez@emergya.com
 
 ENV DEBIAN_FRONTEND noninteractive
 
+ENV SERVER_NAME=sp.edusign.docker
+ENV SECRET_KEY=supersecret
+ENV EDUSIGN_API_BASE_URL=https://sig.idsec.se/signint/v1/
+ENV EDUSIGN_API_PROFILE=edusign-test
+ENV EDUSIGN_API_USERNAME=dummy
+ENV EDUSIGN_API_PASSOWRD=dummy
+
 # Install needed software
 
 RUN /bin/sed -i s/deb.debian.org/ftp.se.debian.org/g /etc/apt/sources.list

@@ -69,6 +69,9 @@ FROM debian:buster AS sp
 
 ENV DEBIAN_FRONTEND noninteractive
 
+ENV SP_HOSTNAME=sp.edusign.docker
+ENV DISCO_URL=https://service.seamlessaccess.org/ds/
+
 # Add the official NGINX sources repositories and public signing key
 
 RUN apt update && apt install -y curl gnupg
