@@ -69,10 +69,6 @@ FROM debian:buster AS sp
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ARG SP_HOSTNAME
-ARG DISCO_URL
-ARG METADATA_FILE
-
 # Add the official NGINX sources repositories and public signing key
 
 RUN apt update && apt install -y curl gnupg

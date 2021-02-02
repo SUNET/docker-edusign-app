@@ -18,6 +18,10 @@ services:
         ipv4_address: 172.20.10.201
     volumes:
       - edusignlogs:/var/log/edusign:rw
+    environment:
+      - SP_HOSTNAME
+      - DISCO_URL
+      - METADATA_FILE
 
   # Container that will execute a gunicorn process driving the edusign backen
   # app.
