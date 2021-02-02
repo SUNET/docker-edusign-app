@@ -43,9 +43,9 @@ publish-sp: build-sp push-sp
 .PHONY: build-sp
 build-sp:
 	docker build --no-cache=false \
-	             --env SP_HOSTNAME \
-	             --env DISCO_URL \
-	             --env METADATA_FILE \
+	             --build-arg SP_HOSTNAME=$(SP_HOSTNAME) \
+	             --build-arg DISCO_URL=$(DISCO_URL) \
+	             --build-arg METADATA_FILE=$(METADATA_FILE) \
 	             -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
 	docker tag $(NAME_SP):$(VERSION_SP) docker.sunet.se/$(NAME_SP):$(VERSION_SP)
 
