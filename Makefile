@@ -35,10 +35,6 @@ update-app:
 push-app:
 	docker push docker.sunet.se/$(NAME_APP):$(VERSION_APP)
 
-## Build and publish to docker.sunet.se the SP image
-.PHONY: publish-sp
-publish-sp: build-sp push-sp
-
 ## Build the SP image
 .PHONY: build-sp
 build-sp:
@@ -55,6 +51,18 @@ update-sp:
 .PHONY: push-sp
 push-sp:
 	docker push docker.sunet.se/$(NAME_SP):$(VERSION_SP)
+
+## Build both images
+.PHONY: build
+build: build-sp build-app
+
+## Push both images to docker.sunet.se
+.PHONY: push
+push: push-sp push-app
+
+## Build and push both images to docker.sunet.se
+.PHONY: publish
+publish: build push
 
 ## Start the docker environment
 .PHONY: env-start

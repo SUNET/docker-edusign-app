@@ -5,23 +5,35 @@ EduSign app docker environment
 Docker environment for the deployment of an instance of edusign-app.
 
 The environment will consist on 2 docker containers, one running a front facing
-NGINX server protected by a Shibboleth SP and proxying the app, and another
-with the eduSign app as a WSGI app driven by Gunicorn.
+NGINX server protected by a Shibboleth SP and proxying the app (edusign-sp),
+and another with the eduSign app as a WSGI app driven by Gunicorn
+(edusign-app).
 
-Essentially, deployment will involve providing configuration and starting a
-docker compose environment.
+This repo also provides the means to buid the docker images and publish them to
+docker.sunet.se.
 
-Deployment tasks are provided as make commands; type :code:`make help` at the
-root of the repository to find out about them.
+Deployment and building tasks are provided as make targets; type :code:`make
+help` at the root of the repository to find out about them.
 
-Prerequisites
-.............
+Building and publishing the apps
+--------------------------------
 
-* A server with a public IP and domain name.
-* An SSL certificate for the domain name.
-* Docker daemon running on the server, and docker-compose available (tested with docker engine 20.10.2
-  and 20.20.2, and docker-compose 1.27.4).
-* A SAML2 IdP/federation that has established trust with the API and is ready to do the same with us.
+To build the image for edusign-sp, use the target `build-sp`. You can update the
+image with `update-sp`, and push it to docker.sunet.se with `push-sp`.
+
+For the edusign-app image, the corresponding targets would be `build-app`,
+`update-app`, and `push-app`.
+
+It is also possible to build both images with :code:`make build`, push both
+images with :code:`make push`, and build and push both images with :code:`make
+publish`.
+
+Running the production environment
+----------------------------------
+
+We assume here that both needed docker images have been built and are present
+either in the local docker engine image repository, or in the docker.sunet.se
+hub.
 
 Configuration
 .............
@@ -33,63 +45,26 @@ First we clone the repo:
  $ git clone https://github.com/SUNET/docker-edusign-app
  $ cd docker-edusign-app
 
-Now we need to provide the SSL certificates for NGINX and for the Shibboleth
-SP. These need to be named :code:`nginx.crt`, :code:`nginx.key`,
-:code:`sp-cert.pem`, and :code:`sp-key.pem`. The certificate for Shibboleth can
-be self signed and can be created with the :code:`shib-keygen` tool distributed
-with Shibboleth.
+We provide a few configuration values in the form of exported environment
+variables in the host. These are listed and explained below. These values can
+also reside in an :code:`.env` file in the same directory as the
+:code:`docker-compose.yml` file.
 
-.. code-block:: bash
+After providing these configuration values, we start the environment with
+:code:`make env-start`, and stop it with :code:`make env-stop`.
 
- $ mkdir -p config-current/ssl
- $ cp <wherever>/nginx.* config-current/ssl/
- $ cp <wherever>/sp-* config-current/ssl/
+Once the environment is up and running, there are a few files we may want to
+update / provide, mainly certificates and metadata:
 
-Then we need to provide the IdP metadata, in a file named idp-metadata.xml. If
-we are instead dealing with a federation, we would need to configure it by
-editing the configuration at :code:`shibboleth2.xml`, see below.
+* SSL certificate for HTTPS, at :code:`/etc/ssl/certs/<SP_HOSTNAME>.crt` and
+  :code:`/etc/ssl/private/<SP_HOSTNAME>.key`
 
-.. code-block:: bash
+* SSL certificate for the Shibboleth SP, at
+  :code:`/etc/ssl/certs/shibsp-<SP_HOSTNAME>.crt` and
+  :code:`/etc/ssl/private/shibsp-<SP_HOSTNAME>.key`
 
- $ cp <wherever>/idp-metadata.xml config-current/
-
-Then we need to provide values to some settings. These can reside in an
-environment file :code:`environment-current` or be exported as environment variables.
-The settings needed are listed in the file :code:`environment` at the root of the
-repo, see below for an explanation of each of them.  So to add them in a file,
-do:
-
-.. code-block:: bash
-
- $ cp environment environment-current
- $ vim environment-current
-
-And then we build the configuration files using these values:
-
-.. code-block:: bash
-
- $ make config-build
-
-This command will pick the files in :code:`config-templates`, replace in them
-the variables in :code:`environment-current` with their values, and (when not
-yet present there) place them in :code:`config-current`. These are files that
-the Dockerfiles will :code:`COPY` into the containers as appropriate. The
-command will also use the contents of :code:`environment-current` to produce an
-:code:`.env` file that will inject environment variables into
-:code:`docker-compose`.
-
-If, instead, we want to provide the settings as exported environment variables,
-we would export them and then run:
-
-.. code-block:: bash
-
- $ make config-build-from-env
-
-We may now want to edit any of the configuration files in
-:code:`config-current/` (e.g., if we deal with a federation instead of an IdP,
-we would edit :code:`config-current/shibboleth2.xml`). If we do so, after
-editing them we would again execute :code:`make config-build` to again
-distribute the files for the Dockerfiles to be able to pick them.
+* Possibly a SAML IdP metadata file, placed at :code:`/etc/shibboleth` and
+  referenced in the configuration variable :code:`METADATA_FILE`.
 
 Attributes used for signing
 ...........................
@@ -109,12 +84,6 @@ deployment, so that we don't need to edit them in each deployment. Note that in
 the :code:`attribute-map.xml` the attributes must be set with an
 :code:`AttributeDecoder` with type :code:`StringAttributeDecoder`.
 
-Start docker compose environment
-................................
-
-Execute the command :code:`make env-start`. To stop the environment, the
-:code:`make env-stop` command should be used.
-
 Access logs
 ...........
 
@@ -124,8 +93,14 @@ tailed with :code:`make logs-tailf <logfile>`.
 Configuration variables
 .......................
 
-SERVER_NAME
+SP_HOSTNAME
     String. FQDN for the service, as used in the SSL certificate for the NGINX.
+
+DISCO_URL
+    String. URL of SAML discovery service to provide to Shibboleth SP.
+
+METADATA_FILE:
+    String. If a metadata file is provided to the SP, set the path here.
 
 SECRET_KEY
     String. Key used by the webapp for encryption, e.g. for the sessions.
@@ -141,15 +116,6 @@ EDUSIGN_API_USERNAME
 
 EDUSIGN_API_PASSWORD
     String. Password for Basic Auth for the eduSign API.
-
-SP_ENTITY_ID
-    String. SAML2 Entity ID of the service as an SP.
-
-IDP_ENTITY_ID
-    String. SAML2 Entity ID of the IdP, used to configure the
-    :code:`shibboleth2.xml` file for the Shibboleth SP. It may be necessary to
-    actually edit the file if we have >1 IdP and need to configure a discovery
-    service.
 
 SIGNER_ATTRIBUTES
     String. The attributes to be used for signing, given as
