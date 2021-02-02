@@ -125,6 +125,7 @@ RUN mkdir -p /var/run/shibboleth
 
 # Copy NGINX configuration files into /etc/nginx/
 
+COPY ./docker/fastcgi.conf /etc/nginx/
 COPY ./docker/shib_fastcgi_params /etc/nginx/
 COPY ./docker/shib_clear_headers /etc/nginx/
 
