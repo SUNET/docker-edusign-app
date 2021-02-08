@@ -70,6 +70,7 @@ WORKDIR /opt/edusign/edusign-webapp
 RUN python3 -m venv venv
 RUN venv/bin/pip install -U pip wheel
 
+RUN venv/bin/pip install -r requirements.txt
 RUN venv/bin/python setup.py install
 RUN venv/bin/pip install gunicorn
 
