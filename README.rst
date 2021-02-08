@@ -105,6 +105,9 @@ METADATA_FILE:
 SECRET_KEY
     String. Key used by the webapp for encryption, e.g. for the sessions.
 
+MAX_FILE_SIZE
+    String. Maximum size of uploadable documents, in a format that NGINX understands, e.g. `20M`.
+
 EDUSIGN_API_BASE_URL
     String. Base URL for the eduSign API.
 

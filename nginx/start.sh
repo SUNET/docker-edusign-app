@@ -169,7 +169,7 @@ http {
     keepalive_timeout  65;
 
     #gzip  on;
-    client_max_body_size 20M;
+    client_max_body_size ${MAX_FILE_SIZE};
 
     fastcgi_read_timeout 3000;
     proxy_read_timeout 3000;

@@ -69,8 +69,9 @@ FROM debian:buster AS sp
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV SP_HOSTNAME=sp.edusign.docker
-ENV DISCO_URL=https://service.seamlessaccess.org/ds/
+ENV SP_HOSTNAME sp.edusign.docker
+ENV DISCO_URL https://service.seamlessaccess.org/ds/
+ENV MAX_FILE_SIZE 20M
 
 # Add the official NGINX sources repositories and public signing key
 

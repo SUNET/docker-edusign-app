@@ -23,6 +23,7 @@ services:
       - DISCO_URL
       - METADATA_FILE
       - SP_ABOUT
+      - MAX_FILE_SIZE
 
   # Container that will execute a gunicorn process driving the edusign backen
   # app.
