@@ -16,7 +16,7 @@ RUN apt -y update && apt -y upgrade && \
     apt -y install npm git nginx build-essential fakeroot \
                        libpcre3 libpcre3-dev libpcrecpp0v5 libssl-dev \
                        openssl zlib1g-dev tar gzip mercurial curl wget libxml2-utils xsltproc \
-                       apt-utils lsb-release devscripts quilt && \
+                       apt-utils lsb-release devscripts quilt sudo && \
     apt -y clean
 
 RUN npm install -U npm -g
