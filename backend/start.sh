@@ -9,9 +9,7 @@ set -x
 . /opt/edusign/edusign-webapp/venv/bin/activate
 
 edusign_name=${edusign_name-'edusign-webapp'}
-app_name=${app_name-'webapp'}
 base_dir=${base_dir-'/opt/edusign'}
-project_dir=${project_dir-"${base_dir}/edusign-webapp/src"}
 
 log_dir=${log_dir-'/var/log/edusign'}
 state_dir=${state_dir-"${base_dir}/run"}
@@ -23,10 +21,6 @@ worker_timeout=${worker_timeout-30}
 forwarded_allow_ips=${forwarded_allow_ips-'*'}
 
 chown -R edusign: "${log_dir}" "${state_dir}"
-
-# set PYTHONPATH if it is not already set using Docker environment
-export PYTHONPATH=${PYTHONPATH-${project_dir}}
-echo "PYTHONPATH=${PYTHONPATH}"
 
 # nice to have in docker run output, to check what
 # version of something is actually running.

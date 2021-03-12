@@ -22,8 +22,8 @@ services:
       - SP_HOSTNAME
       - DISCO_URL
       - METADATA_FILE
-      - SP_ABOUT
       - MAX_FILE_SIZE
+      - EDUSIGN_APP_VERSION
 
   # Container that will execute a gunicorn process driving the edusign backen
   # app.
@@ -38,14 +38,15 @@ services:
     volumes:
       - edusignlogs:/var/log/edusign:rw
     environment:
-      - "PYTHONPATH=/opt/edusign/edusign-webapp/src"
-      - SERVER_NAME
+      - SP_HOSTNAME
       - SECRET_KEY
       - EDUSIGN_API_BASE_URL
       - EDUSIGN_API_PROFILE
       - EDUSIGN_API_USERNAME
       - EDUSIGN_API_PASSWORD
+      - SIGN_REQUESTER_ID
       - SIGNER_ATTRIBUTES
+      - EDUSIGN_APP_VERSION
     depends_on:
       - sp
 

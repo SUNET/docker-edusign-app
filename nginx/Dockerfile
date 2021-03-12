@@ -6,6 +6,7 @@ MAINTAINER eperez@emergya.com
 # the NGINX modules nginx-http-shibboleth and headers-more-nginx
 
 ENV DEBIAN_FRONTEND noninteractive
+ENV EDUSIGN_APP_VERSION v0.1.0
 
 # Install needed software
 
@@ -24,7 +25,7 @@ RUN rm -rf /var/lib/apt/lists/*
 # Get the edusign code from github, pick just the frontend code, and remove the
 # rest.
 
-RUN git clone -b release https://github.com/SUNET/edusign-app /tmp/edusign-app
+RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/frontend /opt
 RUN rm -rf /tmp/edusign-app
 
@@ -54,6 +55,10 @@ RUN ./tip/build_module.sh -v 1.18.0 https://github.com/openresty/headers-more-ng
 RUN mv build-module-artifacts/nginx-module-headersmore_1.18.0-1~buster_amd64.deb build/
 RUN rm -rf build-module-artifacts
 
+#----------------------------
+# End builder image
+#----------------------------
+
 FROM debian:buster AS sp
 
 # This will produce an image to create containers that run a supervisor
@@ -64,8 +69,8 @@ FROM debian:buster AS sp
 #    Shibboleth metadata, status data, etc;
 # 3) A Shibboleth SP shibd daemon, that does the SAML heavy lifting;
 # 4) An NGINX that uses the previous processes to secure certain
-#    locations, and proxies the edusign WSGI app at one of those
-#    locations.
+#    locations, proxies the edusign WSGI app at one of those
+#    locations, and serves the JS bundles statically.
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -109,11 +114,10 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
-# Install the NGINX modules nginx-http-shibboleth and headers-more-nginx
+# Install the NGINX modules nginx-http-shibboleth and headers-more-nginx previously built in the builder image
 
 RUN mkdir build
 COPY --from=builder /opt/backend/build/* build/
-RUN ls build
 RUN dpkg -i build/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb build/nginx-module-headersmore_1.18.0-1~buster_amd64.deb
 
 # Get the js bundle built in the builder image

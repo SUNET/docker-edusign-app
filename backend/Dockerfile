@@ -10,13 +10,15 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Environment attributes
 
-ENV SERVER_NAME=sp.edusign.docker
+ENV SP_HOSTNAME=sp.edusign.docker
 ENV SECRET_KEY=supersecret
 ENV EDUSIGN_API_BASE_URL=https://sig.idsec.se/signint/v1/
 ENV EDUSIGN_API_PROFILE=edusign-test
 ENV EDUSIGN_API_USERNAME=dummy
 ENV EDUSIGN_API_PASSWORD=dummy
-ENV SIGNER_ATTRIBUTES=urn:oid:2.5.4.42,givenName;urn:oid:2.5.4.4,sn;urn:oid:0.9.2342.19200300.100.1.3,mail
+ENV SIGNER_ATTRIBUTES=urn:oid:2.5.4.42,givenName;urn:oid:2.5.4.4,sn;urn:oid:0.9.2342.19200300.100.1.3,mail;urn:oid:2.16.840.1.113730.3.1.241,displayName
+ENV SIGN_REQUESTER_ID=https://sig.idsec.se/shibboleth
+ENV EDUSIGN_APP_VERSION v0.1.0
 
 # Install needed software
 
@@ -56,9 +58,9 @@ RUN chown -R edusign: /opt/edusign/run
 RUN chmod -R 770 /opt/edusign/run
 
 # Get the edusign sources from github, pick the backend sources
-# and put them in /opt/edusign, and throw away the rest.
+# and put them in /opt/edusign, and get rid of the rest.
 
-RUN git clone -b release https://github.com/SUNET/edusign-app /tmp/edusign-app
+RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp
 RUN rm -rf /tmp/edusign-app
 

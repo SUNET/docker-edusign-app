@@ -2,12 +2,13 @@
 EduSign app docker environment
 ==============================
 
-Docker environment for the deployment of an instance of edusign-app.
+Docker environment for the deployment of an instance of edusign-app, managed by
+docker-compose.
 
-The environment will consist on 2 docker containers, one running a front facing
-NGINX server protected by a Shibboleth SP and proxying the app (edusign-sp),
-and another with the eduSign app as a WSGI app driven by Gunicorn
-(edusign-app).
+The environment will consist on 2 docker containers, one (edusign-sp) running a
+front facing NGINX server protected by a Shibboleth SP and proxying the app,
+and another (edusign-app) with the eduSign app as a WSGI app driven by
+Gunicorn.
 
 This repo also provides the means to buid the docker images and publish them to
 docker.sunet.se.
@@ -15,18 +16,19 @@ docker.sunet.se.
 Deployment and building tasks are provided as make targets; type :code:`make
 help` at the root of the repository to find out about them.
 
-Building and publishing the apps
---------------------------------
+Building and publishing the docker images
+-----------------------------------------
 
-To build the image for edusign-sp, use the target `build-sp`. You can update the
-image with `update-sp`, and push it to docker.sunet.se with `push-sp`.
+To build the image for edusign-sp, use the target :code:`build-sp`. You can
+update the image with :code:`update-sp`, and push it to docker.sunet.se with
+:code:`push-sp`.
 
-For the edusign-app image, the corresponding targets would be `build-app`,
-`update-app`, and `push-app`.
+For the edusign-app image, the corresponding targets would be
+:code:`build-app`, :code:`update-app`, and :code:`push-app`.
 
 It is also possible to build both images with :code:`make build`, push both
-images with :code:`make push`, and build and push both images with :code:`make
-publish`.
+images with :code:`make push`, and both build and push both images with
+:code:`make publish`.
 
 Running the production environment
 ----------------------------------
@@ -45,37 +47,40 @@ First we clone the repo:
  $ git clone https://github.com/SUNET/docker-edusign-app
  $ cd docker-edusign-app
 
-We provide a few configuration values in the form of exported environment
-variables in the host. These are listed and explained below. These values can
-also reside in an :code:`.env` file in the same directory as the
-:code:`docker-compose.yml` file.
+Before running the environment, we should provide a few configuration values in
+the form of exported environment variables in the host. These are listed and
+explained below. These settings can also reside in a :code:`.env` file in the
+same directory as the :code:`docker-compose.yml` file in the docker host machine.
 
-After providing these configuration values, we start the environment with
+After providing these configuration settings, we start the environment with
 :code:`make env-start`, and stop it with :code:`make env-stop`.
 
 Once the environment is up and running, there are a few files we may want to
-update / provide, mainly certificates and metadata:
+update / provide in the *sp* container (with :code:`docker cp`), mainly
+certificates and metadata:
 
-* SSL certificate for HTTPS, at :code:`/etc/ssl/certs/<SP_HOSTNAME>.crt` and
-  :code:`/etc/ssl/private/<SP_HOSTNAME>.key`
+* SSL certificate for HTTPS, at :code:`sp:/etc/ssl/certs/<SP_HOSTNAME>.crt` and
+  :code:`sp:/etc/ssl/private/<SP_HOSTNAME>.key`
 
 * SSL certificate for the Shibboleth SP, at
-  :code:`/etc/ssl/certs/shibsp-<SP_HOSTNAME>.crt` and
-  :code:`/etc/ssl/private/shibsp-<SP_HOSTNAME>.key`
+  :code:`sp:/etc/ssl/certs/shibsp-<SP_HOSTNAME>.crt` and
+  :code:`sp:/etc/ssl/private/shibsp-<SP_HOSTNAME>.key`
 
-* Possibly a SAML IdP metadata file, placed at :code:`/etc/shibboleth` and
-  referenced in the configuration variable :code:`METADATA_FILE`.
+* SAML metadata file describing the IdPs we want to interact with, placed at
+  :code:`sp:/etc/shibboleth` and referenced in the configuration variable
+  :code:`METADATA_FILE`.
 
-Attributes used for signing
-...........................
+Attributes used for signing documents
+.....................................
 
-By default, we use the given name :code:`givenName`, the surname :code:`sn` and
-the email address :code:`mail` as attributes for signing the documents. This
-list can be altered; if we do so, there are 4 different places which we need to
-be aware of.  One is the :code:`SIGNER_ATTRIBUTES` setting in
-:code:`environment-current` as we show below. Then, whatever attributes are
-used must be taken into account in the files :code:`attribute-map.xml`,
-:code:`shib_clear_headers`, and :code:`shib_fastcgi_params`.
+By default, we use the given name :code:`givenName`, the surname :code:`sn`,
+the display name :code:`displayName` and the email address :code:`mail` as
+attributes for signing the documents. This list can be altered; if we do so,
+there are 4 different places which we need to be aware of.  One is the
+:code:`SIGNER_ATTRIBUTES` environment variable as we show
+below. Then, whatever attributes are used must be taken into account in the
+files :code:`attribute-map.xml`, :code:`shib_clear_headers`, and
+:code:`shib_fastcgi_params`.
 
 Since having extra attributes in those 3 files, not actually used for signing,
 would not pose a problem, it would be best to provide "out of the box" in those
@@ -94,33 +99,50 @@ Configuration variables
 .......................
 
 SP_HOSTNAME
-    String. FQDN for the service, as used in the SSL certificate for the NGINX.
+    FQDN for the service, as used in the SSL certificate for the NGINX.
+    Default: sp.edusign.docker
 
 DISCO_URL
-    String. URL of SAML discovery service to provide to Shibboleth SP.
+    URL of SAML discovery service to provide to Shibboleth SP.
+    Default: https://service.seamlessaccess.org/ds/
 
 METADATA_FILE:
-    String. If a metadata file is provided to the SP, set the path here.
+    Path to the metadata file describing the IdPs we want to interact with.
+    No Default.
 
 SECRET_KEY
-    String. Key used by the webapp for encryption, e.g. for the sessions.
+    Key used by the webapp for encryption, e.g. for the sessions.
+    Default: supersecret
 
 MAX_FILE_SIZE
-    String. Maximum size of uploadable documents, in a format that NGINX understands, e.g. `20M`.
+    Maximum size of uploadable documents, in a format that NGINX understands, e.g. `20M`.
+    Default: 20M
 
 EDUSIGN_API_BASE_URL
-    String. Base URL for the eduSign API.
+    Base URL for the eduSign API.
+    Default: https://sig.idsec.se/signint/v1/
 
 EDUSIGN_API_PROFILE
-    String. Profile to use in the eduSign API.
+    Profile to use in the eduSign API.
+    Default: edusign-test
 
 EDUSIGN_API_USERNAME
-    String. Username for Basic Auth for the eduSign API.
+    Username for Basic Auth for the eduSign API.
+    Default: dummy
 
 EDUSIGN_API_PASSWORD
-    String. Password for Basic Auth for the eduSign API.
+    Password for Basic Auth for the eduSign API.
+    Default: dummy
+
+SIGN_REQUESTER_ID
+    SAML entity ID of the eduSign API / service as an SP.
+    Default: https://sig.idsec.se/shibboleth
 
 SIGNER_ATTRIBUTES
-    String. The attributes to be used for signing, given as
-    :code:`<name>,<friendlyName>`, and separated by semicolons. For example:
-    :code:`"urn:oid:2.5.4.42,givenName;urn:oid:2.5.4.4,sn"`
+    The attributes to be used for signing, given as
+    :code:`<name>,<friendlyName>`, and separated by semicolons.
+    Default: urn:oid:2.5.4.42,givenName;urn:oid:2.5.4.4,sn;urn:oid:0.9.2342.19200300.100.1.3,mail;urn:oid:2.16.840.1.113730.3.1.241,displayName
+
+EDUSIGN_APP_VERSION
+    The edusign app git tag to get the code from.
+    Default: v0.1.0
