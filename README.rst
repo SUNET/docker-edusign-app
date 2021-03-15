@@ -52,6 +52,9 @@ the form of exported environment variables in the host. These are listed and
 explained below. These settings can also reside in a :code:`.env` file in the
 same directory as the :code:`docker-compose.yml` file in the docker host machine.
 
+When not using docker-compose, the env vars should be provided to `docker run`
+through `-e` flags.
+
 After providing these configuration settings, we start the environment with
 :code:`make env-start`, and stop it with :code:`make env-stop`.
 
