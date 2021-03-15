@@ -107,7 +107,7 @@ SP_HOSTNAME
 
 DISCO_URL
     URL of SAML discovery service to provide to Shibboleth SP.
-    Default: https://service.seamlessaccess.org/ds/
+    Default: https://md.nordu.net/role/idp.ds
 
 METADATA_FILE:
     Path to the metadata file describing the IdPs we want to interact with.
@@ -148,4 +148,4 @@ SIGNER_ATTRIBUTES
 
 EDUSIGN_APP_VERSION
     The edusign app git tag to get the code from.
-    Default: v0.1.0
+    Default: v0.1.1
