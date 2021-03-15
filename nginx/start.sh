@@ -4,7 +4,7 @@
 printenv
 
 if [ "x$SP_HOSTNAME" = "x" ]; then
-   SP_HOSTNAME="sp.example.com"
+   SP_HOSTNAME="sp.edusign.docker"
 fi
 
 if [ "x$CERTNAME" = "x" ]; then
@@ -17,6 +17,14 @@ fi
 
 if [ "x$SP_ABOUT" = "x" ]; then
    SP_ABOUT="/about"
+fi
+
+if [ "x$MAX_FILE_SIZE" = "x" ]; then
+   MAX_FILE_SIZE="20M"
+fi
+
+if [ "x$EDUSIGN_APP_VERSION" = "x" ]; then
+   EDUSIGN_APP_VERSION="v0.1.0"
 fi
 
 if [ "x$BACKEND_HOST" = "x" ]; then
@@ -32,7 +40,7 @@ if [ "x$BACKEND_PROTO" = "x" ]; then
 fi
 
 if [ "x$BACKEND_URL" = "x" ]; then
-   BACKEND_URL="$BACKEND_PROTO://$BACKEND_HOST:$BACKEND_PORT/"
+   BACKEND_URL="$BACKEND_PROTO://$BACKEND_HOST:$BACKEND_PORT"
 fi
 
 if [ -z "$KEYDIR" ]; then

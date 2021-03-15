@@ -41,8 +41,8 @@ RUN npm install && npm run build-pro && rm -rf node_modules
 RUN mkdir -p /opt/backend/build
 WORKDIR /opt/backend
 
-RUN curl -OL http://hg.nginx.org/pkg-oss/archive/tip.tar.gz
-RUN tar -xzf tip.tar.gz
+RUN curl -OL http://hg.nginx.org/pkg-oss/archive/default.tar.gz
+RUN tar -xzf default.tar.gz
 RUN mv pkg-* tip
 
 # Build the NGINX modules nginx-http-shibboleth and headers-more-nginx
@@ -75,7 +75,7 @@ FROM debian:buster AS sp
 ENV DEBIAN_FRONTEND noninteractive
 
 ENV SP_HOSTNAME sp.edusign.docker
-ENV DISCO_URL https://service.seamlessaccess.org/ds/
+ENV DISCO_URL https://md.nordu.net/role/idp.ds
 ENV MAX_FILE_SIZE 20M
 
 # Add the official NGINX sources repositories and public signing key
