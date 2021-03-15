@@ -23,6 +23,7 @@ services:
       - "DISCO_URL=https://md.nordu.net/role/idp.ds"
       - "MAX_FILE_SIZE=20M"
       - "EDUSIGN_APP_VERSION=v0.1.1"
+      - METADATA_FILE
     depends_on:
       - www
 
