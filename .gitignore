@@ -2,7 +2,3 @@
 .*.swp
 .*.swo
 .DS_Store
-
-.env
-config-current/
-environment-current
