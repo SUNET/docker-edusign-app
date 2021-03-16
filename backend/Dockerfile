@@ -18,7 +18,7 @@ ENV EDUSIGN_API_USERNAME=dummy
 ENV EDUSIGN_API_PASSWORD=dummy
 ENV SIGNER_ATTRIBUTES=urn:oid:2.5.4.42,givenName;urn:oid:2.5.4.4,sn;urn:oid:0.9.2342.19200300.100.1.3,mail;urn:oid:2.16.840.1.113730.3.1.241,displayName
 ENV SIGN_REQUESTER_ID=https://sig.idsec.se/shibboleth
-ENV EDUSIGN_APP_VERSION=v0.1.1
+ENV EDUSIGN_APP_VERSION=v0.1.2
 
 # Install needed software
 
