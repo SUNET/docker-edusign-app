@@ -146,10 +146,6 @@ SIGNER_ATTRIBUTES
     :code:`<name>,<friendlyName>`, and separated by semicolons.
     Default: urn:oid:2.5.4.42,givenName;urn:oid:2.5.4.4,sn;urn:oid:0.9.2342.19200300.100.1.3,mail;urn:oid:2.16.840.1.113730.3.1.241,displayName
 
-EDUSIGN_APP_VERSION
-    The edusign app git tag to get the code from.
-    Default: v0.1.1
-
 SCOPE_WHITELIST
     Comma separated list of domain names, so users having an email belonging to those domains can start signing documents.
     Default: sunet.se,nordu.net,emergya.com
