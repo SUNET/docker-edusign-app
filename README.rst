@@ -149,3 +149,7 @@ SIGNER_ATTRIBUTES
 EDUSIGN_APP_VERSION
     The edusign app git tag to get the code from.
     Default: v0.1.1
+
+SCOPE_WHITELIST
+    Comma separated list of domain names, so users having an email belonging to those domains can start signing documents.
+    Default: sunet.se,nordu.net,emergya.com
