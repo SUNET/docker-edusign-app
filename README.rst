@@ -53,7 +53,8 @@ explained below. These settings can also reside in a :code:`.env` file in the
 same directory as the :code:`docker-compose.yml` file in the docker host machine.
 
 When not using docker-compose, the env vars should be provided to `docker run`
-through `-e` flags.
+through `-e` flags. In this case there are additional env vars to be set, listed
+below as "additional configuration variables"
 
 After providing these configuration settings, we start the environment with
 :code:`make env-start`, and stop it with :code:`make env-stop`.
@@ -149,3 +150,25 @@ SIGNER_ATTRIBUTES
 SCOPE_WHITELIST
     Comma separated list of domain names, so users having an email belonging to those domains can start signing documents.
     Default: sunet.se,nordu.net,emergya.com
+
+
+Additional configuration variables
+..................................
+
+These need to be set when not using docker-compose to run the environment, but
+rather bare `docker run` commands.
+
+For the NGINX container, we need to set variables informing it where to find
+the WSGI app, to relay dynamic requests to it:
+
+BACKEND_HOST
+    The hostname of the container running the backend WSGI app.
+    Default: www
+
+BACKEND_PORT
+    The TCP port the WSGI app is listening at.
+    Default: 8080
+
+BACKEND_SCHEME
+    The protocol to access the WSGI app.
+    Default: http
