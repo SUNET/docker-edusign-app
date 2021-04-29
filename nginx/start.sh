@@ -195,7 +195,7 @@ http {
     server {
       listen 443 ssl;
       server_name ${SP_HOSTNAME};
-      root /opt/edusign/frontend/public;
+      root /opt/public;
 
       ssl_certificate ${KEYDIR}/certs/${CERTNAME}.crt;
       ssl_certificate_key ${KEYDIR}/private/${CERTNAME}.key;

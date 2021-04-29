@@ -126,6 +126,7 @@ RUN dpkg -i build/*.deb
 # Get the js bundle built in the builder image
 #
 COPY --from=builder /opt/frontend/build jsbuild
+COPY --from=builder /opt/frontend/public public
 
 # Create run directory for shibboleth
 
