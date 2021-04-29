@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Environment attributes
 
-ENV EDUSIGN_APP_VERSION=v0.1.4
+ENV EDUSIGN_APP_VERSION=v0.2.0
 ENV SP_HOSTNAME=sp.edusign.docker
 ENV SECRET_KEY=supersecret
 ENV EDUSIGN_API_BASE_URL=https://sig.idsec.se/signint/v1/

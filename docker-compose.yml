@@ -22,7 +22,6 @@ services:
       - SP_HOSTNAME
       - DISCO_URL
       - MAX_FILE_SIZE
-      - EDUSIGN_APP_VERSION
       - METADATA_FILE
     depends_on:
       - www
@@ -48,7 +47,6 @@ services:
       - EDUSIGN_API_PASSWORD
       - SIGN_REQUESTER_ID
       - SIGNER_ATTRIBUTES
-      - EDUSIGN_APP_VERSION
       - SCOPE_WHITELIST
 
 volumes:
