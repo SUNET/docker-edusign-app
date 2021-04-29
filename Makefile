@@ -21,7 +21,7 @@ publish-app: build-app push-app
 ## Build the APP image
 .PHONY: build-app
 build-app:
-	docker build --no-cache=false -t $(NAME_APP):$(VERSION_APP) $(DIR_APP)
+	docker build --no-cache=true -t $(NAME_APP):$(VERSION_APP) $(DIR_APP)
 	docker tag $(NAME_APP):$(VERSION_APP) docker.sunet.se/$(NAME_APP):$(VERSION_APP)
 
 ## Update the APP image

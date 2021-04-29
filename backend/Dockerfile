@@ -51,11 +51,11 @@ RUN adduser --system --shell /bin/false edusign
 # Create run and log directories
 
 RUN mkdir -p /var/log/edusign
-RUN chown -R edusign: /var/log/edusign
+RUN chown -R edusign /var/log/edusign
 RUN chmod -R 770 /var/log/edusign
 
 RUN mkdir -p /opt/edusign/run
-RUN chown -R edusign: /opt/edusign/run
+RUN chown -R edusign /opt/edusign/run
 RUN chmod -R 770 /opt/edusign/run
 
 # Get the edusign sources from github, pick the backend sources

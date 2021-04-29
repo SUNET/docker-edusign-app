@@ -49,10 +49,12 @@ RUN mv pkg-* tip
 # see https://tcg.stanford.edu/?p=131
 
 RUN ./tip/build_module.sh -v 1.18.0 https://github.com/nginx-shib/nginx-http-shibboleth.git
-RUN mv build-module-artifacts/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb build/
+#RUN mv build-module-artifacts/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb build/
+RUN mv build-module-artifacts/*.deb build/
 RUN rm -rf build-module-artifacts
 RUN ./tip/build_module.sh -v 1.18.0 https://github.com/openresty/headers-more-nginx-module.git
-RUN mv build-module-artifacts/nginx-module-headersmore_1.18.0-1~buster_amd64.deb build/
+#RUN mv build-module-artifacts/nginx-module-headersmore_1.18.0-1~buster_amd64.deb build/
+RUN mv build-module-artifacts/*.deb build/
 RUN rm -rf build-module-artifacts
 
 #----------------------------
@@ -118,7 +120,8 @@ ENV LC_ALL en_US.UTF-8
 
 RUN mkdir build
 COPY --from=builder /opt/backend/build/* build/
-RUN dpkg -i build/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb build/nginx-module-headersmore_1.18.0-1~buster_amd64.deb
+RUN dpkg -i build/*.deb
+#RUN dpkg -i build/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb build/nginx-module-headersmore_1.18.0-1~buster_amd64.deb
 
 # Get the js bundle built in the builder image
 #

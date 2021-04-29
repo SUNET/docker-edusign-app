@@ -184,7 +184,12 @@ http {
     server {
       listen 80 default_server;
       server_name ${SP_HOSTNAME};
-      return 301 https://\$host\$request_uri;
+      location ^~ /.well-known/acme-challenge/ {
+          proxy_pass http://${ACMEPROXY}/.well-known/acme-challenge/;
+      }
+      location / {
+          return 301 https://\$host\$request_uri;
+      }
     }
 
     server {
@@ -201,6 +206,10 @@ http {
       ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
       ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
       ssl_prefer_server_ciphers on;
+ 
+      location ^~ /.well-known/acme-challenge/ {
+          proxy_pass http://${ACMEPROXY}/.well-known/acme-challenge/;
+      }
 
     # FastCGI authorizer for Shibboleth Auth Request module
       location = /shibauthorizer {
