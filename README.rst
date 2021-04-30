@@ -104,11 +104,11 @@ Configuration variables
 
 SP_HOSTNAME
     FQDN for the service, as used in the SSL certificate for the NGINX.
-    Default: sp.edusign.docker
+    Default: `sp.edusign.docker`
 
 DISCO_URL
     URL of SAML discovery service to provide to Shibboleth SP.
-    Default: https://md.nordu.net/role/idp.ds
+    Default: `https://md.nordu.net/role/idp.ds`
 
 METADATA_FILE:
     Path to the metadata file describing the IdPs we want to interact with.
@@ -116,41 +116,82 @@ METADATA_FILE:
 
 SECRET_KEY
     Key used by the webapp for encryption, e.g. for the sessions.
-    Default: supersecret
+    Default: `supersecret`
 
 MAX_FILE_SIZE
     Maximum size of uploadable documents, in a format that NGINX understands, e.g. `20M`.
-    Default: 20M
+    Default: `20M`
 
 EDUSIGN_API_BASE_URL
     Base URL for the eduSign API.
-    Default: https://sig.idsec.se/signint/v1/
+    Default: `https://sig.idsec.se/signint/v1/`
 
 EDUSIGN_API_PROFILE
     Profile to use in the eduSign API.
-    Default: edusign-test
+    Default: `edusign-test`
 
 EDUSIGN_API_USERNAME
     Username for Basic Auth for the eduSign API.
-    Default: dummy
+    Default: `dummy`
 
 EDUSIGN_API_PASSWORD
     Password for Basic Auth for the eduSign API.
-    Default: dummy
+    Default: `dummy`
 
 SIGN_REQUESTER_ID
     SAML entity ID of the eduSign API / service as an SP.
-    Default: https://sig.idsec.se/shibboleth
+    Default: `https://sig.idsec.se/shibboleth`
 
 SIGNER_ATTRIBUTES
     The attributes to be used for signing, given as
     :code:`<name>,<friendlyName>`, and separated by semicolons.
-    Default: urn:oid:2.5.4.42,givenName;urn:oid:2.5.4.4,sn;urn:oid:0.9.2342.19200300.100.1.3,mail;urn:oid:2.16.840.1.113730.3.1.241,displayName
+    Default: `urn:oid:2.5.4.42,givenName;urn:oid:2.5.4.4,sn;urn:oid:0.9.2342.19200300.100.1.3,mail;urn:oid:2.16.840.1.113730.3.1.241,displayName`
 
 SCOPE_WHITELIST
     Comma separated list of domain names, so users having an email belonging to those domains can start signing documents.
-    Default: sunet.se,nordu.net,emergya.com
+    Default: `sunet.se,nordu.net,emergya.com`
 
+STORAGE_CLASS_PATH
+    Dotted path to the Python class implementing the backend for the sorage of documents with invitations to sign.
+    Default: `edusign_webapp.document.storage.local.LocalStorage`
+
+LOCAL_STORAGE_BASE_DIR
+    Filesystem path pointing to a directory in which to store documents, when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.local.LocalStorage`.
+    Default: `/tmp`
+
+AWS_ACCESS_KEY
+    AWS access key, to be set when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.s3.S3Storage`.
+    Default: `dummy`
+
+AWS_SECRET_ACCESS_KEY
+    AWS secret access key, to be set when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.s3.S3Storage`.
+    Default: `dummy`
+
+AWS_REGION_NAME
+    AWS region name, to be set when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.s3.S3Storage`.
+    Default: `eu-north-1`
+
+AWS_BUCKET_NAME
+    AWS bucket name, to be set when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.s3.S3Storage`.
+    Default: `edusign-storage`
+
+DOC_METADATA_CLASS_PATH
+    Dotted path to the Python class implementing the backend for the metadata of invitations to sign.
+    Default: `edusign_webapp.document.metadata.sqlite.SqliteMD`
+
+SQLITE_MD_DB_PATH
+    Filesystem path pointing to a sqlite db, when `DOC_METADATA_CLASS_PATH` is set to `edusign_webapp.document.metadata.sqlite.SquliteMD`.
+    Default: `/tmp/test.db`
+
+REDIS_URL
+    URL to connect to Redis when `DOC_METADATA_CLASS_PATH` is set to `edusign_webapp.document.metadata.redis_client.RedisMD`.
+    Default: `redis://localhost:6379/0`.
+
+Mail configuration
+..................
+
+It is necessary to provide the app with access to some SMTP server,
+setting the variables `indicated here <https://flask-mail.readthedocs.io/en/latest/#configuring-flask-mail>`_.
 
 Additional configuration variables
 ..................................

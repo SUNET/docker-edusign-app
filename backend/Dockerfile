@@ -20,6 +20,25 @@ ENV EDUSIGN_API_PASSWORD=dummy
 ENV SIGNER_ATTRIBUTES=urn:oid:2.5.4.42,givenName;urn:oid:2.5.4.4,sn;urn:oid:0.9.2342.19200300.100.1.3,mail;urn:oid:2.16.840.1.113730.3.1.241,displayName
 ENV SIGN_REQUESTER_ID=https://sig.idsec.se/shibboleth
 ENV SCOPE_WHITELIST=sunet.se,nordu.net,emergya.com
+ENV STORAGE_CLASS_PATH=edusign_webapp.document.storage.local.LocalStorage
+ENV LOCAL_STORAGE_BASE_DIR=/tmp
+ENV AWS_ACCESS_KEY=dummy
+ENV AWS_SECRET_ACCESS_KEY=dummy
+ENV AWS_REGION_NAME=eu-north-1
+ENV AWS_BUCKET_NAME=edusign-storage
+ENV DOC_METADATA_CLASS_PATH=edusign_webapp.document.metadata.sqlite.SqliteMD
+ENV SQLITE_MD_DB_PATH=/tmp/test.db
+ENV REDIS_URL=redis://localhost:6379/0
+ENV MAIL_SERVER=localhost
+ENV MAIL_PORT==25
+ENV MAIL_USERNAME=dummy
+ENV MAIL_PASSWORD=dummy
+ENV MAIL_DEFAULT_SENDER=no-reply@localhost
+ENV MAIL_USE_TLS=false
+ENV MAIL_USE_SSL=false
+ENV MAIL_DEBUG=DEBUG
+ENV MAIL_SUPPRESS_SEND=app.testing
+ENV MAIL_ASCII_ATTACHMENTS=false
 
 # Install needed software
 
