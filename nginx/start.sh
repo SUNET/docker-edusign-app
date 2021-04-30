@@ -240,6 +240,7 @@ http {
 
       location /js {
           alias /opt/jsbuild;
+          try_files \$uri \$uri/;
       }
     }
 }
