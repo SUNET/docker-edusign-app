@@ -71,7 +71,6 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
     <!-- The ApplicationDefaults element is where most of Shibboleth's SAML bits are defined. -->
     <ApplicationDefaults entityID="https://${SP_HOSTNAME}/shibboleth"
         REMOTE_USER="eppn subject-id pairwise-id persistent-id"
-        attributePrefix="AJP_"
         cipherSuites="DEFAULT:!EXP:!LOW:!aNULL:!eNULL:!DES:!IDEA:!SEED:!RC4:!3DES:!kRSA:!SSLv2:!SSLv3:!TLSv1:!TLSv1.1">
         <!--
         Controls session lifetimes, address checks, cookie handling, and the protocol handlers.
