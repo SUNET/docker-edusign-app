@@ -47,12 +47,16 @@ RUN mv pkg-* tip
 
 # Build the NGINX modules nginx-http-shibboleth and headers-more-nginx
 # see https://tcg.stanford.edu/?p=131
+#
+# NOTE: if building the image below (sp) fails due to conflicting versions between the modules
+# and NGINX, due to a new NGINX version in http://nginx.org/packages/debian/,
+# check the version of NGINX installed, and replace the "1.20.0"'s below with the new version.
 
-RUN ./tip/build_module.sh -v 1.18.0 https://github.com/nginx-shib/nginx-http-shibboleth.git
+RUN ./tip/build_module.sh -v 1.20.0 https://github.com/nginx-shib/nginx-http-shibboleth.git
 #RUN mv build-module-artifacts/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb build/
 RUN mv build-module-artifacts/*.deb build/
 RUN rm -rf build-module-artifacts
-RUN ./tip/build_module.sh -v 1.18.0 https://github.com/openresty/headers-more-nginx-module.git
+RUN ./tip/build_module.sh -v 1.20.0 https://github.com/openresty/headers-more-nginx-module.git
 #RUN mv build-module-artifacts/nginx-module-headersmore_1.18.0-1~buster_amd64.deb build/
 RUN mv build-module-artifacts/*.deb build/
 RUN rm -rf build-module-artifacts
