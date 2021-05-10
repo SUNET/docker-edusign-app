@@ -136,6 +136,13 @@ COPY --from=builder /opt/frontend/public public
 
 RUN mkdir -p /var/run/shibboleth
 
+# Create log directories
+#
+RUN mkdir -p /var/log/supervisor
+RUN mkdir -p /var/log/edusign
+RUN mkdir -p /var/log/nginx
+RUN chmod -R 777 /var/log
+
 # Copy NGINX configuration files into /etc/nginx/
 
 COPY ./docker/fastcgi.conf /etc/nginx/
