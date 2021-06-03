@@ -69,6 +69,13 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
     are used. See example-shibboleth2.xml for samples of explicitly configuring them.
     -->
     <!-- The ApplicationDefaults element is where most of Shibboleth's SAML bits are defined. -->
+    <RequestMapper type="Native">
+        <RequestMap>
+            <Host name="${SP_HOSTNAME}">
+                <Path name="sign" authType="shibboleth" requireSession="true"/>
+            </Host>
+        </RequestMap>
+    </RequestMapper>
     <ApplicationDefaults entityID="https://${SP_HOSTNAME}/shibboleth"
         REMOTE_USER="eppn subject-id pairwise-id persistent-id"
         cipherSuites="DEFAULT:!EXP:!LOW:!aNULL:!eNULL:!DES:!IDEA:!SEED:!RC4:!3DES:!kRSA:!SSLv2:!SSLv3:!TLSv1:!TLSv1.1">
@@ -81,7 +88,7 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
         "false", this makes an assertion stolen in transit easier for attackers to misuse.
         -->
         <Sessions lifetime="28800" timeout="3600" relayState="ss:mem"
-                  checkAddress="false" handlerSSL="false" cookieProps="http">
+                  checkAddress="false" handlerSSL="false" cookieProps="https">
             <!--
             Configures SSO for a default IdP. To properly allow for >1 IdP, remove
             entityID property and adjust discoveryURL to point to discovery service.
