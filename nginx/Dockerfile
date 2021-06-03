@@ -108,7 +108,7 @@ RUN /bin/sed -i s/deb.debian.org/ftp.se.debian.org/g /etc/apt/sources.list
 RUN apt update -y && apt upgrade -y && \
     apt install -y apt-utils  opensaml2-schemas opensaml2-tools xmltooling-schemas ssl-cert less \
                    libshibsp8 libshibsp-plugins shibboleth-sp2-common shibboleth-sp2-utils procps \
-                   libpcre3 libpcrecpp0v5 openssl libxml2-utils xsltproc supervisor locales nginx && \
+                   libpcre3 libpcrecpp0v5 openssl libxml2-utils xsltproc supervisor locales nginx wget curl vim && \
     apt clean -y && \
     rm -rf /var/lib/apt/lists/*
 

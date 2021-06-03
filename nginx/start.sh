@@ -194,7 +194,7 @@ http {
     server {
       listen 443 ssl;
       server_name ${SP_HOSTNAME};
-      root /opt/public;
+      #root /opt/public;
 
       ssl_certificate ${KEYDIR}/certs/${CERTNAME}.crt;
       ssl_certificate_key ${KEYDIR}/private/${CERTNAME}.key;
@@ -240,6 +240,9 @@ http {
       location /js {
           alias /opt/jsbuild;
           try_files \$uri \$uri/;
+      }
+      location = / {
+          return 302 /sign/;
       }
     }
 }
