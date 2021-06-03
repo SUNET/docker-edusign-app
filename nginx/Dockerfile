@@ -12,6 +12,23 @@ ENV EDUSIGN_APP_VERSION v0.2.3
 
 RUN /bin/sed -i s/deb.debian.org/ftp.se.debian.org/g /etc/apt/sources.list
 
+# Add the official NGINX sources repositories and public signing key
+
+RUN apt update && apt install -y curl gnupg
+
+RUN touch /etc/apt/sources.list.d/nginx.list
+RUN echo "deb http://nginx.org/packages/debian/ buster nginx" >> /etc/apt/sources.list.d/nginx.list
+RUN echo "deb-src http://nginx.org/packages/debian/ buster nginx" >> /etc/apt/sources.list.d/nginx.list
+
+WORKDIR /opt
+RUN curl -OL  http://nginx.org/keys/nginx_signing.key
+RUN apt-key add nginx_signing.key
+
+RUN touch /etc/apt/preferences.d/nginx
+RUN echo "Package: nginx" >> /etc/apt/preferences.d/nginx
+RUN echo "Pin: release o=nginx" >> /etc/apt/preferences.d/nginx
+RUN echo "Pin-Priority: 600" >> /etc/apt/preferences.d/nginx
+
 RUN apt -y update && apt -y upgrade && \
     apt -y install npm git nginx build-essential fakeroot \
                        libpcre3 libpcre3-dev libpcrecpp0v5 libssl-dev \
@@ -52,11 +69,11 @@ RUN mv pkg-* tip
 # and NGINX, due to a new NGINX version in http://nginx.org/packages/debian/,
 # check the version of NGINX installed, and replace the "1.20.0"'s below with the new version.
 
-RUN ./tip/build_module.sh -v 1.20.0 https://github.com/nginx-shib/nginx-http-shibboleth.git
+RUN ./tip/build_module.sh -v "$(echo $(nginx -v 2>&1) | grep -o '[0-9.]*$')" https://github.com/nginx-shib/nginx-http-shibboleth.git
 #RUN mv build-module-artifacts/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb build/
 RUN mv build-module-artifacts/*.deb build/
 RUN rm -rf build-module-artifacts
-RUN ./tip/build_module.sh -v 1.20.0 https://github.com/openresty/headers-more-nginx-module.git
+RUN ./tip/build_module.sh -v "$(echo $(nginx -v 2>&1) | grep -o '[0-9.]*$')" https://github.com/openresty/headers-more-nginx-module.git
 #RUN mv build-module-artifacts/nginx-module-headersmore_1.18.0-1~buster_amd64.deb build/
 RUN mv build-module-artifacts/*.deb build/
 RUN rm -rf build-module-artifacts
