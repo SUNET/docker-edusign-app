@@ -6,7 +6,7 @@ MAINTAINER eperez@emergya.com
 # the NGINX modules nginx-http-shibboleth and headers-more-nginx
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV EDUSIGN_APP_VERSION v0.2.6
+ENV EDUSIGN_APP_VERSION v0.2.7
 
 # Install needed software
 
@@ -51,7 +51,7 @@ WORKDIR /opt/frontend
 # Install the needed JS dependencies, build the bundle, and remove said
 # dependencies
 
-RUN npm install && npm run build-pro && rm -rf node_modules
+RUN npm install && npm run build-pro && cp node_modules/pdfjs-dist/build/pdf.worker* build/ && rm -rf node_modules
 
 # Get software that builds NGINX modules
 
