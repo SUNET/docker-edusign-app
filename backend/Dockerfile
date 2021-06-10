@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Environment attributes
 
-ENV EDUSIGN_APP_VERSION=v0.2.5
+ENV EDUSIGN_APP_VERSION=v0.2.6
 
 ENV SP_HOSTNAME=sp.edusign.docker
 ENV SECRET_KEY=supersecret
@@ -20,7 +20,7 @@ ENV EDUSIGN_API_USERNAME=dummy
 ENV EDUSIGN_API_PASSWORD=dummy
 ENV SIGNER_ATTRIBUTES=urn:oid:2.5.4.42,givenName;urn:oid:2.5.4.4,sn;urn:oid:0.9.2342.19200300.100.1.3,mail;urn:oid:2.16.840.1.113730.3.1.241,displayName
 ENV SIGN_REQUESTER_ID=https://sig.idsec.se/shibboleth
-ENV SCOPE_WHITELIST=sunet.se,nordu.net,emergya.com
+ENV SCOPE_WHITELIST=sunet.se,nordu.net,eduid.se
 ENV STORAGE_CLASS_PATH=edusign_webapp.document.storage.local.LocalStorage
 ENV LOCAL_STORAGE_BASE_DIR=/tmp
 ENV AWS_ACCESS_KEY=dummy
