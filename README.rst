@@ -102,6 +102,10 @@ tailed with :code:`make logs-tailf <logfile>`.
 Configuration variables
 .......................
 
+DEBUG
+    Turn on debug mode for the app.
+    Default: false
+
 SP_HOSTNAME
     FQDN for the service, as used in the SSL certificate for the NGINX.
     Default: `sp.edusign.docker`

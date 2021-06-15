@@ -61,12 +61,6 @@ Then we add the nginx IP and domain name to the host's ``/etc/hosts``.
 
   $ sudo bash -c "echo '172.20.10.202 www.edusign.docker' >> /etc/hosts"
 
-We also create a volume to hold the built JS bundles.
-
-.. code-block:: bash
-
-  $ docker volume create jsbuild
-
 We now create an env file with the environment variables needed by the app
 container. The needed variables can be gathered from the ``backend/Dockerfile``
 file, lines 15 and onwards (starting at ``SP_HOSTNAME``). Keep in mind that the
