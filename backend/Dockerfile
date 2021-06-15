@@ -103,4 +103,6 @@ COPY ./start.sh /start.sh
 
 EXPOSE 8080
 
+ENV DEBUG=false
+
 CMD ["bash", "/start.sh"]
