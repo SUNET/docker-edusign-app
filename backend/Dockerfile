@@ -31,7 +31,7 @@ ENV DOC_METADATA_CLASS_PATH=edusign_webapp.document.metadata.sqlite.SqliteMD
 ENV SQLITE_MD_DB_PATH=/tmp/test.db
 ENV REDIS_URL=redis://localhost:6379/0
 ENV MAIL_SERVER=localhost
-ENV MAIL_PORT==25
+ENV MAIL_PORT=25
 ENV MAIL_USERNAME=dummy
 ENV MAIL_PASSWORD=dummy
 ENV MAIL_DEFAULT_SENDER=no-reply@localhost
