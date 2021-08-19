@@ -191,6 +191,9 @@ REDIS_URL
     URL to connect to Redis when `DOC_METADATA_CLASS_PATH` is set to `edusign_webapp.document.metadata.redis_client.RedisMD`.
     Default: `redis://localhost:6379/0`.
 
+MULTISIGN_BUTTONS
+    Set to any string except "yes" to disable the multi sign buttons.
+
 Mail configuration
 ..................
 
