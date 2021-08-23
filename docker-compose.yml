@@ -23,7 +23,6 @@ services:
       - DISCO_URL
       - MAX_FILE_SIZE
       - METADATA_FILE
-      - MULTISIGN_BUTTONS
     depends_on:
       - www
 
@@ -46,6 +45,7 @@ services:
       - EDUSIGN_API_PROFILE
       - EDUSIGN_API_USERNAME
       - EDUSIGN_API_PASSWORD
+      - MULTISIGN_BUTTONS
       - SIGN_REQUESTER_ID
       - SIGNER_ATTRIBUTES
       - SCOPE_WHITELIST
