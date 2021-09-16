@@ -248,8 +248,15 @@ http {
           alias /opt/jsbuild;
           try_files \$uri \$uri/;
       }
-      location = / {
-          return 302 /sign/;
+
+      location / {
+        proxy_pass http://www:8080;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header Host \$host;
+        proxy_redirect default;
+        proxy_buffering off;
       }
     }
 }
