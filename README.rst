@@ -220,3 +220,13 @@ BACKEND_PORT
 BACKEND_SCHEME
     The protocol to access the WSGI app.
     Default: http
+
+Home Page (Anonymous)
+.....................
+
+The anonymous home page at the root of the site takes its content from markdown documents.
+There are English and Swedish default md docs under version control, in the
+`edusign-app repo <https://github.com/SUNET/edusign-app/tree/master/backend/src/edusign_webapp/md>`_.
+These can be overriden by documents `/etc/edusign/home-en.md` and `/etc/edusign/home-sv.md`,
+in the `edusign-app` container.
+edusign-app:/backend/src/edusign_webapp/md/
