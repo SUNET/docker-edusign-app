@@ -258,7 +258,7 @@ http {
       }
 
       location / {
-        proxy_pass http://www:8080;
+        proxy_pass ${BACKEND_URL};
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
