@@ -178,7 +178,6 @@ http {
     #keepalive_timeout  0;
     keepalive_timeout  65;
 
-    #gzip  on;
     client_max_body_size ${MAX_FILE_SIZE};
 
     fastcgi_read_timeout 3000;
@@ -212,6 +211,15 @@ http {
       ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
       ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
       ssl_prefer_server_ciphers on;
+
+      gzip on;
+      gzip_static on;    
+      gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+      gzip_proxied  any;
+      gzip_vary on;
+      gzip_comp_level 6;
+      gzip_buffers 16 8k;
+      gzip_http_version 1.1;
  
       location ^~ /.well-known/acme-challenge/ {
           proxy_pass http://${ACMEPROXY}/.well-known/acme-challenge/;
@@ -250,7 +258,7 @@ http {
       }
 
       location / {
-        proxy_pass http://www:8080;
+        proxy_pass ${BACKEND_URL};
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
