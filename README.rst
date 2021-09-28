@@ -192,7 +192,7 @@ REDIS_URL
     Default: `redis://localhost:6379/0`.
 
 MULTISIGN_BUTTONS
-    Set to any string except "yes" to disable the multi sign buttons.
+    Set to any of "Yes", "yes", "True", "true", "T", or "t" to enable the multi sign buttons. Anything else will disable them.
 
 Mail configuration
 ..................
