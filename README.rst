@@ -194,6 +194,9 @@ REDIS_URL
 MULTISIGN_BUTTONS
     Set to any of "Yes", "yes", "True", "true", "T", or "t" to enable the multi sign buttons. Anything else will disable them.
 
+SESSION_COOKIE_NAME
+    `session` by default. We want to change it to avoid sending the cookies from the production domain (e.g. edusign.sunet.se) to the sataging domain (e.g. test.edusign.sunet.se).
+
 Mail configuration
 ..................
 
