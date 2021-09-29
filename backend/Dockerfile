@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Environment attributes
 
-ENV EDUSIGN_APP_VERSION=st0.0.8
+ENV EDUSIGN_APP_VERSION=st0.0.9
 
 ENV SP_HOSTNAME=sp.edusign.docker
 ENV SESSION_COOKIE_NAME=session
