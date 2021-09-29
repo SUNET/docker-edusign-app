@@ -43,4 +43,5 @@ more_clear_input_headers
      EMAIL
      GIVENNAME
      EDUPERSONPRINCIPALNAME
+     O
      SN;
