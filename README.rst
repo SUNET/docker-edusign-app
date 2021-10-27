@@ -152,8 +152,12 @@ SIGNER_ATTRIBUTES
     Default: `urn:oid:2.5.4.42,givenName;urn:oid:2.5.4.4,sn;urn:oid:0.9.2342.19200300.100.1.3,mail;urn:oid:2.16.840.1.113730.3.1.241,displayName`
 
 SCOPE_WHITELIST
-    Comma separated list of domain names, so users having an email belonging to those domains can start signing documents.
-    Default: `sunet.se,nordu.net,emergya.com`
+    Comma separated list of domain names, so users having an eppn belonging to those domains can start signing documents.
+    Default: `sunet.se,eduid.se`
+
+USER_BLACKLIST
+    Comma separated list of eppn's, so users identified by them cannot start signing documents.
+    Default: `blacklisted@eduid.se`
 
 STORAGE_CLASS_PATH
     Dotted path to the Python class implementing the backend for the sorage of documents with invitations to sign.
