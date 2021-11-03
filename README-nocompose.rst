@@ -81,7 +81,8 @@ vars are needed if it is set to ``(...).RedisMD``.
     EDUSIGN_API_PASSWORD=dummy
     SIGNER_ATTRIBUTES=urn:oid:2.16.840.1.113730.3.1.241,displayName
     SIGN_REQUESTER_ID=https://sig.idsec.se/shibboleth
-    SCOPE_WHITELIST=sunet.se,nordu.net,emergya.com
+    SCOPE_WHITELIST=sunet.se,eduid.se
+    USER_BLACKLIST=blacklisted@eduid.se
     STORAGE_CLASS_PATH=edusign_webapp.document.storage.local.LocalStorage
     LOCAL_STORAGE_BASE_DIR=/tmp
     DOC_METADATA_CLASS_PATH=edusign_webapp.document.metadata.sqlite.SqliteMD

@@ -89,7 +89,7 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
         "false", this makes an assertion stolen in transit easier for attackers to misuse.
         -->
         <Sessions lifetime="28800" timeout="3600" relayState="ss:mem"
-                  checkAddress="false" handlerSSL="false" cookieProps="https">
+                  checkAddress="false" handlerSSL="false" cookieProps="; path=/; secure; HttpOnly; SameSite=None">
             <!--
             Configures SSO for a default IdP. To properly allow for >1 IdP, remove
             entityID property and adjust discoveryURL to point to discovery service.
