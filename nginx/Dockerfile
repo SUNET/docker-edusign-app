@@ -6,7 +6,6 @@ MAINTAINER eperez@emergya.com
 # the NGINX modules nginx-http-shibboleth and headers-more-nginx
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV EDUSIGN_APP_VERSION v1.0.0rc29
 
 # Install needed software
 
@@ -39,20 +38,6 @@ RUN apt -y update && apt -y upgrade && \
 RUN npm install -U npm -g
 RUN rm -rf /var/lib/apt/lists/*
 
-# Get the edusign code from github, pick just the frontend code, and remove the
-# rest.
-
-RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
-RUN mv -f /tmp/edusign-app/frontend /opt
-RUN rm -rf /tmp/edusign-app
-
-WORKDIR /opt/frontend
-
-# Install the needed JS dependencies, build the bundle, and remove said
-# dependencies
-
-RUN npm install && npm run build-pro && npm run build-dev && cp node_modules/pdfjs-dist/build/pdf.worker* build/ && rm -rf node_modules
-
 # Get software that builds NGINX modules
 
 RUN mkdir -p /opt/backend/build
@@ -73,6 +58,22 @@ RUN ./tip/build_module.sh -v "$(echo $(nginx -v 2>&1) | grep -o '[0-9.]*$')" htt
 #RUN mv build-module-artifacts/nginx-module-headersmore_1.18.0-1~buster_amd64.deb build/
 RUN mv build-module-artifacts/*.deb build/
 RUN rm -rf build-module-artifacts
+
+# Get the edusign code from github, pick just the frontend code, and remove the
+# rest.
+#
+ENV EDUSIGN_APP_VERSION v1.0.0rc30
+
+RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
+RUN mv -f /tmp/edusign-app/frontend /opt
+RUN rm -rf /tmp/edusign-app
+
+WORKDIR /opt/frontend
+
+# Install the needed JS dependencies, build the bundle, and remove said
+# dependencies
+
+RUN npm install && npm run build-pro && npm run build-dev && cp node_modules/pdfjs-dist/build/pdf.worker* build/ && rm -rf node_modules
 
 #----------------------------
 # End builder image
