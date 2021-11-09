@@ -6,7 +6,7 @@ MAINTAINER eperez@emergya.com
 # the NGINX modules nginx-http-shibboleth and headers-more-nginx
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV EDUSIGN_APP_VERSION v1.0.0rc27
+ENV EDUSIGN_APP_VERSION v1.0.0rc28
 
 # Install needed software
 
