@@ -39,7 +39,7 @@ push-app:
 ## Build the SP image
 .PHONY: build-sp
 build-sp:
-	docker build -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
+	docker build --no-cache=$(NO_CACHE) -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
 	docker tag $(NAME_SP):$(VERSION_SP) docker.sunet.se/$(NAME_SP):$(VERSION_SP)
 
 ## Update the SP image
