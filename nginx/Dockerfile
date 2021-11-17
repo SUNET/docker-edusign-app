@@ -13,7 +13,7 @@ RUN /bin/sed -i s/deb.debian.org/ftp.se.debian.org/g /etc/apt/sources.list
 
 # Add the official NGINX sources repositories and public signing key
 
-RUN apt update && apt install -y curl gnupg
+RUN apt -y update && apt -y upgrade && apt install -y curl gnupg
 
 RUN touch /etc/apt/sources.list.d/nginx.list
 RUN echo "deb http://nginx.org/packages/debian/ buster nginx" >> /etc/apt/sources.list.d/nginx.list
@@ -28,7 +28,7 @@ RUN echo "Package: nginx" >> /etc/apt/preferences.d/nginx
 RUN echo "Pin: release o=nginx" >> /etc/apt/preferences.d/nginx
 RUN echo "Pin-Priority: 600" >> /etc/apt/preferences.d/nginx
 
-RUN apt -y update && apt -y upgrade && \
+RUN apt -y update && \
     apt -y install npm git nginx build-essential fakeroot \
                        libpcre3 libpcre3-dev libpcrecpp0v5 libssl-dev \
                        openssl zlib1g-dev tar gzip mercurial curl wget libxml2-utils xsltproc \
@@ -100,7 +100,7 @@ ENV MAX_FILE_SIZE 20M
 
 # Add the official NGINX sources repositories and public signing key
 
-RUN apt update && apt install -y curl gnupg
+RUN apt -y update && apt -y upgrade && apt install -y curl gnupg
 
 RUN touch /etc/apt/sources.list.d/nginx.list
 RUN echo "deb http://nginx.org/packages/debian/ buster nginx" >> /etc/apt/sources.list.d/nginx.list
@@ -117,9 +117,7 @@ RUN echo "Pin-Priority: 600" >> /etc/apt/preferences.d/nginx
 
 # Install needed software.
 
-RUN /bin/sed -i s/deb.debian.org/ftp.se.debian.org/g /etc/apt/sources.list
-
-RUN apt update -y && apt upgrade -y && \
+RUN apt update -y && \
     apt install -y apt-utils  opensaml2-schemas opensaml2-tools xmltooling-schemas ssl-cert less \
                    libshibsp8 libshibsp-plugins shibboleth-sp2-common shibboleth-sp2-utils procps \
                    libpcre3 libpcrecpp0v5 openssl libxml2-utils xsltproc supervisor locales nginx wget curl vim && \
