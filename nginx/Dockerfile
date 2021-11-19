@@ -9,10 +9,6 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Install needed software
 
-RUN /bin/sed -i s/deb.debian.org/ftp.se.debian.org/g /etc/apt/sources.list
-
-# Add the official NGINX sources repositories and public signing key
-
 RUN apt -y update && apt -y upgrade && apt install -y curl gnupg
 
 RUN touch /etc/apt/sources.list.d/nginx.list
@@ -33,9 +29,8 @@ RUN apt -y update && \
                        libpcre3 libpcre3-dev libpcrecpp0v5 libssl-dev \
                        openssl zlib1g-dev tar gzip mercurial curl wget libxml2-utils xsltproc \
                        apt-utils lsb-release devscripts quilt sudo && \
-    apt -y clean
-
-RUN rm -rf /var/lib/apt/lists/*
+    apt -y clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Get software that builds NGINX modules
 

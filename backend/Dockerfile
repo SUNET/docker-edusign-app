@@ -43,17 +43,13 @@ ENV MAIL_ASCII_ATTACHMENTS=false
 
 # Install needed software
 
-RUN /bin/sed -i s/deb.debian.org/ftp.se.debian.org/g /etc/apt/sources.list
-
 RUN apt -y update && apt -y upgrade && \
     apt -y install libffi-dev libfreetype6-dev libjpeg62-turbo-dev libssl-dev \
       libtiff5-dev libxml2-dev libxml2-utils libxslt1-dev swig xmlsec1 zlib1g-dev \
       git build-essential libpython3-dev python3-cffi python3-venv iputils-ping \
       procps bind9-host netcat-openbsd net-tools curl locales && \
-    apt -y clean
-
-RUN apt clean
-RUN rm -rf /var/lib/apt/lists/*
+    apt -y clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set the locale
 
