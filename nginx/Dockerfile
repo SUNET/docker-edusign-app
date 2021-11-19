@@ -35,7 +35,6 @@ RUN apt -y update && \
                        apt-utils lsb-release devscripts quilt sudo && \
     apt -y clean
 
-RUN npm install -U npm -g
 RUN rm -rf /var/lib/apt/lists/*
 
 # Get software that builds NGINX modules
