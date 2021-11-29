@@ -37,7 +37,7 @@ RUN echo "Pin: release o=nginx" >> /etc/apt/preferences.d/nginx
 RUN echo "Pin-Priority: 600" >> /etc/apt/preferences.d/nginx
 
 RUN apt -y update && \
-    apt -y install nodejs npm git nginx build-essential fakeroot \
+    apt -y install nodejs git nginx build-essential fakeroot \
                    libpcre3 libpcre3-dev libpcrecpp0v5 libssl-dev \
                    openssl zlib1g-dev tar gzip mercurial curl wget libxml2-utils xsltproc \
                    apt-utils lsb-release devscripts quilt sudo && \
