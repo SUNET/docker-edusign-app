@@ -11,17 +11,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt -y update && apt -y upgrade && apt install -y curl gnupg
 
-# Add the NodeSource package signing key
-ENV NODE_KEYRING /usr/share/keyrings/nodesource.gpg
-RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | tee "$NODE_KEYRING" >/dev/null
-RUN gpg --no-default-keyring --keyring "$NODE_KEYRING" --list-keys
-
-# Add the desired NodeSource repository
-ENV NODE_VERSION node_17.x
-RUN echo "deb [signed-by=$NODE_KEYRING] https://deb.nodesource.com/$NODE_VERSION $(lsb_release -s -c) main" | \
-      tee /etc/apt/sources.list.d/nodesource.list
-RUN echo "deb-src [signed-by=$NODE_KEYRING] https://deb.nodesource.com/$NODE_VERSION $(lsb_release -s -c) main" | \
-      tee -a /etc/apt/sources.list.d/nodesource.list
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && apt-get -y update && apt-get install -y nodejs
 
 RUN touch /etc/apt/sources.list.d/nginx.list
 RUN echo "deb http://nginx.org/packages/debian/ buster nginx" >> /etc/apt/sources.list.d/nginx.list
@@ -37,7 +27,7 @@ RUN echo "Pin: release o=nginx" >> /etc/apt/preferences.d/nginx
 RUN echo "Pin-Priority: 600" >> /etc/apt/preferences.d/nginx
 
 RUN apt -y update && \
-    apt -y install nodejs git nginx build-essential fakeroot \
+    apt -y install git nginx build-essential fakeroot \
                    libpcre3 libpcre3-dev libpcrecpp0v5 libssl-dev \
                    openssl zlib1g-dev tar gzip mercurial curl wget libxml2-utils xsltproc \
                    apt-utils lsb-release devscripts quilt sudo && \
