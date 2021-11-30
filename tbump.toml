@@ -21,3 +21,7 @@ search = 'ENV EDUSIGN_APP_VERSION v{current_version}'
 [[file]]
 src = "nginx/Dockerfile"
 search = 'ENV EDUSIGN_APP_VERSION v{current_version}'
+
+[[file]]
+src = "Makefile"
+search = 'VERSION={current_version}'

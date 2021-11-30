@@ -6,11 +6,13 @@
 # Get any extra command line arguments
 args=`arg="$(filter-out $@,$(MAKECMDGOALS))" && echo $${arg:-${1}}`
 
-VERSION_SP=latest
+VERSION=1.0.0
+
+VERSION_SP=$(VERSION)
 NAME_SP=edusign-sp
 DIR_SP=nginx
 
-VERSION_APP=latest
+VERSION_APP=$(VERSION)
 NAME_APP=edusign-app
 DIR_APP=backend
 NO_CACHE=true
