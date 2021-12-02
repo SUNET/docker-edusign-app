@@ -159,6 +159,10 @@ USER_BLACKLIST
     Comma separated list of eppn's, so users identified by them cannot start signing documents.
     Default: `blacklisted@eduid.se`
 
+USER_WHITELIST
+    Comma separated list of eppn's, so users identified by them can start signing documents.
+    Default: `whitelisted@eduid.se`
+
 STORAGE_CLASS_PATH
     Dotted path to the Python class implementing the backend for the sorage of documents with invitations to sign.
     Default: `edusign_webapp.document.storage.local.LocalStorage`

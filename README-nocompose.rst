@@ -83,6 +83,7 @@ vars are needed if it is set to ``(...).RedisMD``.
     SIGN_REQUESTER_ID=https://sig.idsec.se/shibboleth
     SCOPE_WHITELIST=sunet.se,eduid.se
     USER_BLACKLIST=blacklisted@eduid.se
+    USER_WHITELIST=whitelisted@eduid.se
     STORAGE_CLASS_PATH=edusign_webapp.document.storage.local.LocalStorage
     LOCAL_STORAGE_BASE_DIR=/tmp
     DOC_METADATA_CLASS_PATH=edusign_webapp.document.metadata.sqlite.SqliteMD
