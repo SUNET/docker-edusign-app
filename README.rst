@@ -205,6 +205,10 @@ MULTISIGN_BUTTONS
 SESSION_COOKIE_NAME
     `session` by default. We want to change it to avoid sending the cookies from the production domain (e.g. edusign.sunet.se) to the sataging domain (e.g. test.edusign.sunet.se).
 
+PROXY_NETWORK
+    If the NGINX server is behind a proxy server / load balancer, it needs to know the network address(es) of the proxy
+    to be able to recoiver the real IP from the client.
+
 Mail configuration
 ..................
 
