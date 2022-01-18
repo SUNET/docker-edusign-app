@@ -204,7 +204,7 @@ http {
       server_name ${SP_HOSTNAME};
       #root /opt/public;
 
-      set_real_ip_from ${PROXY_NETWORK};
+      set_real_ip_from ${PROXY_NETWORK-${SP_HOSTNAME}};
       real_ip_header X-Forwarded-For;
 
       ssl_certificate ${KEYDIR}/certs/${CERTNAME}.crt;
