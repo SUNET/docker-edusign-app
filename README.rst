@@ -207,7 +207,7 @@ SESSION_COOKIE_NAME
 
 PROXY_NETWORK
     If the NGINX server is behind a proxy server / load balancer, it needs to know the network address(es) of the proxy
-    to be able to recoiver the real IP from the client. It can be set to an IP address / hostname/ CIDR / unix socket.
+    to be able to recover the real IP from the client. It can be set to an IP address / hostname/ CIDR / unix socket.
 
 Mail configuration
 ..................

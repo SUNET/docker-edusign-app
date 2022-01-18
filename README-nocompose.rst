@@ -126,7 +126,7 @@ file, lines 83 and onwards (starting at ``SP_HOSTNAME``).
     BACKEND_HOST=edusign-app
     BACKEND_PORT=8080
     BACKEND_SCHEME=http
-    PROXY_NETWORK=www.edusign.docker
+    PROXY_NETWORK="$SP_HOSTNAME"
 
 Now we run the shibboleth sp protected nginx container:
 
