@@ -48,7 +48,7 @@ RUN adduser --system --shell /bin/false edusign
 # Get the edusign sources from github, pick the backend sources
 # and put them in /opt/edusign, and get rid of the rest.
 
-ENV EDUSIGN_APP_VERSION v1.0.3rc17
+ENV EDUSIGN_APP_VERSION v1.1.0rc1
 
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp
