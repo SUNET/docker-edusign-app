@@ -69,6 +69,7 @@ RUN venv/bin/python setup.py install
 
 # Copy the supervisor configuration file into its place
 
+COPY ./start.sh /start.sh
 COPY ./docker/supervisord.conf /etc/supervisor/conf.d/
 
 CMD ["bash", "/start.sh"]
