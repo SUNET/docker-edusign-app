@@ -50,9 +50,11 @@ RUN adduser --system --shell /bin/false edusign
 
 ENV EDUSIGN_APP_VERSION v1.1.0rc1
 
-RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
-RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp
-RUN rm -rf /tmp/edusign-app
+RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app && \
+      mkdir /opt/edusign && \
+      mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp && \
+      chown -R edusign /opt/edusign && \
+      rm -rf /tmp/edusign-app
 
 WORKDIR /opt/edusign/edusign-webapp
 
