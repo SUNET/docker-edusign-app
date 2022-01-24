@@ -17,6 +17,38 @@ NAME_APP=edusign-app
 DIR_APP=backend
 NO_CACHE=true
 
+VERSION_QUEUE=$(VERSION)
+NAME_QUEUE=edusign-queue
+DIR_QUEUE=queue
+NO_CACHE=true
+
+## Build and publish to docker.sunet.se the queue image
+.PHONY: publish-queue
+publish-queue: build-queue push-queue
+
+## Build the queue image
+.PHONY: build-queue
+build-queue:
+	docker build --no-cache=$(NO_CACHE) -t $(NAME_QUEUE):$(VERSION_QUEUE) $(DIR_QUEUE)
+	docker tag $(NAME_QUEUE):$(VERSION_QUEUE) docker.sunet.se/$(NAME_QUEUE):$(VERSION_QUEUE)
+
+## Update the queue image
+.PHONY: update-queue
+update-queue:
+	docker build -t $(NAME_QUEUE):$(VERSION_QUEUE) $(DIR_QUEUE)
+	docker tag $(NAME_QUEUE):$(VERSION_QUEUE) docker.sunet.se/$(NAME_QUEUE):$(VERSION_QUEUE)
+
+## Publish the queue image to docker.sunet.se
+.PHONY: push-queue
+push-queue:
+	docker push docker.sunet.se/$(NAME_QUEUE):$(VERSION_QUEUE)
+
+## Publish the queue image as stable to docker.sunet.se
+.PHONY: push-stable-queue
+push-stable-queue:
+	docker tag $(NAME_QUEUE):$(VERSION_QUEUE) docker.sunet.se/$(NAME_QUEUE):stable
+	docker push docker.sunet.se/$(NAME_QUEUE):stable
+
 ## Build and publish to docker.sunet.se the APP image
 .PHONY: publish-app
 publish-app: build-app push-app
@@ -38,6 +70,12 @@ update-app:
 push-app:
 	docker push docker.sunet.se/$(NAME_APP):$(VERSION_APP)
 
+## Publish the APP image to docker.sunet.se as stable
+.PHONY: push-stable-app
+push-stable-app:
+	docker tag $(NAME_APP):$(VERSION_APP) docker.sunet.se/$(NAME_APP):stable
+	docker push docker.sunet.se/$(NAME_APP):stable
+
 ## Build the SP image
 .PHONY: build-sp
 build-sp:
@@ -55,15 +93,25 @@ update-sp:
 push-sp:
 	docker push docker.sunet.se/$(NAME_SP):$(VERSION_SP)
 
-## Build both images
+## Publish the SP image to docker.sunet.se as stable
+.PHONY: push-stable-sp
+push-stable-sp:
+	docker tag $(NAME_SP):$(VERSION_SP) docker.sunet.se/$(NAME_SP):stable
+	docker push docker.sunet.se/$(NAME_SP):stable
+
+## Build all images
 .PHONY: build
-build: build-sp build-app
+build: build-sp build-app build-queue
 
-## Push both images to docker.sunet.se
+## Push all images to docker.sunet.se
 .PHONY: push
-push: push-sp push-app
+push: push-sp push-app push-queue
 
-## Build and push both images to docker.sunet.se
+## Push all images to docker.sunet.se as stable
+.PHONY: push-stable
+push-stable: push-stable-sp push-stable-app push-stable-queue
+
+## Build and push all images to docker.sunet.se
 .PHONY: publish
 publish: build push
 
