@@ -16,6 +16,47 @@ docker.sunet.se.
 Deployment and building tasks are provided as make targets; type :code:`make
 help` at the root of the repository to find out about them.
 
+High level architecture
+-----------------------
+
+This environment places an NGINX in the front, servicing user requests.
+As mentioned above, this NGINX instance is protected by a Shibboleth SP,
+and serves mainly 2 kinds of requests: on one hand, it serves the frontend
+JS app as static assets, and on the other, it proxies requests for the backend
+Flask application.
+
+The Dockerfile (at `nginx/Dockerfile` in this repo) builds 2 images. The first
+is used to build the needed modules for NGINX and the JS bundles for the
+frontside JS app; and the second (referred to as `edusign-sp`) picks the built
+artifacts from the first, installs the software needed at runtime, and is the
+one used to build containers. The separation is simply to avoid bloating the
+containers with the build environments.
+
+The NGINX modules built in the first image are nginx-http-shibboleth and
+header-more-nginx, both needed to use Shibboleth SP with NGINX.
+
+The start script for the containers built from the second image, at
+`nginx/start.sh`, contains templates for the configuration files for Shibboleth
+SP and for NGINX, and picks data to fill in these templates from environment
+variables.
+
+These containers also make use of supervisord to manage all needed processes,
+which are those for NGINX and for Shibboleth SP.
+
+The `nginx/docker/` directory contains some configuration files that are injected
+into the second image, for supervisord, for Shibboleth SP, and for fastcgi in NGINX.
+
+
+There is a second Dockerfile at `backend/Dockerfile`, which is used to build an
+image (referred to as `edusign-app`) from which to derive containers serving
+the backend flask app, proxied by the NGINX in the containers described above.
+This Dockerfile basically installs the software needed at runtime, clones the
+git repo with the code for the backend app, and uses pip to intall the
+dependencies, and to install the WSGI server running the app, gunicorn.
+
+The start script for containers built from this image, at `backend/nginx.sh`,
+simply runs gunicorn serving the app.
+
 Building and publishing the docker images
 -----------------------------------------
 
