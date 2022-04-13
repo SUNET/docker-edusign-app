@@ -159,6 +159,10 @@ USER_BLACKLIST
     Comma separated list of eppn's, so users identified by them cannot start signing documents.
     Default: `blacklisted@eduid.se`
 
+USER_WHITELIST
+    Comma separated list of eppn's, so users identified by them can start signing documents.
+    Default: `whitelisted@eduid.se`
+
 STORAGE_CLASS_PATH
     Dotted path to the Python class implementing the backend for the sorage of documents with invitations to sign.
     Default: `edusign_webapp.document.storage.local.LocalStorage`
@@ -200,6 +204,10 @@ MULTISIGN_BUTTONS
 
 SESSION_COOKIE_NAME
     `session` by default. We want to change it to avoid sending the cookies from the production domain (e.g. edusign.sunet.se) to the sataging domain (e.g. test.edusign.sunet.se).
+
+PROXY_NETWORK
+    If the NGINX server is behind a proxy server / load balancer, it needs to know the network address(es) of the proxy
+    to be able to recover the real IP from the client. It can be set to an IP address / hostname/ CIDR / unix socket.
 
 Mail configuration
 ..................

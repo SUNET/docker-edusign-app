@@ -6,11 +6,13 @@
 # Get any extra command line arguments
 args=`arg="$(filter-out $@,$(MAKECMDGOALS))" && echo $${arg:-${1}}`
 
-VERSION_SP=latest
+VERSION=1.0.6rc10
+
+VERSION_SP=$(VERSION)
 NAME_SP=edusign-sp
 DIR_SP=nginx
 
-VERSION_APP=latest
+VERSION_APP=$(VERSION)
 NAME_APP=edusign-app
 DIR_APP=backend
 NO_CACHE=true
@@ -39,7 +41,7 @@ push-app:
 ## Build the SP image
 .PHONY: build-sp
 build-sp:
-	docker build -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
+	docker build --no-cache=$(NO_CACHE) -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
 	docker tag $(NAME_SP):$(VERSION_SP) docker.sunet.se/$(NAME_SP):$(VERSION_SP)
 
 ## Update the SP image
