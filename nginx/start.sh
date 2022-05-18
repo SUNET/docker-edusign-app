@@ -260,7 +260,7 @@ http {
       }
 
       location /admin {
-          Deny All;
+          deny all;
       }
 
       location / {
