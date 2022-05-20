@@ -259,6 +259,10 @@ http {
           try_files \$uri \$uri/;
       }
 
+      location /admin {
+          deny all;
+      }
+
       location / {
         proxy_pass ${BACKEND_URL};
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
