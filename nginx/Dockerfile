@@ -28,7 +28,7 @@ RUN echo "Pin-Priority: 600" >> /etc/apt/preferences.d/nginx
 
 RUN apt -y update && \
     apt -y install git nginx build-essential fakeroot \
-                   libpcre3 libpcre3-dev libpcrecpp0v5 libssl-dev \
+                   libpcre3 libpcre3-dev libpcre2-dev libparse-recdescent-perl libpcrecpp0v5 libssl-dev \
                    openssl zlib1g-dev tar gzip mercurial curl wget libxml2-utils xsltproc \
                    apt-utils lsb-release devscripts quilt sudo && \
     apt -y clean && \
@@ -45,6 +45,9 @@ RUN mv pkg-* tip
 
 # Build the NGINX modules nginx-http-shibboleth and headers-more-nginx
 # see https://tcg.stanford.edu/?p=131
+
+RUN curl -X GET http://hg.nginx.org/xslscript/raw-file/tip/xslscript.pl -o /usr/local/bin/xslscript.pl
+RUN chmod 755 /usr/local/bin/xslscript.pl
 
 RUN ./tip/build_module.sh -v "$(echo $(nginx -v 2>&1) | grep -o '[0-9.]*$')" https://github.com/nginx-shib/nginx-http-shibboleth.git
 #RUN mv build-module-artifacts/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb build/
