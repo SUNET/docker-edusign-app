@@ -95,7 +95,8 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ENV SP_HOSTNAME=sp.edusign.docker
 ENV DISCO_URL=https://md.nordu.net/role/idp.ds
-ENV MAX_FILE_SIZE=20M
+# 20M:
+ENV MAX_FILE_SIZE=20971520
 
 # Add the official NGINX sources repositories and public signing key
 
