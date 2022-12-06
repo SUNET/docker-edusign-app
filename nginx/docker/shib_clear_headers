@@ -20,6 +20,8 @@ more_clear_input_headers
      EPPN
      Affiliation
      cn
+     Mail
+     MailLocalAddress
      Unscoped-Affiliation
      Entitlement
      Targeted-Id
@@ -32,12 +34,16 @@ more_clear_input_headers
      GivenName
      EduPersonPrincipalName
      Sn
+     mail
+     mailLocalAddress
      commonName
      displayName
      email
      givenName
      eduPersonPrincipalName
      sn
+     MAIL
+     MAILLOCALADDRESS
      COMMONNAME
      DISPLAYNAME
      EMAIL
