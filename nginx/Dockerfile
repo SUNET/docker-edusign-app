@@ -72,7 +72,7 @@ WORKDIR /opt/frontend
 # Install the needed JS dependencies, build the bundle, and remove said
 # dependencies
 
-RUN npm install && npm run build-pro && npm run build-dev && cp node_modules/pdfjs-dist/build/pdf.worker* build/ && rm -rf node_modules
+RUN npm install && npm run build-pro && cp node_modules/pdfjs-dist/build/pdf.worker* build/ && rm -rf node_modules
 
 #----------------------------
 # End builder image
