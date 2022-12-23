@@ -40,6 +40,8 @@ ENV MAIL_USE_TLS=false
 ENV MAIL_USE_SSL=false
 ENV MAIL_SUPPRESS_SEND=false
 ENV MAIL_ASCII_ATTACHMENTS=false
+# 20M:
+ENV MAX_FILE_SIZE=20971520
 
 # Install needed software
 
@@ -77,7 +79,7 @@ RUN chmod -R 770 /opt/edusign/run
 # Get the edusign sources from github, pick the backend sources
 # and put them in /opt/edusign, and get rid of the rest.
 
-ENV EDUSIGN_APP_VERSION v1.0.8
+ENV EDUSIGN_APP_VERSION v1.1.1
 
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp

@@ -28,7 +28,7 @@ RUN echo "Pin-Priority: 600" >> /etc/apt/preferences.d/nginx
 
 RUN apt -y update && \
     apt -y install git nginx build-essential fakeroot \
-                   libpcre3 libpcre3-dev libpcrecpp0v5 libssl-dev \
+                   libpcre3 libpcre3-dev libpcre2-dev libparse-recdescent-perl libpcrecpp0v5 libssl-dev \
                    openssl zlib1g-dev tar gzip mercurial curl wget libxml2-utils xsltproc \
                    apt-utils lsb-release devscripts quilt sudo && \
     apt -y clean && \
@@ -46,6 +46,9 @@ RUN mv pkg-* tip
 # Build the NGINX modules nginx-http-shibboleth and headers-more-nginx
 # see https://tcg.stanford.edu/?p=131
 
+RUN curl -X GET http://hg.nginx.org/xslscript/raw-file/tip/xslscript.pl -o /usr/local/bin/xslscript.pl
+RUN chmod 755 /usr/local/bin/xslscript.pl
+
 RUN ./tip/build_module.sh -v "$(echo $(nginx -v 2>&1) | grep -o '[0-9.]*$')" https://github.com/nginx-shib/nginx-http-shibboleth.git
 #RUN mv build-module-artifacts/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb build/
 RUN mv build-module-artifacts/*.deb build/
@@ -58,7 +61,7 @@ RUN rm -rf build-module-artifacts
 # Get the edusign code from github, pick just the frontend code, and remove the
 # rest.
 #
-ENV EDUSIGN_APP_VERSION v1.0.8
+ENV EDUSIGN_APP_VERSION v1.1.1
 
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/frontend /opt
@@ -92,7 +95,8 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ENV SP_HOSTNAME=sp.edusign.docker
 ENV DISCO_URL=https://md.nordu.net/role/idp.ds
-ENV MAX_FILE_SIZE=20M
+# 20M:
+ENV MAX_FILE_SIZE=20971520
 
 # Add the official NGINX sources repositories and public signing key
 
