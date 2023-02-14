@@ -24,6 +24,7 @@ ENV SCOPE_WHITELIST=sunet.se,eduid.se
 ENV USER_BLACKLIST=blacklisted@eduid.se
 ENV STORAGE_CLASS_PATH=edusign_webapp.document.storage.local.LocalStorage
 ENV LOCAL_STORAGE_BASE_DIR=/tmp
+ENV AWS_ENDPOINT_URL=none
 ENV AWS_ACCESS_KEY=dummy
 ENV AWS_SECRET_ACCESS_KEY=dummy
 ENV AWS_REGION_NAME=eu-north-1

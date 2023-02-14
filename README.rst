@@ -212,6 +212,10 @@ LOCAL_STORAGE_BASE_DIR
     Filesystem path pointing to a directory in which to store documents, when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.local.LocalStorage`.
     Default: `/tmp`
 
+AWS_ENDPOINT_URL
+    URL to access S3 bucket. If using GCP, set to https://storage.googleapis.com. If using AWS, do not set it, or set to none
+    Default: `none`
+
 AWS_ACCESS_KEY
     AWS access key, to be set when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.s3.S3Storage`.
     Default: `dummy`

@@ -86,8 +86,14 @@ vars are needed if it is set to ``(...).RedisMD``.
     USER_WHITELIST=whitelisted@eduid.se
     STORAGE_CLASS_PATH=edusign_webapp.document.storage.local.LocalStorage
     LOCAL_STORAGE_BASE_DIR=/tmp
+    AWS_ENDPOINT_URL=none
+    AWS_ACCESS_KEY=dummy
+    AWS_SECRET_ACCESS_KEY=dummy
+    AWS_REGION_NAME=dummy
+    AWS_BUCKET_NAME=dummy
     DOC_METADATA_CLASS_PATH=edusign_webapp.document.metadata.sqlite.SqliteMD
     SQLITE_MD_DB_PATH=/tmp/test.db
+    REDIS_URL=dummy
     MAIL_SERVER=localhost
     MAIL_PORT==25
     MAIL_USERNAME=dummy
