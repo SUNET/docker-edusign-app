@@ -86,7 +86,7 @@ RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/e
 RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp
 RUN rm -rf /tmp/edusign-app
 
-WORKDIR /opt/edusign/edusign-webapp
+WORKDIR /opt/edusign
 
 # Make a python virtualenv, update pip, and install the edusign backend code
 # and gunicorn.

@@ -6,7 +6,7 @@
 set -e
 set -x
 
-. /opt/edusign/edusign-webapp/venv/bin/activate
+. /opt/edusign/venv/bin/activate
 
 edusign_name=${edusign_name-'edusign-webapp'}
 base_dir=${base_dir-'/opt/edusign'}
@@ -36,7 +36,7 @@ echo ""
 echo "$0: Starting ${edusign_name}"
 
 exec start-stop-daemon --start -c edusign:edusign --exec \
-     /opt/edusign/edusign-webapp/venv/bin/gunicorn \
+     /opt/edusign/venv/bin/gunicorn \
      --pidfile "${state_dir}/${edusign_name}.pid" \
      --user=edusign --group=edusign -- \
      --bind 0.0.0.0:8080 \
