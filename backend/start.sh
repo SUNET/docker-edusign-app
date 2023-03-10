@@ -30,7 +30,7 @@ esac
 
 # nice to have in docker run output, to check what
 # version of something is actually running.
-/opt/edusign/edusign-webapp/venv/bin/pip freeze
+/opt/edusign/venv/bin/pip freeze
 
 echo ""
 echo "$0: Starting ${edusign_name}"
