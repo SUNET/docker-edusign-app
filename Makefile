@@ -29,7 +29,7 @@ build-app:
 
 ## Build the APP image for development
 .PHONY: build-app-develop
-build-app:
+build-app-develop:
 	docker build --build-arg INSTALL_PACKAGE=develop --no-cache=$(NO_CACHE) -t $(NAME_APP):$(VERSION_APP) $(DIR_APP)
 	docker tag $(NAME_APP):$(VERSION_APP) docker.sunet.se/$(NAME_APP):$(VERSION_APP)
 
