@@ -1,6 +1,6 @@
 FROM debian:buster
 
-MAINTAINER eperez@emergya.com
+ARG INSTALL_PACKAGE=install
 
 # This will create an image with a virtualenv containing the edusign backend
 # sources and gunicorn, and with a script to start a gunicorn process running
@@ -95,7 +95,7 @@ RUN python3 -m venv venv
 RUN venv/bin/pip install -U pip wheel
 
 RUN venv/bin/pip install -r requirements.txt
-RUN venv/bin/python setup.py install
+RUN venv/bin/python setup.py $INSTALL_PACKAGE
 RUN venv/bin/pip install gunicorn
 
 # Add the script with the main command.

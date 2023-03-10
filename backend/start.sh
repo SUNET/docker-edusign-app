@@ -22,6 +22,12 @@ forwarded_allow_ips=${forwarded_allow_ips-'*'}
 
 chown -R edusign: "${log_dir}" "${state_dir}"
 
+extra_args=""
+
+case $DEBUG in
+  (true) extra_args="--reload"
+esac
+
 # nice to have in docker run output, to check what
 # version of something is actually running.
 /opt/edusign/edusign-webapp/venv/bin/pip freeze
@@ -40,4 +46,5 @@ exec start-stop-daemon --start -c edusign:edusign --exec \
      --access-logfile "${log_dir}/${edusign_name}-access.log" \
      --error-logfile "${log_dir}/${edusign_name}-error.log" \
      --capture-output \
+     ${extra_args} \
      edusign_webapp.run:app
