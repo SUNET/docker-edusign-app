@@ -1,0 +1,7 @@
+SP_HOSTNAME=test-edusign.ed-integrations.com
+DISCO_URL=https://service.seamlessaccess.org/ds/
+METADATA_FILE=/etc/nginx/swamid-idp.xml
+MAX_FILE_SIZE=20M
+BACKEND_HOST=edusign-app
+BACKEND_PORT=8080
+BACKEND_SCHEME=http
