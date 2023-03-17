@@ -51,7 +51,7 @@ RUN apt -y update && apt -y upgrade && \
       libtiff5-dev libxml2-dev libxml2-utils libxslt1-dev swig xmlsec1 zlib1g-dev \
       git build-essential iputils-ping \
       procps bind9-host netcat-openbsd net-tools curl locales libncurses5-dev \
-      libgdbm-dev libnss3-dev libsqlite3-dev libreadline-dev libbz2-dev liblzma-dev \
+      libgdbm-dev libnss3-dev libsqlite3-dev libreadline-dev libbz2-dev liblzma-dev && \
     apt -y clean && \
     rm -rf /var/lib/apt/lists/*
 
