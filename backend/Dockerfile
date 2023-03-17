@@ -49,8 +49,9 @@ ENV MAX_FILE_SIZE=20971520
 RUN apt -y update && apt -y upgrade && \
     apt -y install libffi-dev libfreetype6-dev libjpeg62-turbo-dev libssl-dev \
       libtiff5-dev libxml2-dev libxml2-utils libxslt1-dev swig xmlsec1 zlib1g-dev \
-      git build-essential libpython3-dev python3-cffi python3-venv iputils-ping \
-      procps bind9-host netcat-openbsd net-tools curl locales && \
+      git build-essential iputils-ping \
+      procps bind9-host netcat-openbsd net-tools curl locales libncurses5-dev \
+      libgdbm-dev libnss3-dev libsqlite3-dev libreadline-dev libbz2-dev liblzma-dev \
     apt -y clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -61,6 +62,18 @@ RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
+
+# install python
+
+RUN curl -O https://www.python.org/ftp/python/3.8.9/Python-3.8.9.tar.xz && \
+    tar -xf Python-3.8.9.tar.xz && \
+    cd Python-3.8.9 && \
+    ./configure --enable-optimizations --enable-loadable-sqlite-extensions && \
+    make -j 4 && \
+    make altinstall && \
+    cd .. && \
+    rm -rf Python-3.8.9 Python-3.8.9.tar.xz  
+
 
 # Add edusign user to run the service as
 
