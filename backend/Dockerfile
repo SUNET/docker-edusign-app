@@ -104,7 +104,7 @@ WORKDIR /opt/edusign
 # Make a python virtualenv, update pip, and install the edusign backend code
 # and gunicorn.
 
-RUN python3 -m venv venv
+RUN python -m venv venv
 RUN venv/bin/pip install -U pip wheel
 
 WORKDIR /opt/edusign/edusign-webapp
