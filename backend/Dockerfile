@@ -93,7 +93,7 @@ RUN chmod -R 770 /opt/edusign/run
 # Get the edusign sources from github, pick the backend sources
 # and put them in /opt/edusign, and get rid of the rest.
 
-ENV EDUSIGN_APP_VERSION v1.2.0b22
+ENV EDUSIGN_APP_VERSION v1.2.0b21
 
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp
@@ -104,12 +104,7 @@ WORKDIR /opt/edusign
 # Make a python virtualenv, update pip, and install the edusign backend code
 # and gunicorn.
 
-RUN echo "PAAATH $PATH"
-RUN ls /usr/local/bin
-
-ENV PATH "/usr/local/bin:$PATH"
-
-RUN python -m venv venv
+RUN python3 -m venv venv
 RUN venv/bin/pip install -U pip wheel
 
 WORKDIR /opt/edusign/edusign-webapp
