@@ -70,7 +70,7 @@ RUN curl -O https://www.python.org/ftp/python/3.8.9/Python-3.8.9.tar.xz && \
     cd Python-3.8.9 && \
     ./configure --enable-optimizations --enable-loadable-sqlite-extensions && \
     make -j 4 && \
-    make altinstall && \
+    make install && \
     cd .. && \
     rm -rf Python-3.8.9 Python-3.8.9.tar.xz  
 
