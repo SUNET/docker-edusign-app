@@ -104,6 +104,11 @@ WORKDIR /opt/edusign
 # Make a python virtualenv, update pip, and install the edusign backend code
 # and gunicorn.
 
+RUN echo "PAAATH $PATH"
+RUN ls /usr/local/bin
+
+ENV PATH "/usr/local/bin:$PATH"
+
 RUN python -m venv venv
 RUN venv/bin/pip install -U pip wheel
 
