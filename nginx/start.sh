@@ -73,6 +73,7 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
         <RequestMap>
             <Host name="${SP_HOSTNAME}">
                 <Path name="sign" authType="shibboleth" requireSession="true"/>
+                <Path name="sign2" authType="shibboleth" requireSession="true" entityID="${ENTITYID2}"/>
             </Host>
         </RequestMap>
     </RequestMapper>
@@ -126,6 +127,9 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
               attributeName="http://macedir.org/entity-category"
               attributeNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
               attributeValue="http://refeds.org/category/hide-from-discovery" />
+        </MetadataProvider>
+        <MetadataProvider type="XML" validate="false" path="${METADATA2_FILE}" maxRefreshDelay="7200">
+            <MetadataFilter type="RequireValidUntil" maxValidityInterval="2419200"/>
         </MetadataProvider>
         <!-- Example of remotely supplied "on-demand" signed metadata. -->
         <!--
@@ -250,6 +254,20 @@ http {
 
     # Location secured by Shibboleth
       location /sign {
+        shib_request /shibauthorizer;
+        shib_request_use_headers on;
+        include shib_clear_headers;
+        proxy_pass ${BACKEND_URL};
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header Host \$host;
+        proxy_redirect default;
+        proxy_buffering off;
+      }
+
+    # 2nd Location secured by Shibboleth
+      location /sign2 {
         shib_request /shibauthorizer;
         shib_request_use_headers on;
         include shib_clear_headers;
