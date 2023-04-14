@@ -129,7 +129,6 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
               attributeValue="http://refeds.org/category/hide-from-discovery" />
         </MetadataProvider>
         <MetadataProvider type="XML" validate="false" path="${METADATA2_FILE}" maxRefreshDelay="7200">
-            <MetadataFilter type="RequireValidUntil" maxValidityInterval="2419200"/>
         </MetadataProvider>
         <!-- Example of remotely supplied "on-demand" signed metadata. -->
         <!--
