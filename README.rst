@@ -159,6 +159,14 @@ METADATA_FILE:
     Path to the metadata file describing the IdPs we want to interact with.
     No Default.
 
+METADATA2_FILE:
+    Path to the metadata file for the MyAcademicID IdP.
+    No Default.
+
+ENTITYID2:
+    entityID of the MyAcademicID IdP.
+    Default: https://proxy.prod.erasmus.eduteams.org/proxy
+
 SECRET_KEY
     Key used by the webapp for encryption, e.g. for the sessions.
     Default: `supersecret`

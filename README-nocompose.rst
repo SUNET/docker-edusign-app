@@ -133,6 +133,9 @@ file, lines 83 and onwards (starting at ``SP_HOSTNAME``).
     BACKEND_PORT=8080
     BACKEND_SCHEME=http
     PROXY_NETWORK="$SP_HOSTNAME"
+    ENTITYID2=https://proxy.prod.erasmus.eduteams.org/proxy
+    METADATA_FILE=/etc/nginx/swamid-idp.xml
+    METADATA2_FILE=/etc/nginx/myacademicid-idp.xml
 
 Now we run the shibboleth sp protected nginx container:
 
