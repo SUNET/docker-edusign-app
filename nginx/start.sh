@@ -225,6 +225,14 @@ http {
       gzip_comp_level 6;
       gzip_buffers 16 8k;
       gzip_http_version 1.1;
+
+      large_client_header_buffers 8 256k;
+      client_header_buffer_size 256k;
+      fastcgi_buffers 8 256k;
+      fastcgi_buffer_size 256k;
+      proxy_buffer_size   256k;
+      proxy_buffers   8 256k;
+      proxy_busy_buffers_size   256k
  
       location ^~ /.well-known/acme-challenge/ {
           proxy_pass http://${ACMEPROXY}/.well-known/acme-challenge/;
