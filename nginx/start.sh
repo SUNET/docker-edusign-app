@@ -232,7 +232,7 @@ http {
       fastcgi_buffer_size 256k;
       proxy_buffer_size   256k;
       proxy_buffers   8 256k;
-      proxy_busy_buffers_size   256k
+      proxy_busy_buffers_size   256k;
  
       location ^~ /.well-known/acme-challenge/ {
           proxy_pass http://${ACMEPROXY}/.well-known/acme-challenge/;
