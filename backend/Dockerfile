@@ -93,7 +93,7 @@ RUN chmod -R 770 /opt/edusign/run
 # Get the edusign sources from github, pick the backend sources
 # and put them in /opt/edusign, and get rid of the rest.
 
-ENV EDUSIGN_APP_VERSION v2.0.0b9
+ENV EDUSIGN_APP_VERSION v2.0.0b10
 
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp
