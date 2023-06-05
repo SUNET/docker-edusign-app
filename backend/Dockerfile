@@ -44,6 +44,7 @@ ENV MAIL_ASCII_ATTACHMENTS=false
 # 20M:
 ENV MAX_FILE_SIZE=20971520
 ENV HASH_METHOD=scrypt
+ENV APP_IN_TWO_PATHS=False
 
 # Install needed software
 
