@@ -16,7 +16,7 @@ server, and (d) perhaps change the storage and metadata db settings to use S3
 and Redis.
 
 Procedure.
-..........
+----------
 
 We start with a debian buster VM.
 
@@ -151,3 +151,20 @@ Now we run the shibboleth sp protected nginx container:
 After all this, and using lynx, I get a 500 at ``https://www.edusign.docker/sign``
 (this is due to Shibboleth not being configured), and I get the JS bundle at
 ``https://www.edusign.docker/js/main-bundle.js``.
+
+
+Customization & branding.
+-------------------------
+
+Logos.
+......
+
+
+
+Texts.
+......
+
+
+
+Colors.
+.......
