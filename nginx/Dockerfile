@@ -117,8 +117,17 @@ RUN echo "Pin-Priority: 600" >> /etc/apt/preferences.d/nginx
 
 # Install needed software.
 
+COPY docker/libxmltooling8_3.0.4-1+deb10u1.1_amd64.deb .
+COPY docker/xmltooling-schemas_3.0.4-1+deb10u1.1_all.deb .
+
+RUN dpkg -i libxmltooling8_3.0.4-1+deb10u1.1_amd64.deb
+RUN dpkg -i xmltooling-schemas_3.0.4-1+deb10u1.1_all.deb
+
+RUN rm libxmltooling8_3.0.4-1+deb10u1.1_amd64.deb
+RUN rm xmltooling-schemas_3.0.4-1+deb10u1.1_all.deb
+
 RUN apt update -y && \
-    apt install -y apt-utils  opensaml2-schemas opensaml2-tools xmltooling-schemas ssl-cert less \
+    apt install -y apt-utils  opensaml2-schemas opensaml2-tools ssl-cert less \
                    libshibsp8 libshibsp-plugins shibboleth-sp2-common shibboleth-sp2-utils procps \
                    libpcre3 libpcrecpp0v5 openssl libxml2-utils xsltproc supervisor locales nginx wget curl vim && \
     apt clean -y && \
