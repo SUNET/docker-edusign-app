@@ -98,9 +98,10 @@ ENV DISCO_URL=https://md.nordu.net/role/idp.ds
 # 20M:
 ENV MAX_FILE_SIZE=20971520
 
-# Add the official NGINX sources repositories and public signing key
+RUN apt -y update && apt -y upgrade && apt install -y curl gnupg libxml-security-c20 \
+                    zlib1g libxerces-c3.2 libstdc++6 libssl1.1 liblog4shib2 libgcc1 libgcc1 libcurl4
 
-RUN apt -y update && apt -y upgrade && apt install -y curl gnupg
+# Add the official NGINX sources repositories and public signing key
 
 RUN touch /etc/apt/sources.list.d/nginx.list
 RUN echo "deb http://nginx.org/packages/debian/ buster nginx" >> /etc/apt/sources.list.d/nginx.list
