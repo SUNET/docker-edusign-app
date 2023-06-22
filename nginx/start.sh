@@ -267,6 +267,11 @@ http {
           try_files \$uri \$uri/;
       }
 
+      location /assets {
+          alias /opt/assets;
+          try_files \$uri \$uri/;
+      }
+
       location /admin {
           deny all;
       }
