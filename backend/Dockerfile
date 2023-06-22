@@ -90,6 +90,14 @@ RUN mkdir -p /opt/edusign/run
 RUN chown -R edusign /opt/edusign/run
 RUN chmod -R 770 /opt/edusign/run
 
+# Add custom markdown pages
+
+RUN mkdir -p /etc/edusign
+RUN chown -R edusign /etc/edusign
+RUN chmod -R 770 /etc/edusign
+
+COPY custom/*.md /etc/edusign
+
 # Get the edusign sources from github, pick the backend sources
 # and put them in /opt/edusign, and get rid of the rest.
 

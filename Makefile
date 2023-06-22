@@ -17,6 +17,12 @@ NAME_APP=edusign-app
 DIR_APP=backend
 NO_CACHE=true
 
+## Gather customizations from provided path to add them to docker images
+.PHONY: customize
+customize:
+	cp "$(call args)"/md/*.md backend/custom 
+	cp "$(call args)"/assets/* nginx/custom 
+
 ## Build and publish to docker.sunet.se the APP image
 .PHONY: publish-app
 publish-app: build-app push-app
