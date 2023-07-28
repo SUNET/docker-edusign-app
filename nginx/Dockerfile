@@ -97,11 +97,10 @@ FROM debian:bookworm AS sp
 ENV DEBIAN_FRONTEND noninteractive
 
 ENV SP_HOSTNAME=sp.edusign.docker
-ENV DISCO_URL=https://md.nordu.net/role/idp.ds
 # 20M:
 ENV MAX_FILE_SIZE=20971520
 
-ENV ENTITYID2=https://proxy.prod.erasmus.eduteams.org/proxy
+ENV IDP_ENTITYID=https://proxy.prod.erasmus.eduteams.org/proxy
 
 # Add the official NGINX sources repositories and public signing key
 

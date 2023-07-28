@@ -156,14 +156,10 @@ DISCO_URL
     Default: `https://md.nordu.net/role/idp.ds`
 
 METADATA_FILE:
-    Path to the metadata file describing the IdPs we want to interact with.
-    No Default.
-
-METADATA2_FILE:
     Path to the metadata file for the MyAcademicID IdP.
     No Default.
 
-ENTITYID2:
+IDP_ENTITYID:
     entityID of the MyAcademicID IdP.
     Default: https://proxy.prod.erasmus.eduteams.org/proxy
 
@@ -198,7 +194,16 @@ SIGN_REQUESTER_ID
 SIGNER_ATTRIBUTES
     The attributes to be used for signing, given as
     :code:`<name>,<friendlyName>`, and separated by semicolons.
-    Default: `urn:oid:2.5.4.42,givenName;urn:oid:2.5.4.4,sn;urn:oid:0.9.2342.19200300.100.1.3,mail;urn:oid:2.16.840.1.113730.3.1.241,displayName`
+    Default: `urn:oid:2.16.840.1.113730.3.1.241,displayName`
+
+SIGNER_ATTRIBUTES
+    The attributes to be used for authentication, given as
+    :code:`<name>,<friendlyName>`, and separated by semicolons.
+    Default: `urn:oid:1.2.752.201.3.7,eidasPersonIdentifier`
+
+FORCE_AUTHN_CONTEXT
+    An authn context LoA to force on the sign service
+    Default: `''`
 
 SCOPE_WHITELIST
     Comma separated list of domain names, so users having an eppn belonging to those domains can start signing documents.

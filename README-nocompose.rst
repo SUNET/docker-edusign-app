@@ -80,6 +80,8 @@ vars are needed if it is set to ``(...).RedisMD``.
     EDUSIGN_API_USERNAME=dummy
     EDUSIGN_API_PASSWORD=dummy
     SIGNER_ATTRIBUTES=urn:oid:2.16.840.1.113730.3.1.241,displayName
+    AUTHN_ATTRIBUTES=urn:oid:1.2.752.201.3.7,eidasPersonIdentifier
+    FORCE_AUTHN_CONTEXT=
     SIGN_REQUESTER_ID=https://sig.idsec.se/shibboleth
     SCOPE_WHITELIST=sunet.se,eduid.se
     USER_BLACKLIST=blacklisted@eduid.se
@@ -133,9 +135,8 @@ file, lines 83 and onwards (starting at ``SP_HOSTNAME``).
     BACKEND_PORT=8080
     BACKEND_SCHEME=http
     PROXY_NETWORK="$SP_HOSTNAME"
-    ENTITYID2=https://proxy.prod.erasmus.eduteams.org/proxy
-    METADATA_FILE=/etc/nginx/swamid-idp.xml
-    METADATA2_FILE=/etc/nginx/myacademicid-idp.xml
+    IDP_ENTITYID=https://proxy.prod.erasmus.eduteams.org/proxy
+    METADATA_FILE=/etc/nginx/myacademicid-idp.xml
 
 Now we run the shibboleth sp protected nginx container:
 

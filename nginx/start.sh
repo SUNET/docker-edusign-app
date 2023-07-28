@@ -72,8 +72,7 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
     <RequestMapper type="Native">
         <RequestMap>
             <Host name="${SP_HOSTNAME}">
-                <Path name="sign" authType="shibboleth" requireSession="true"/>
-                <Path name="sign2" authType="shibboleth" requireSession="true" entityID="${ENTITYID2}"/>
+                <Path name="sign" authType="shibboleth" requireSession="true" entityID="${IDP_ENTITYID}"/>
             </Host>
         </RequestMap>
     </RequestMapper>
@@ -96,7 +95,7 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
             entityID property and adjust discoveryURL to point to discovery service.
             You can also override entityID on /Login query string, or in RequestMap/htaccess.
             -->
-            <SSO discoveryProtocol="SAMLDS" discoveryURL="${DISCO_URL}">
+            <SSO entityID="${IDP_ENTITYID}">
               SAML2
             </SSO>
             <!-- SAML and local-only logout. -->
@@ -122,13 +121,6 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
             helpLocation="${SP_ABOUT}"
             styleSheet="/shibboleth-sp/main.css"/>
         <MetadataProvider type="XML" validate="false" path="${METADATA_FILE}" maxRefreshDelay="7200">
-            <MetadataFilter type="RequireValidUntil" maxValidityInterval="2419200"/>
-            <DiscoveryFilter type="Blacklist" matcher="EntityAttributes" trimTags="true" 
-              attributeName="http://macedir.org/entity-category"
-              attributeNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
-              attributeValue="http://refeds.org/category/hide-from-discovery" />
-        </MetadataProvider>
-        <MetadataProvider type="XML" validate="false" path="${METADATA2_FILE}" maxRefreshDelay="7200">
         </MetadataProvider>
         <!-- Example of remotely supplied "on-demand" signed metadata. -->
         <!--
@@ -254,20 +246,6 @@ http {
 
     # Location secured by Shibboleth
       location /sign {
-        shib_request /shibauthorizer;
-        shib_request_use_headers on;
-        include shib_clear_headers;
-        proxy_pass ${BACKEND_URL};
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header Host \$host;
-        proxy_redirect default;
-        proxy_buffering off;
-      }
-
-    # 2nd Location secured by Shibboleth
-      location /sign2 {
         shib_request /shibauthorizer;
         shib_request_use_headers on;
         include shib_clear_headers;
