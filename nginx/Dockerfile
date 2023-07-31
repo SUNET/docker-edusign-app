@@ -145,7 +145,7 @@ RUN dpkg -i build/*.deb
 COPY --from=builder /opt/frontend/build jsbuild
 COPY --from=builder /opt/frontend/public public
 COPY docker/assets assets
-COPY custom/* assets/*
+COPY custom/* assets/
 
 # Create run directory for shibboleth
 
