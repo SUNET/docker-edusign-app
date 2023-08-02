@@ -93,3 +93,6 @@ fastcgi_param MailLocalAddress $shib_maillocaladdress;
 
 shib_request_set $shib_edupersonassurance $upstream_http_variable_edupersonassurance;
 fastcgi_param EduPersonAssurance $shib_edupersonassurance;
+
+shib_request_set $shib_personidentifier $upstream_http_variable_personidentifier;
+fastcgi_param PersonIdentifier $shib_personidentifier;
