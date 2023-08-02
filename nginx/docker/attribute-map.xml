@@ -87,6 +87,10 @@
         <AttributeDecoder xsi:type="XMLAttributeDecoder"/>
     </Attribute>
 
+    <Attribute name="http://eidas.europa.eu/attributes/naturalperson/PersonIdentifier" id="PersonIdentifier">
+        <AttributeDecoder xsi:type="XMLAttributeDecoder"/>
+    </Attribute>
+
     <Attribute name="urn:oid:2.5.4.10" id="o" aliases="organizationName">
         <AttributeDecoder xsi:type="XMLAttributeDecoder"/>
     </Attribute>
