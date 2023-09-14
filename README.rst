@@ -196,10 +196,10 @@ SIGNER_ATTRIBUTES
     :code:`<name>,<friendlyName>`, and separated by semicolons.
     Default: `urn:oid:2.16.840.1.113730.3.1.241,displayName`
 
-SIGNER_ATTRIBUTES
+AUTHN_ATTRIBUTES
     The attributes to be used for authentication, given as
     :code:`<name>,<friendlyName>`, and separated by semicolons.
-    Default: `urn:oid:1.2.752.201.3.7,eidasPersonIdentifier`
+    Default: `http://eidas.europa.eu/attributes/naturalperson/PersonIdentifier,PersonIdentifier`
 
 FORCE_AUTHN_CONTEXT
     An authn context LoA to force on the sign service

@@ -80,7 +80,7 @@ vars are needed if it is set to ``(...).RedisMD``.
     EDUSIGN_API_USERNAME=dummy
     EDUSIGN_API_PASSWORD=dummy
     SIGNER_ATTRIBUTES=urn:oid:2.16.840.1.113730.3.1.241,displayName
-    AUTHN_ATTRIBUTES=urn:oid:1.2.752.201.3.7,eidasPersonIdentifier
+    AUTHN_ATTRIBUTES=http://eidas.europa.eu/attributes/naturalperson/PersonIdentifier,PersonIdentifier
     FORCE_AUTHN_CONTEXT=
     SIGN_REQUESTER_ID=https://sig.idsec.se/shibboleth
     SCOPE_WHITELIST=sunet.se,eduid.se
