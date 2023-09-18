@@ -121,6 +121,7 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
             helpLocation="${SP_ABOUT}"
             styleSheet="/shibboleth-sp/main.css"/>
         <MetadataProvider type="XML" validate="false" path="${METADATA_FILE}" maxRefreshDelay="7200">
+        </MetadataProvider>
         <MetadataProvider type="XML" validate="false" path="${METADATA_FILE_2}" maxRefreshDelay="7200">
         </MetadataProvider>
         <!-- Example of remotely supplied "on-demand" signed metadata. -->
