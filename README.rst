@@ -173,7 +173,7 @@ MAX_FILE_SIZE
 
 EDUSIGN_API_BASE_URL
     Base URL for the eduSign API.
-    Default: `https://sig.idsec.se/signint/v1/`
+    Default: `https://api.test.edusign.sunet.se/v1/`
 
 EDUSIGN_API_PROFILE
     Profile to use in the eduSign API.
@@ -189,7 +189,7 @@ EDUSIGN_API_PASSWORD
 
 SIGN_REQUESTER_ID
     SAML entity ID of the eduSign API / service as an SP.
-    Default: `https://sig.idsec.se/shibboleth`
+    Default: `https://test.edusign.sunet.se/shibboleth`
 
 SIGNER_ATTRIBUTES
     The attributes to be used for signing, given as
@@ -199,7 +199,7 @@ SIGNER_ATTRIBUTES
 AUTHN_ATTRIBUTES
     The attributes to be used for authentication, given as
     :code:`<name>,<friendlyName>`, and separated by semicolons.
-    Default: `http://eidas.europa.eu/attributes/naturalperson/PersonIdentifier,PersonIdentifier`
+    Default: ``
 
 FORCE_AUTHN_CONTEXT
     An authn context LoA to force on the sign service
@@ -272,6 +272,140 @@ Mail configuration
 
 It is necessary to provide the app with access to some SMTP server,
 setting the variables `indicated here <https://flask-mail.readthedocs.io/en/latest/#configuring-flask-mail>`_.
+
+Configuration for MyAcademicID
+..............................
+
+EIDAS_AUTHN_AUTHORITY
+    AuthenticatingAuthority sent by MyAcademicID when authenticating via eIDAS
+    For the acceptance environment, it would be `https://proxy.staging.my-academic-id.sunet.se/proxy`
+    And for the production environemnt, `https://proxy.production.my-academic-id.sunet.se/proxy`
+
+EIDAS_EDUSIGN_API_BASE_URL
+    Base URL for the eduSign API.
+    Default: `https://api.test.edusign.sunet.se/v1/`
+
+EIDAS_EDUSIGN_API_PROFILE
+    Profile to use in the eduSign API.
+    Default: `edusign-test-harica`
+
+EIDAS_EDUSIGN_API_USERNAME
+    Username for Basic Auth for the eduSign API.
+    Default: `dummy`
+
+EIDAS_EDUSIGN_API_PASSWORD
+    Password for Basic Auth for the eduSign API.
+    Default: `dummy`
+
+EIDAS_SIGN_REQUESTER_ID
+    SAML entity ID of the eduSign API / service as an SP.
+    Default: `https://test.edusign.geant.org/shibboleth`
+
+EIDAS_SIGNER_ATTRIBUTES
+    The attributes to be used for signing, given as
+    :code:`<name>,<friendlyName>`, and separated by semicolons.
+    Default: `urn:oid:2.16.840.1.113730.3.1.241,displayName`
+
+EIDAS_AUTHN_ATTRIBUTES
+    The attributes to be used for authentication, given as
+    :code:`<name>,<friendlyName>`, and separated by semicolons.
+    Default: `http://eidas.europa.eu/attributes/naturalperson/PersonIdentifier,PersonIdentifier`
+
+EIDAS_AUTHN_ATTRIBUTES_MAPPING
+    Mapping of attributes received from MyAcademicID to attributes sent to the sign service.
+    :code:`<name>,<name>`, and separated by semicolons.
+    Default: `http://eidas.europa.eu/attributes/naturalperson/PersonIdentifier,urn:oid:1.2.752.201.3.7`
+
+Metadata configuration
+......................
+
+MD_ENTITY_ID
+    EntityID of the service
+    default `https://edusign.sunet.se/shibboleth`
+
+MD_ENTITY_CATEGORIES
+    Entity categories the SP adheres to. Comma separated values.
+    default `http://www.geant.net/uri/dataprotection-code-of-conduct/v1,https://refeds.org/category/code-of-conduct/v2,http://refeds.org/category/research-and-scholarship`
+
+MD_DISPLAY_NAMES
+    mdui:UIInfo display names. Semicolon separated list of Comma separated pairs.
+    default `sv,SUNET eduSIGN - tjänst för e-signaturer;en,SUNET eduSIGN Service`
+
+MD_DESCRIPTIONS
+    mdui:UIInfo descriptions. Semicolon separated list of Comma separated pairs.
+    default `sv,SUNET eduSIGN gör det enkelt att arbeta med e-signaturer;en,SUNET eduSIGN Service makes it easy to electronically sign documents`
+
+MD_INFORMATION_URLS
+    mdui:UIInfo information urls. Semicolon separated list of Comma separated pairs.
+    default `sv,https://www.sunet.se/services/sakerhet/edusign/;en,https://www.sunet.se/services/sakerhet/edusign/`
+
+MD_PRIVACY_STATEMENT_URLS
+    mdui:UIInfo statement urls. Semicolon separated list of Comma separated pairs.
+    default `sv,https://wiki.sunet.se/display/info/eduSign+Privacy+Policy?showLanguage=sv_SE;en,https://wiki.sunet.se/display/info/eduSign+Privacy+Policy?showLanguage=en_GB`
+
+MD_SHIBBOLETH_LOCATION
+    Prefix for the shibboleth endpoints
+    default `https://edusign.sunet.se/Shibboleth.sso`
+
+MD_SIGNING_CERTIFICATE
+    public key for signing certificate
+    default: the key for the service at edusign.sunet.se
+
+MD_ENCRYPTION_CERTIFICATE
+    public key for encryption certificate
+    default: the key for the service at edusign.sunet.se
+
+MD_SERVICE_NAMES
+    Attribute consuming service - service names. Semicolon separated list of Comma separated pairs.
+    default `sv,SUNET eduSIGN - tjänst för e-signaturer;en,SUNET eduSIGN Service`
+
+MD_ATTRIBUTES
+    Attribute consuming service - Required attributes. Semicolon separated list of Comma separated pairs.
+    default `eduPersonPrincipalName,urn:oid:1.3.6.1.4.1.5923.1.1.1.6;sn,urn:oid:2.5.4.4;givenName,urn:oid:2.5.4.42;displayName,urn:oid:2.16.840.1.113730.3.1.241;eduPersonAssurance,urn:oid:1.3.6.1.4.1.5923.1.1.1.11;mail,urn:oid:0.9.2342.19200300.100.1.3;mailLocalAddress,urn:oid:2.16.840.1.113730.3.1.13;PersonIdentifier,http://eidas.europa.eu/attributes/naturalperson/PersonIdentifier`
+
+MD_ORGANIZATION_NAMES
+    Organization - organization names. Semicolon separated list of Comma separated pairs.
+    default `sv,Vetenskapsrådet;en,The Swedish Research Council`
+
+MD_ORGANIZATION_DISPLAY_NAMES
+    Organization - display names. Semicolon separated list of Comma separated pairs.
+    default `sv,Sunet;en,Sunet`
+
+MD_ORGANIZATION_URLS
+    Organization - urls. Semicolon separated list of Comma separated pairs.
+    default `sv,https://www.sunet.se;en,https://www.sunet.se`
+
+MD_TECHNICAL_CONTACT_NAME
+    Contact name, technical
+    default `SUNET`
+
+MD_TECHNICAL_CONTACT_EMAIL
+    Contact email, technical
+    default `mailto:noc@sunet.se`
+
+MD_ADMINISTRATIVE_CONTACT_NAME
+    Contact name, administrative
+    default `SUNET`
+
+MD_ADMINISTRATIVE_CONTACT_EMAIL
+    Contact email, administrative
+    default `mailto:noc@sunet.se`
+
+MD_SUPPORT_CONTACT_NAME
+    Contact name, support
+    default `SUNET`
+
+MD_SUPPORT_CONTACT_EMAIL
+    Contact email, support
+    default `mailto:noc@sunet.se`
+
+MD_SECURITY_CONTACT_NAME
+    Contact name, security
+    default `SUNET`
+
+MD_SECURITY_CONTACT_EMAIL
+    Contact email, security
+    default `mailto:cert@cert.sunet.se`
 
 Additional configuration variables
 ..................................
