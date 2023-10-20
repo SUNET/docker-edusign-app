@@ -137,7 +137,8 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
         -->
         <!-- Map to extract attributes from SAML assertions. -->
         <AttributeExtractor type="XML" validate="true" reloadChanges="false" path="attribute-map.xml"/>
-        <AttributeExtractor type="Metadata" DisplayName="organizationName" registrationAuthority="registrationAuthority"/>
+        <AttributeExtractor type="Metadata" DisplayName="organizationName"/>
+        <AttributeExtractor type="Metadata" registrationAuthority="registrationAuthority"/>
         <!-- Default filtering policy for recognized attributes, lets other data pass. -->
         <AttributeFilter type="XML" validate="true" path="attribute-policy.xml"/>
         <!-- Simple file-based resolvers for separate signing/encryption keys. -->
