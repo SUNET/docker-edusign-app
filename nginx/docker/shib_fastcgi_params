@@ -85,5 +85,8 @@ fastcgi_param Email $shib_email;
 shib_request_set $shib_organizationname $upstream_http_variable_organizationname;
 fastcgi_param OrganizationName $shib_organizationname;
 
+shib_request_set $shib_registrationauthority $upstream_http_variable_registrationauthority;
+fastcgi_param RegistrationAuthority $shib_registrationauthority;
+
 shib_request_set $shib_maillocaladdress $upstream_http_variable_maillocaladdress;
 fastcgi_param MailLocalAddress $shib_maillocaladdress;
