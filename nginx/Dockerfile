@@ -14,8 +14,8 @@ RUN apt -y update && apt -y upgrade && apt install -y curl gnupg
 RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && apt-get -y update && apt-get install -y nodejs
 
 RUN touch /etc/apt/sources.list.d/nginx.list
-RUN echo "deb http://nginx.org/packages/debian/ buster nginx" >> /etc/apt/sources.list.d/nginx.list
-RUN echo "deb-src http://nginx.org/packages/debian/ buster nginx" >> /etc/apt/sources.list.d/nginx.list
+RUN echo "deb http://nginx.org/packages/debian/ bookworm nginx" >> /etc/apt/sources.list.d/nginx.list
+RUN echo "deb-src http://nginx.org/packages/debian/ bookworm nginx" >> /etc/apt/sources.list.d/nginx.list
 
 WORKDIR /opt
 RUN curl -OL  http://nginx.org/keys/nginx_signing.key
@@ -103,8 +103,8 @@ ENV MAX_FILE_SIZE=20971520
 RUN apt -y update && apt -y upgrade && apt install -y curl gnupg
 
 RUN touch /etc/apt/sources.list.d/nginx.list
-RUN echo "deb http://nginx.org/packages/debian/ buster nginx" >> /etc/apt/sources.list.d/nginx.list
-RUN echo "deb-src http://nginx.org/packages/debian/ buster nginx" >> /etc/apt/sources.list.d/nginx.list
+RUN echo "deb http://nginx.org/packages/debian/ bookworm nginx" >> /etc/apt/sources.list.d/nginx.list
+RUN echo "deb-src http://nginx.org/packages/debian/ bookworm nginx" >> /etc/apt/sources.list.d/nginx.list
 
 WORKDIR /opt
 RUN curl -OL  http://nginx.org/keys/nginx_signing.key
