@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bookworm
 
 ARG INSTALL_PACKAGE=install
 
@@ -66,14 +66,14 @@ ENV LC_ALL en_US.UTF-8
 
 # install python
 
-RUN curl -O https://www.python.org/ftp/python/3.8.9/Python-3.8.9.tar.xz && \
-    tar -xf Python-3.8.9.tar.xz && \
-    cd Python-3.8.9 && \
+RUN curl -O https://www.python.org/ftp/python/3.11.6/Python-3.11.6.tar.xz && \
+    tar -xf Python-3.11.6.tar.xz && \
+    cd Python-3.11.6 && \
     ./configure --enable-optimizations --enable-loadable-sqlite-extensions && \
     make -j 4 && \
     make install && \
     cd .. && \
-    rm -rf Python-3.8.9 Python-3.8.9.tar.xz  
+    rm -rf Python-3.11.6 Python-3.11.6.tar.xz  
 
 
 # Add edusign user to run the service as
