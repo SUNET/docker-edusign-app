@@ -1,4 +1,4 @@
-FROM debian:buster AS builder
+FROM debian:bookworm AS builder
 
 MAINTAINER eperez@emergya.com
 
@@ -78,7 +78,7 @@ RUN npm install && npm run build-pro && npm run build-dev && cp node_modules/pdf
 # End builder image
 #----------------------------
 
-FROM debian:buster AS sp
+FROM debian:bookworm AS sp
 
 # This will produce an image to create containers that run a supervisor
 # process, supervising 4 child processes:
