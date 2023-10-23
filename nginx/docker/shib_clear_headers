@@ -41,6 +41,9 @@ more_clear_input_headers
      email
      givenName
      eduPersonPrincipalName
+     eduPersonAssurance
+     EduPersonAssurance
+     EDUPERSONASSURANCE
      sn
      MAIL
      MAILLOCALADDRESS
