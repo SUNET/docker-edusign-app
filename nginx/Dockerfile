@@ -118,8 +118,8 @@ RUN echo "Pin-Priority: 600" >> /etc/apt/preferences.d/nginx
 # Install needed software.
 
 RUN apt update -y && \
-    apt install -y apt-utils  opensaml2-schemas opensaml2-tools xmltooling-schemas ssl-cert less \
-                   libshibsp8 libshibsp-plugins shibboleth-sp2-common shibboleth-sp2-utils procps \
+    apt install -y apt-utils  opensaml-schemas opensaml-tools xmltooling-schemas ssl-cert less \
+                   libshibsp11 libshibsp-plugins shibboleth-sp-common shibboleth-sp-utils procps \
                    libpcre3 libpcrecpp0v5 openssl libxml2-utils xsltproc supervisor locales nginx wget curl vim && \
     apt clean -y && \
     rm -rf /var/lib/apt/lists/*
