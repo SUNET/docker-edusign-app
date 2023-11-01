@@ -9,9 +9,12 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Install needed software
 
-RUN apt -y update && apt -y upgrade && apt install -y curl gnupg
+RUN apt -y update && apt -y upgrade && apt install -y curl gnupg ca-certificates
 
-RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && apt-get -y update && apt-get install -y nodejs
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+ENV NODE_MAJOR 20
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+RUN sudo apt-get update && sudo apt-get install nodejs -y
 
 RUN touch /etc/apt/sources.list.d/nginx.list
 RUN echo "deb http://nginx.org/packages/debian/ bookworm nginx" >> /etc/apt/sources.list.d/nginx.list
