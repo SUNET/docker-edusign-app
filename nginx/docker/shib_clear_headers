@@ -50,4 +50,30 @@ more_clear_input_headers
      GIVENNAME
      EDUPERSONPRINCIPALNAME
      O
-     SN;
+     SN
+     Edupersonprincipalname-11
+     Edupersonprincipalname-2
+     Affiliation-11
+     Affiliation-2
+     Unscoped-affiliation-11
+     Unscoped-affiliation-2
+     Edupersonentitlement-11
+     Edupersonentitlement-2
+     Targeted-id-2
+     Persistent-id-2
+     Persistent-id
+     Uid-11
+     Uid-2
+     Cn-11
+     Cn-2
+     Sn-11
+     Sn-2
+     Givenname-11
+     Givenname-2
+     Mail-11
+     Mail-2
+     Displayname-11
+     Displayname-2
+     Maillocaladdress-2
+     Organizationname-11
+     Organizationname-2;
