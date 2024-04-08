@@ -102,7 +102,7 @@ COPY custom/*.md /etc/edusign
 # Get the edusign sources from github, pick the backend sources
 # and put them in /opt/edusign, and get rid of the rest.
 
-ENV EDUSIGN_APP_VERSION v1.4.0b150
+ENV EDUSIGN_APP_VERSION v1.4.0b151
 
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp
