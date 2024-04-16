@@ -4,16 +4,15 @@ Installing edusign-app without docker-compose
 
 Caveat emptor: We do not aim here to have a fully functional edusign-app
 deployment, since that would require establishing trust with some SAML
-environment with which the edusign API has also established trust.  The aim
-here is to have the flask app running, and the nginx reaching it to pull
-requests from it.
+environment with which the signservice integration API has also established
+trust.  The aim here is to have the flask app running behind an nginx.
 
-So these instructions should reach a point at which we only need to (a) properly
-configure communication of the flask app with a deployment of the edusign API,
-(b) configure Shibboleth SP to integrate in the same SAML environment the API
-is integrated with, (c) configure properly the flask app access to a mail
-server, and (d) perhaps change the storage and metadata db settings to use S3
-and Redis.
+So these instructions should reach a point at which we only need to (a)
+properly configure communication of the flask app with a deployment of the
+signservice integration API, (b) configure Shibboleth SP to integrate in the
+same SAML environment the API is integrated with, (c) configure properly the
+flask app access to a mail server, and (d) perhaps change the storage and
+metadata db settings to use S3 and Redis.
 
 Procedure.
 ----------
