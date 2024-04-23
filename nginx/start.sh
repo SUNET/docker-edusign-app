@@ -78,7 +78,7 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
     </RequestMapper>
     <ApplicationDefaults entityID="https://${SP_HOSTNAME}/shibboleth"
         REMOTE_USER="eppn subject-id pairwise-id persistent-id"
-        metadataAttributePrefix="MD_"
+        metadataAttributePrefix="MD-"
         cipherSuites="DEFAULT:!EXP:!LOW:!aNULL:!eNULL:!DES:!IDEA:!SEED:!RC4:!3DES:!kRSA:!SSLv2:!SSLv3:!TLSv1:!TLSv1.1">
         <!--
         Controls session lifetimes, address checks, cookie handling, and the protocol handlers.
@@ -137,8 +137,7 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
         -->
         <!-- Map to extract attributes from SAML assertions. -->
         <AttributeExtractor type="XML" validate="true" reloadChanges="false" path="attribute-map.xml"/>
-        <AttributeExtractor type="Metadata" DisplayName="organizationName"/>
-        <AttributeExtractor type="Metadata" registrationAuthority="registrationAuthority"/>
+        <AttributeExtractor type="Metadata" DisplayName="organizationName" registrationAuthority="registrationAuthority"/>
         <!-- Default filtering policy for recognized attributes, lets other data pass. -->
         <AttributeFilter type="XML" validate="true" path="attribute-policy.xml"/>
         <!-- Simple file-based resolvers for separate signing/encryption keys. -->
