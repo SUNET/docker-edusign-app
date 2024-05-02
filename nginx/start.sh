@@ -120,6 +120,7 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
         <Errors supportContact="root@localhost"
             helpLocation="${SP_ABOUT}"
             styleSheet="/shibboleth-sp/main.css"/>
+        <!--
         <MetadataProvider type="XML" validate="false" path="${METADATA_FILE}" maxRefreshDelay="7200">
             <MetadataFilter type="RequireValidUntil" maxValidityInterval="2419200"/>
             <DiscoveryFilter type="Blacklist" matcher="EntityAttributes" trimTags="true" 
@@ -127,14 +128,13 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
               attributeNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
               attributeValue="http://refeds.org/category/hide-from-discovery" />
         </MetadataProvider>
-        <!-- Example of remotely supplied "on-demand" signed metadata. -->
-        <!--
-        <MetadataProvider type="MDQ" validate="true" cacheDirectory="mdq"
-	            baseUrl="http://mdq.federation.org" ignoreTransport="true">
-            <MetadataFilter type="RequireValidUntil" maxValidityInterval="2419200"/>
-            <MetadataFilter type="Signature" certificate="mdqsigner.pem" />
-        </MetadataProvider>
         -->
+        <!-- Example of remotely supplied "on-demand" signed metadata. -->
+        <MetadataProvider type="MDQ" validate="true" cacheDirectory="mdq"
+	            baseUrl="${MDQ_BASE_URL}" ignoreTransport="true">
+            <MetadataFilter type="RequireValidUntil" maxValidityInterval="2419200"/>
+            <MetadataFilter type="Signature" certificate="${MDQ_SIGNER_CERT}" />
+        </MetadataProvider>
         <!-- Map to extract attributes from SAML assertions. -->
         <AttributeExtractor type="XML" validate="true" reloadChanges="false" path="attribute-map.xml"/>
         <AttributeExtractor type="Metadata" DisplayName="organizationName" registrationAuthority="registrationAuthority"/>
