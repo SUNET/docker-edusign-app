@@ -2,8 +2,7 @@
 EduSign app docker environment
 ==============================
 
-Docker environment for the deployment of an instance of edusign-app, managed by
-docker-compose.
+Docker environment for the deployment of an instance of edusign-app.
 
 The environment will consist on 2 docker containers, one (edusign-sp) running a
 front facing NGINX server protected by a Shibboleth SP and proxying the app,
@@ -29,8 +28,7 @@ The Dockerfile (at `nginx/Dockerfile` in this repo) builds 2 images. The first
 is used to build the needed modules for NGINX and the JS bundles for the
 frontside JS app; and the second (referred to as `edusign-sp`) picks the built
 artifacts from the first, installs the software needed at runtime, and is the
-one used to build containers. The separation is simply to avoid bloating the
-containers with the build environments.
+one used to build containers.
 
 The NGINX modules built in the first image are nginx-http-shibboleth and
 header-more-nginx, both needed to use Shibboleth SP with NGINX.
@@ -71,36 +69,89 @@ It is also possible to build both images with :code:`make build`, push both
 images with :code:`make push`, and both build and push both images with
 :code:`make publish`.
 
-Running the production environment
+Installing and Running edusign-app
 ----------------------------------
 
-We assume here that both needed docker images have been built and are present
-either in the local docker engine image repository, or in the docker.sunet.se
-hub.
+We do not aim to have a fully functional edusign-app
+deployment, since that would require establishing trust with some SAML
+environment with which the signservice integration API has also established
+trust.  The aim here is to have the flask app running behind an nginx.
 
-Configuration
-.............
+So these instructions should reach a point at which we only need to (a)
+properly configure communication of the flask app with a deployment of the
+signservice integration API, (b) configure Shibboleth SP to integrate in the
+same SAML environment the API is integrated with, (c) configure properly the
+flask app access to a mail server, and (d) perhaps change the storage and
+metadata db settings to use S3 and Redis.
 
-First we clone the repo:
+We start in a debian bookworm VM.
+
+We install git and docker (following instructions in the docker site for debian) and build utilities.
+
+Clone the docker-edusign-app repo:
 
 .. code-block:: bash
 
- $ git clone https://github.com/SUNET/docker-edusign-app
- $ cd docker-edusign-app
+  $ git clone https://gitnub.com/SUNET/docker-edusign-app
 
-Before running the environment, we should provide a few configuration values in
-the form of exported environment variables in the host. These are listed and
-explained below. These settings can also reside in a :code:`.env` file in the
-same directory as the :code:`docker-compose.yml` file in the docker host machine.
+Build the docker images.
 
-When not using docker-compose, the env vars should be provided to `docker run`
-through `-e` flags. In this case there are additional env vars to be set, listed
-below as "additional configuration variables"
+.. code-block:: bash
 
-After providing these configuration settings, we start the environment with
-:code:`make env-start`, and stop it with :code:`make env-stop`.
+  $ cd docker-edusign-app
+  $ make build-sp
+  $ make build-app
 
-Once the environment is up and running, there are a few files we may want to
+In docker, we first create the network:
+
+.. code-block:: bash
+
+  $ docker network create --subnet=172.20.10.0/24 br-edusign
+
+We now create an env file with the environment variables needed by the app
+container. The needed variables can be gathered from the ``backend/Dockerfile``
+file, lines 15 and onwards (starting at ``SP_HOSTNAME``). Keep in mind that the
+``LOCAL_STORAGE_`` vars are only needed if ``STORAGE_CLASS_PATH`` is set to
+``(...).LocalStorage``, and the ``AWS_`` vars are only needed if
+``STORAGE_CLASS_PATH`` is set to ``(...).S3Storage``. Similarly, ``SQLITE_`` vars are
+needed if ``DOC_METADATA_CLASS_PATH`` is set to ``(...).SqliteMD``, and ``REDIS_``
+vars are needed if it is set to ``(...).RedisMD``.
+
+Now we create and run a docker container with the flask app:
+
+.. code-block:: bash
+
+  $ docker run -d --hostname app.edusign.docker \
+               --env-file app-env \
+               --network br-edusign \
+               --ip 172.20.10.201 \
+               --name edusign-app \
+               docker.sunet.se/edusign-app:latest
+
+We now create an env file with the environment variables needed by the nginx container.
+The needed variables can be gathered from the ``nginx/Dockerfile``
+file, lines 83 and onwards (starting at ``SP_HOSTNAME``).
+
+Now we run the shibboleth sp protected nginx container:
+
+.. code-block:: bash
+
+  $ docker run -d --hostname www.edusign.docker \
+               --env-file nginx-env \
+               -p 80:80 \
+               -p 443:443 \
+               --network br-edusign \
+               --ip 172.20.10.202 \
+               --name edusign-sp \
+               --link edusign-app
+               docker.sunet.se/edusign-sp:latest
+
+After all this, and using lynx, I get a 500 at ``https://www.edusign.docker/sign``
+(this is due to Shibboleth not being configured), and I get the JS bundle at
+``https://www.edusign.docker/js/main-bundle.js``.
+
+
+Once the environment is up and running, there are a few files we want to
 update / provide in the *sp* container (with :code:`docker cp`), mainly
 certificates and metadata:
 
@@ -111,11 +162,11 @@ certificates and metadata:
   :code:`sp:/etc/ssl/certs/shibsp-<SP_HOSTNAME>.crt` and
   :code:`sp:/etc/ssl/private/shibsp-<SP_HOSTNAME>.key`
 
-* SAML metadata file describing the IdPs we want to interact with, placed at
+* MDQ signing certificate, placed at
   :code:`sp:/etc/shibboleth` and referenced in the configuration variable
-  :code:`METADATA_FILE`.
+  :code:`MDQ_SIGNER_CERT`.
 
-Attributes used for signing documents
+Attributes used for signing documents XXX
 .....................................
 
 By default, we use the given name :code:`givenName`, the surname :code:`sn`,
@@ -171,15 +222,15 @@ EDUSIGN_API_BASE_URL
     Base URL for the eduSign API.
     Default: `https://sig.idsec.se/signint/v1/`
 
-EDUSIGN_API_PROFILE
+EDUSIGN_API_PROFILE_20
     Profile to use in the eduSign API.
     Default: `edusign-test`
 
-EDUSIGN_API_USERNAME
+EDUSIGN_API_USERNAME_20
     Username for Basic Auth for the eduSign API.
     Default: `dummy`
 
-EDUSIGN_API_PASSWORD
+EDUSIGN_API_PASSWORD_20
     Password for Basic Auth for the eduSign API.
     Default: `dummy`
 
