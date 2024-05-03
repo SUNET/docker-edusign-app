@@ -121,7 +121,7 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
             helpLocation="${SP_ABOUT}"
             styleSheet="/shibboleth-sp/main.css"/>
         <!--
-        <MetadataProvider type="XML" validate="false" path="${METADATA_FILE}" maxRefreshDelay="7200">
+        <MetadataProvider type="XML" validate="false" path="/etc/metadata.xml" maxRefreshDelay="7200">
             <MetadataFilter type="RequireValidUntil" maxValidityInterval="2419200"/>
             <DiscoveryFilter type="Blacklist" matcher="EntityAttributes" trimTags="true" 
               attributeName="http://macedir.org/entity-category"

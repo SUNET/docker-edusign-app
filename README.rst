@@ -162,8 +162,7 @@ certificates and metadata:
   :code:`sp:/etc/ssl/certs/shibsp-<SP_HOSTNAME>.crt` and
   :code:`sp:/etc/ssl/private/shibsp-<SP_HOSTNAME>.key`
 
-* MDQ signing certificate, placed at
-  :code:`sp:/etc/shibboleth` and referenced in the configuration variable
+* MDQ signing certificate, referenced in the configuration variable
   :code:`MDQ_SIGNER_CERT`.
 
 Attributes used for signing documents XXX
@@ -185,14 +184,11 @@ deployment, so that we don't need to edit them in each deployment. Note that in
 the :code:`attribute-map.xml` the attributes must be set with an
 :code:`AttributeDecoder` with type :code:`StringAttributeDecoder`.
 
-Access logs
-...........
-
-The available logs can be listed via the command :code:`make logs-list`. They can be
-tailed with :code:`make logs-tailf <logfile>`.
-
 Configuration variables
-.......................
+-----------------------
+
+For the edusign-app container
+.............................
 
 DEBUG
     Turn on debug mode for the app.
@@ -201,14 +197,6 @@ DEBUG
 SP_HOSTNAME
     FQDN for the service, as used in the SSL certificate for the NGINX.
     Default: `sp.edusign.docker`
-
-DISCO_URL
-    URL of SAML discovery service to provide to Shibboleth SP.
-    Default: `https://md.nordu.net/role/idp.ds`
-
-METADATA_FILE:
-    Path to the metadata file describing the IdPs we want to interact with.
-    No Default.
 
 SECRET_KEY
     Key used by the webapp for encryption, e.g. for the sessions.
@@ -223,7 +211,9 @@ EDUSIGN_API_BASE_URL
     Default: `https://sig.idsec.se/signint/v1/`
 
 EDUSIGN_API_PROFILE_20
-    Profile to use in the eduSign API.
+    Profile to use in the eduSign API for IdPs that release attributes in the SAML2.0 format.
+    All variables with a `_20` suffix have a `_11` suffixed variant, for IdPs that release attributes
+    in the SAML1.1 format, to be provided in addition to the `_20` variants.
     Default: `edusign-test`
 
 EDUSIGN_API_USERNAME_20
@@ -238,10 +228,18 @@ SIGN_REQUESTER_ID
     SAML entity ID of the eduSign API / service as an SP.
     Default: `https://sig.idsec.se/shibboleth`
 
-SIGNER_ATTRIBUTES
-    The attributes to be used for signing, given as
+VALIDATOR_API_BASE_URL
+    URL of the validator service.
+    Default: `https://sig.idsec.se/sigval/`
+
+SIGNER_ATTRIBUTES_20
+    The attributes that are displayed in the image representation of the signature, given as
     :code:`<name>,<friendlyName>`, and separated by semicolons.
-    Default: `urn:oid:2.5.4.42,givenName;urn:oid:2.5.4.4,sn;urn:oid:0.9.2342.19200300.100.1.3,mail;urn:oid:2.16.840.1.113730.3.1.241,displayName`
+    Default: `urn:oid:2.16.840.1.113730.3.1.241,displayName`
+
+AUTHN_ATTRIBUTES_20
+    The attributes that are used to make sure that the identity used for signing is the same as the one used for authentication.
+    Default: `urn:oid:1.3.6.1.4.1.5923.1.1.1.6,eduPersonPrincipalName`
 
 SCOPE_WHITELIST
     Comma separated list of domain names, so users having an eppn belonging to those domains can start signing documents.
@@ -260,26 +258,32 @@ STORAGE_CLASS_PATH
     Default: `edusign_webapp.document.storage.local.LocalStorage`
 
 LOCAL_STORAGE_BASE_DIR
-    Filesystem path pointing to a directory in which to store documents, when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.local.LocalStorage`.
+    Only needed when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.local.LocalStorage`.
+    Filesystem path pointing to a directory in which to store documents.
     Default: `/tmp`
 
 AWS_ENDPOINT_URL
+    Only needed when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.s3.S3Storage`.
     URL to access S3 bucket. If using GCP, set to https://storage.googleapis.com. If using AWS, do not set it, or set to none
     Default: `none`
 
 AWS_ACCESS_KEY
+    Only needed when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.s3.S3Storage`.
     AWS access key, to be set when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.s3.S3Storage`.
     Default: `dummy`
 
 AWS_SECRET_ACCESS_KEY
+    Only needed when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.s3.S3Storage`.
     AWS secret access key, to be set when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.s3.S3Storage`.
     Default: `dummy`
 
 AWS_REGION_NAME
+    Only needed when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.s3.S3Storage`.
     AWS region name, to be set when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.s3.S3Storage`.
     Default: `eu-north-1`
 
 AWS_BUCKET_NAME
+    Only needed when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.s3.S3Storage`.
     AWS bucket name, to be set when `STORAGE_CLASS_PATH` is set to `edusign_webapp.document.storage.s3.S3Storage`.
     Default: `edusign-storage`
 
@@ -288,37 +292,60 @@ DOC_METADATA_CLASS_PATH
     Default: `edusign_webapp.document.metadata.sqlite.SqliteMD`
 
 SQLITE_MD_DB_PATH
-    Filesystem path pointing to a sqlite db, when `DOC_METADATA_CLASS_PATH` is set to `edusign_webapp.document.metadata.sqlite.SquliteMD`.
+    Only needed when `DOC_METADATA_CLASS_PATH` is set to `edusign_webapp.document.metadata.sqlite.SqliteMD`.
+    Filesystem path pointing to a sqlite db.
     Default: `/tmp/test.db`
 
 REDIS_URL
-    URL to connect to Redis when `DOC_METADATA_CLASS_PATH` is set to `edusign_webapp.document.metadata.redis_client.RedisMD`.
+    Only needed when `DOC_METADATA_CLASS_PATH` is set to `edusign_webapp.document.metadata.redis.RedisMD`.
+    URL to connect to Redis.
     Default: `redis://localhost:6379/0`.
 
-MULTISIGN_BUTTONS
-    Set to any of "Yes", "yes", "True", "true", "T", or "t" to enable the multi sign buttons. Anything else will disable them.
+MAX_SIGNATURES
+    The maximum number of signatures that fit in a document.
+    Default: 10
 
-SESSION_COOKIE_NAME
-    `session` by default. We want to change it to avoid sending the cookies from the production domain (e.g. edusign.sunet.se) to the sataging domain (e.g. test.edusign.sunet.se).
+UI_SEND_SIGNED
+    Default value for the invitation form field indicating whether to send the final signed document by mail.
+    Default: True
+
+UI_SKIP_FINAL
+    Default value for the invitation form field indicating whether the inviting user should provide a final signature.
+    Default: True
+
+UI_ORDERED_INVITATIONS
+    Default value for the invitation form field indicating whether the invitations should be sent in order.
+    Default: False
+
+In addition it is necessary to provide the app with access to some SMTP server,
+setting the variables `indicated here <https://flask-mailman.readthedocs.io/en/latest/>`_.
+
+For the edusign-sp container
+............................
+
+SP_HOSTNAME
+    FQDN for the service, as used in the SSL certificate for the NGINX.
+    Default: `sp.edusign.docker`
+
+MAX_FILE_SIZE
+    Maximum size of uploadable documents, in a format that NGINX understands, e.g. `20M`.
+    Default: `20M`
 
 PROXY_NETWORK
     If the NGINX server is behind a proxy server / load balancer, it needs to know the network address(es) of the proxy
     to be able to recover the real IP from the client. It can be set to an IP address / hostname/ CIDR / unix socket.
 
-Mail configuration
-..................
+DISCO_URL
+    URL of SAML discovery service to provide to Shibboleth SP.
+    Default: `https://md.nordu.net/role/idp.ds`
 
-It is necessary to provide the app with access to some SMTP server,
-setting the variables `indicated here <https://flask-mail.readthedocs.io/en/latest/#configuring-flask-mail>`_.
+MDQ_BASE_URL:
+    Base URL for an MDQ server, used 
+    No Default.
 
-Additional configuration variables
-..................................
-
-These need to be set when not using docker-compose to run the environment, but
-rather bare `docker run` commands.
-
-For the NGINX container, we need to set variables informing it where to find
-the WSGI app, to relay dynamic requests to it:
+MDQ_SIGNER_CERT:
+    Path to the metadata file describing the IdPs we want to interact with.
+    No Default.
 
 BACKEND_HOST
     The hostname of the container running the backend WSGI app.
@@ -331,6 +358,9 @@ BACKEND_PORT
 BACKEND_SCHEME
     The protocol to access the WSGI app.
     Default: http
+
+ACMEPROXY
+    For the .well-known/acme-challenge nginx location for letsencrypt.
 
 Home Page (Anonymous)
 .....................
