@@ -165,25 +165,6 @@ certificates and metadata:
 * MDQ signing certificate, referenced in the configuration variable
   :code:`MDQ_SIGNER_CERT`.
 
-Attributes used for signing documents XXX
-.....................................
-
-By default, we use the given name :code:`givenName`, the surname :code:`sn`,
-the display name :code:`displayName` and the email address :code:`mail` as
-attributes for signing the documents. This list can be altered; if we do so,
-there are 4 different places which we need to be aware of.  One is the
-:code:`SIGNER_ATTRIBUTES` environment variable as we show
-below. Then, whatever attributes are used must be taken into account in the
-files :code:`attribute-map.xml`, :code:`shib_clear_headers`, and
-:code:`shib_fastcgi_params`.
-
-Since having extra attributes in those 3 files, not actually used for signing,
-would not pose a problem, it would be best to provide "out of the box" in those
-files *all* attributes that might be used for signing in any possible
-deployment, so that we don't need to edit them in each deployment. Note that in
-the :code:`attribute-map.xml` the attributes must be set with an
-:code:`AttributeDecoder` with type :code:`StringAttributeDecoder`.
-
 Configuration variables
 -----------------------
 
