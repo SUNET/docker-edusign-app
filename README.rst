@@ -173,6 +173,7 @@ For the edusign-app container
 
 DEBUG
     Turn on debug mode for the app.
+
     Default: false
 
 ENVIRONMENT
