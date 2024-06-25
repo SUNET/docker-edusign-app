@@ -175,9 +175,39 @@ DEBUG
     Turn on debug mode for the app.
     Default: false
 
+ENVIRONMENT
+    Environment the app is running on. Possible values: production, development and e2e.
+    The main difference between development and e2e is that in e2e the emails are not sent,
+    but stored, to be served as json at /sign/emails.
+    Default: `production`
+
 SP_HOSTNAME
     FQDN for the service, as used in the SSL certificate for the NGINX.
     Default: `sp.edusign.docker`
+
+SERVER_NAME
+    Flask configuration. No need to set it, it's enough with SP_HOSTNAME.
+    Default: the value of SP_HOSTNAME
+
+SESSION_COOKIE_DOMAIN
+    Configuration of the Flask session cookie.
+    Default: the value of SP_HOSTNAME
+
+SESSION_COOKIE_PATH
+    Configuration of the Flask session cookie.
+    Default: `/sign`
+
+SESSION_COOKIE_SECURE
+    Configuration of the Flask session cookie.
+    Default: True
+
+SESSION_COOKIE_NAME
+    Configuration of the Flask session cookie.
+    Default: `session`
+
+SESSION_COOKIE_SAMESITE
+    Configuration of the Flask session cookie.
+    Default: `None`
 
 SECRET_KEY
     Key used by the webapp for encryption, e.g. for the sessions.
@@ -187,8 +217,24 @@ MAX_FILE_SIZE
     Maximum size of uploadable documents, in a format that NGINX understands, e.g. `20M`.
     Default: `20M`
 
+PREFERRED_URL_SCHEME
+    Flask configuration
+    Default: `https`
+
+BABEL_DEFAULT_LOCALE
+    Babel configuration
+    Default: `sv`
+
+BABEL_DEFAULT_TIMEZONE
+    Babel configuration
+    Default: `UTC`
+
+SUPPORTED_LANGUAGES
+    Supported languages, given as `<code>,<display name>` and separated by semicolons
+    Default: `en,English;sv,Svenska`
+
 EDUSIGN_API_BASE_URL
-    Base URL for the eduSign API.
+    Base URL for the sign service integration API.
     Default: `https://sig.idsec.se/signint/v1/`
 
 EDUSIGN_API_PROFILE_20
@@ -206,11 +252,14 @@ EDUSIGN_API_PASSWORD_20
     Default: `dummy`
 
 SIGN_REQUESTER_ID
-    SAML entity ID of the eduSign API / service as an SP.
+    This is providedto the integration API to construct the sign request.
+    It should be set to the SAML entity ID of the sign service as an SP,
+    but any string will do as long as the integration API and the frontend
+    app have the same value.
     Default: `https://sig.idsec.se/shibboleth`
 
 VALIDATOR_API_BASE_URL
-    URL of the validator service.
+    URL of the signature validator service.
     Default: `https://sig.idsec.se/sigval/`
 
 SIGNER_ATTRIBUTES_20
@@ -300,6 +349,96 @@ UI_ORDERED_INVITATIONS
 
 In addition it is necessary to provide the app with access to some SMTP server,
 setting the variables `indicated here <https://flask-mailman.readthedocs.io/en/latest/>`_.
+
+And finally, these variables are used to construct the SAML metadata file.
+
+MD_ENTITY_ID
+    SAML entityID
+    Default: `https://edusign.sunet.se/shibboleth`
+
+MD_ENTITY_CATEGORIES
+    SAML entity categories 
+    Default: `http://www.geant.net/uri/dataprotection-code-of-conduct/v1,https://refeds.org/category/code-of-conduct/v2,http://refeds.org/category/research-and-scholarship`
+
+MD_DISPLAY_NAMES
+    SAML MDUI display names
+    Default: `sv,SUNET eduSIGN - tjänst för e-signaturer;en,SUNET eduSIGN Service`
+
+MD_DESCRIPTIONS
+    SAML MDUI descriptions
+    Default: `sv,SUNET eduSIGN gör det enkelt att arbeta med e-signaturer;en,SUNET eduSIGN Service makes it easy to electronically sign documents`
+
+MD_INFORMATION_URLS
+    SAML MDUI information URLs
+    Default: `sv,https://www.sunet.se/services/sakerhet/edusign/;en,https://www.sunet.se/services/sakerhet/edusign/`
+
+MD_PRIVACY_STATEMENT_URLS
+    SAML MDUI privacy statement URLs
+    Default: `sv,https://wiki.sunet.se/display/info/eduSign+Privacy+Policy?showLanguage=sv_SE;en,https://wiki.sunet.se/display/info/eduSign+Privacy+Policy?showLanguage=en_GB`
+
+MD_SHIBBOLETH_LOCATION
+    Base URL for all shibboleth locations (assertion consumer service, etc.)
+    Default: `https://edusign.sunet.se/Shibboleth.sso`
+
+MD_SIGNING_CERTIFICATE
+    Public key of the certificate used for signing
+    Default: cert for https://dev.edusign.sunet.se/shibboleth
+
+MD_ENCRYPTION_CERTIFICATE
+    Public key of the certificate used for encryption (can be the same used for signing)
+    Default: cert for https://dev.edusign.sunet.se/shibboleth
+
+MD_SERVICE_NAMES
+    SAML attribute consuming service names
+    Default: `sv,SUNET eduSIGN - tjänst för e-signaturer;en,SUNET eduSIGN Service`
+
+MD_ATTRIBUTES
+    Requested attributes
+    Default: `eduPersonPrincipalName,urn:oid:1.3.6.1.4.1.5923.1.1.1.6;sn,urn:oid:2.5.4.4;givenName,urn:oid:2.5.4.42;displayName,urn:oid:2.16.840.1.113730.3.1.241;eduPersonAssurance,urn:oid:1.3.6.1.4.1.5923.1.1.1.11;mail,urn:oid:0.9.2342.19200300.100.1.3;mailLocalAddress,urn:oid:2.16.840.1.113730.3.1.13`
+
+MD_ORGANIZATION_NAMES
+    SAML Organization names
+    Default: `sv,Vetenskapsrådet;en,The Swedish Research Council`
+
+MD_ORGANIZATION_DISPLAY_NAMES
+    SAML Organization display names
+    Default: `sv,Sunet;en,Sunet`
+
+MD_ORGANIZATION_URLS
+    SAML Organization URLs
+    Default: `sv,https://www.sunet.se;en,https://www.sunet.se`
+
+MD_TECHNICAL_CONTACT_NAME
+    SAML Technical contact name
+    Default: `SUNET`
+
+MD_TECHNICAL_CONTACT_EMAIL
+    SAML Technical contact email
+    Default: `mailto:noc@sunet.se`
+
+MD_ADMINISTRATIVE_CONTACT_NAME
+    SAML Administrative contact name
+    Default: `SUNET`
+
+MD_ADMINISTRATIVE_CONTACT_EMAIL
+    SAML Administrative contact email
+    Default: `mailto:noc@sunet.se`
+
+MD_SUPPORT_CONTACT_NAME
+    SAML support contact name
+    Default: `SUNET`
+
+MD_SUPPORT_CONTACT_EMAIL
+    SAML support contact email
+    Default: `mailto:noc@sunet.se`
+
+MD_SECURITY_CONTACT_NAME
+    SAML security contact name
+    Default: `SUNET`
+
+MD_SECURITY_CONTACT_EMAIL
+    SAML security contact email
+    Default: `mailto:cert@cert.sunet.se`
 
 For the edusign-sp container
 ............................
