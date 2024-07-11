@@ -263,6 +263,16 @@ http {
         proxy_buffering off;
       }
 
+      location /api/v1 {
+        proxy_pass ${BACKEND_URL};
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header Host \$host;
+        proxy_redirect default;
+        proxy_buffering off;
+      }
+
       location /js {
           alias /opt/jsbuild;
           try_files \$uri \$uri/;
