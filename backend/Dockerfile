@@ -11,6 +11,7 @@ ENV DEBIAN_FRONTEND noninteractive
 # Environment attributes
 
 ENV SP_HOSTNAME=sp.edusign.docker
+ENV API_KEY=dummy
 ENV SESSION_COOKIE_NAME=session
 ENV SECRET_KEY=supersecret
 ENV EDUSIGN_API_BASE_URL=https://sig.idsec.se/signint/v1/
