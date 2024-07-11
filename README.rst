@@ -183,6 +183,11 @@ ENVIRONMENT
 
     Default: `production`
 
+API_KEY
+    API key to access the service from another application, instead of using the frontend.
+
+    Default: `dummy`
+
 SP_HOSTNAME
     FQDN for the service, as used in the SSL certificate for the NGINX.
 
