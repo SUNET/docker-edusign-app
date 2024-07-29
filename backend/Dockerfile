@@ -11,6 +11,7 @@ ENV DEBIAN_FRONTEND noninteractive
 # Environment attributes
 
 ENV SP_HOSTNAME=sp.edusign.docker
+ENV API_KEY=dummy
 ENV SESSION_COOKIE_NAME=session
 ENV SECRET_KEY=supersecret
 ENV EDUSIGN_API_BASE_URL=https://sig.idsec.se/signint/v1/
@@ -102,7 +103,7 @@ COPY custom/*.md /etc/edusign
 # Get the edusign sources from github, pick the backend sources
 # and put them in /opt/edusign, and get rid of the rest.
 
-ENV EDUSIGN_APP_VERSION v1.4.0b238
+ENV EDUSIGN_APP_VERSION v1.4.0b235
 
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp
