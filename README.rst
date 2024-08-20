@@ -224,9 +224,15 @@ SECRET_KEY
     Default: `supersecret`
 
 MAX_FILE_SIZE
-    Maximum size of uploadable documents, in a format that NGINX understands, e.g. `20M`.
+    Maximum size of uploadable documents, in bytes, plus 37% more to account for base64 encoding.
+    So the default is 28730982, 20971520 (20MiB) plus 20971520 * 37 / 100.
 
-    Default: `20M`
+    Default: `28730982`
+
+MAX_FILE_SIZE_FRONT
+    Maximum size of uploadable documents, in bytes.
+
+    Default: `20971520`
 
 PREFERRED_URL_SCHEME
     Flask configuration

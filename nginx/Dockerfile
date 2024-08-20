@@ -101,7 +101,7 @@ ENV DISCO_URL=https://md.nordu.net/role/idp.ds
 ENV MDQ_BASE_URL=https://mds.swamid.se/
 ENV MDQ_SIGNER_CERT=md-signer2.crt
 # 20M:
-ENV MAX_FILE_SIZE=20971520
+ENV MAX_FILE_SIZE=28730982
 
 # Add the official NGINX sources repositories and public signing key
 
