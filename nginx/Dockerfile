@@ -1,7 +1,5 @@
 FROM debian:bookworm AS builder
 
-MAINTAINER eperez@emergya.com
-
 # In this temp container we build the frontside bundle and
 # the NGINX modules nginx-http-shibboleth and headers-more-nginx
 
@@ -14,23 +12,12 @@ RUN apt -y update && apt -y upgrade && apt install -y curl gnupg ca-certificates
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 ENV NODE_MAJOR 20
 RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
-RUN apt-get update && apt-get install nodejs -y
 
-RUN touch /etc/apt/sources.list.d/nginx.list
-RUN echo "deb http://nginx.org/packages/debian/ bookworm nginx" >> /etc/apt/sources.list.d/nginx.list
-RUN echo "deb-src http://nginx.org/packages/debian/ bookworm nginx" >> /etc/apt/sources.list.d/nginx.list
-
-WORKDIR /opt
-RUN curl -OL  http://nginx.org/keys/nginx_signing.key
-RUN apt-key add nginx_signing.key
-
-RUN touch /etc/apt/preferences.d/nginx
-RUN echo "Package: nginx" >> /etc/apt/preferences.d/nginx
-RUN echo "Pin: release o=nginx" >> /etc/apt/preferences.d/nginx
-RUN echo "Pin-Priority: 600" >> /etc/apt/preferences.d/nginx
+RUN curl -fSsL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /etc/apt/keyrings/nginx-keyring.gpg
+RUN echo "deb [signed-by=/etc/apt/keyrings/nginx-keyring.gpg] http://nginx.org/packages/mainline/debian bookworm nginx" | tee /etc/apt/sources.list.d/nginx.list
 
 RUN apt -y update && \
-    apt -y install git nginx build-essential fakeroot \
+    apt -y install git nodejs nginx=1.27.1-1~bookworm build-essential fakeroot \
                    libpcre3 libpcre3-dev libpcre2-dev libparse-recdescent-perl libpcrecpp0v5 libssl-dev \
                    openssl zlib1g-dev tar gzip mercurial curl wget libxml2-utils xsltproc \
                    apt-utils lsb-release devscripts quilt sudo && \
@@ -42,8 +29,8 @@ RUN apt -y update && \
 RUN mkdir -p /opt/backend/build
 WORKDIR /opt/backend
 
-RUN curl -OL http://hg.nginx.org/pkg-oss/archive/default.tar.gz
-RUN tar -xzf default.tar.gz
+RUN curl -OL http://hg.nginx.org/pkg-oss/archive/tip.tar.gz
+RUN tar -xzf tip.tar.gz
 RUN mv pkg-* tip
 
 # Build the NGINX modules nginx-http-shibboleth and headers-more-nginx
@@ -107,25 +94,15 @@ ENV MAX_FILE_SIZE=28730982
 
 RUN apt -y update && apt -y upgrade && apt install -y curl gnupg
 
-RUN touch /etc/apt/sources.list.d/nginx.list
-RUN echo "deb http://nginx.org/packages/debian/ bookworm nginx" >> /etc/apt/sources.list.d/nginx.list
-RUN echo "deb-src http://nginx.org/packages/debian/ bookworm nginx" >> /etc/apt/sources.list.d/nginx.list
-
-WORKDIR /opt
-RUN curl -OL  http://nginx.org/keys/nginx_signing.key
-RUN apt-key add nginx_signing.key
-
-RUN touch /etc/apt/preferences.d/nginx
-RUN echo "Package: nginx" >> /etc/apt/preferences.d/nginx
-RUN echo "Pin: release o=nginx" >> /etc/apt/preferences.d/nginx
-RUN echo "Pin-Priority: 600" >> /etc/apt/preferences.d/nginx
+RUN curl -fSsL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /etc/apt/keyrings/nginx-keyring.gpg
+RUN echo "deb [signed-by=/etc/apt/keyrings/nginx-keyring.gpg] http://nginx.org/packages/mainline/debian bookworm nginx" | tee /etc/apt/sources.list.d/nginx.list
 
 # Install needed software.
 
 RUN apt update -y && \
     apt install -y apt-utils  opensaml-schemas opensaml-tools xmltooling-schemas ssl-cert less \
                    libshibsp11 libshibsp-plugins shibboleth-sp-common shibboleth-sp-utils procps \
-                   libpcre3 libpcrecpp0v5 openssl libxml2-utils xsltproc supervisor locales nginx wget curl vim && \
+                   libpcre3 libpcrecpp0v5 openssl libxml2-utils xsltproc supervisor locales nginx=1.27.1-1~bookworm wget curl vim && \
     apt clean -y && \
     rm -rf /var/lib/apt/lists/*
 
