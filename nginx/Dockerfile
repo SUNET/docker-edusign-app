@@ -116,6 +116,8 @@ ENV LC_ALL en_US.UTF-8
 
 # Install the NGINX modules nginx-http-shibboleth and headers-more-nginx previously built in the builder image
 
+WORKDIR /opt
+
 RUN mkdir build
 COPY --from=builder /opt/backend/build/* build/
 RUN dpkg -i build/*.deb
