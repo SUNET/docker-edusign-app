@@ -1,6 +1,6 @@
 FROM debian:bookworm
 
-ARG INSTALL_PACKAGE=install
+ARG INSTALL_PACKAGE=""
 
 # This will create an image with a virtualenv containing the edusign backend
 # sources and gunicorn, and with a script to start a gunicorn process running
@@ -120,7 +120,7 @@ RUN venv/bin/pip install -U pip wheel
 WORKDIR /opt/edusign/edusign-webapp
 
 RUN ../venv/bin/pip install -r requirements.txt
-RUN ../venv/bin/python setup.py $INSTALL_PACKAGE
+RUN ../venv/bin/python -m pip install $INSTALL_PACKAGE .
 RUN ../venv/bin/pip install gunicorn
 
 # Add the script with the main command.
