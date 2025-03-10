@@ -358,6 +358,7 @@ AWS_BUCKET_NAME
 
 DOC_METADATA_CLASS_PATH
     Dotted path to the Python class implementing the backend for the metadata of invitations to sign.
+    alternative value: `edusign_webapp.document.metadata.postgresql.PostgresqlMD`
 
     Default: `edusign_webapp.document.metadata.sqlite.SqliteMD`
 
@@ -366,6 +367,36 @@ SQLITE_MD_DB_PATH
     Filesystem path pointing to a sqlite db.
 
     Default: `/tmp/test.db`
+
+PG_DB_USER
+    PostGreSQL user
+    Only needed when `DOC_METADATA_CLASS_PATH` is set to `edusign_webapp.document.metadata.postgresql.PostgresqlMD`.
+
+    Default: `edusign`
+
+PG_DB_PASSWORD
+    PostGreSQL password
+    Only needed when `DOC_METADATA_CLASS_PATH` is set to `edusign_webapp.document.metadata.postgresql.PostgresqlMD`.
+
+    Default: `edusign`
+
+PG_DB_HOST
+    PostGreSQL host
+    Only needed when `DOC_METADATA_CLASS_PATH` is set to `edusign_webapp.document.metadata.postgresql.PostgresqlMD`.
+
+    Default: `postgres`
+
+PG_DB_PORT
+    PostGreSQL port
+    Only needed when `DOC_METADATA_CLASS_PATH` is set to `edusign_webapp.document.metadata.postgresql.PostgresqlMD`.
+
+    Default: `5432`
+
+PG_DB_PORT
+    PostGreSQL database name
+    Only needed when `DOC_METADATA_CLASS_PATH` is set to `edusign_webapp.document.metadata.postgresql.PostgresqlMD`.
+
+    Default: `edusign`
 
 REDIS_URL
     Only needed when `DOC_METADATA_CLASS_PATH` is set to `edusign_webapp.document.metadata.redis.RedisMD`.
