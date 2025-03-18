@@ -51,7 +51,7 @@ RUN rm -rf build-module-artifacts
 # Get the edusign code from github, pick just the frontend code, and remove the
 # rest.
 #
-ENV EDUSIGN_APP_VERSION v1.4.0b279
+ENV EDUSIGN_APP_VERSION v1.3.1b15
 
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/frontend /opt
