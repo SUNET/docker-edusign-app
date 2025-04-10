@@ -95,7 +95,8 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
             entityID property and adjust discoveryURL to point to discovery service.
             You can also override entityID on /Login query string, or in RequestMap/htaccess.
             -->
-            <SSO discoveryProtocol="SAMLDS" discoveryURL="${DISCO_URL}">
+            <SSO discoveryProtocol="SAMLDS" discoveryURL="${DISCO_URL}"
+                 NameIDFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent">
               SAML2
             </SSO>
             <!-- SAML and local-only logout. -->
