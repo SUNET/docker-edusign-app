@@ -315,6 +315,12 @@ USER_WHITELIST
 
     Default: `whitelisted@eduid.se`
 
+POLLING
+    When does the frontend poll the backend for changes in the invitations. One of 'always', 'inviter', 'never'.
+    The value 'inviter' indicates to poll only when the user has invited others to sign some document.
+
+    Default: `always`
+
 STORAGE_CLASS_PATH
     Dotted path to the Python class implementing the backend for the sorage of documents with invitations to sign.
 

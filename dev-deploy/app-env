@@ -8,6 +8,7 @@ SIGNER_ATTRIBUTES=urn:oid:2.16.840.1.113730.3.1.241,displayName
 SIGN_REQUESTER_ID=https://sig.idsec.se/shibboleth
 SCOPE_WHITELIST=sunet.se,nordu.net,eduid.se,auth.gr,dev.eduid.se
 USER_BLACKLIST=viduj-vamir@eduid.se
+POLLING=always
 STORAGE_CLASS_PATH=edusign_webapp.document.storage.local.LocalStorage
 AWS_ENDPOINT_URL=https://storage.googleapis.com
 AWS_ACCESS_KEY=REDACTED
