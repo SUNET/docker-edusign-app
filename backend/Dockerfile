@@ -112,8 +112,6 @@ RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/e
 # Install the edusign backend code
 # and gunicorn.
 
-ENV UV_PROJECT_ENVIRONMENT /opt/edusign
-
 WORKDIR /opt/edusign/edusign-webapp
 
 RUN uv python install 3.12

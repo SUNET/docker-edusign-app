@@ -36,7 +36,7 @@ echo ""
 echo "$0: Starting ${edusign_name}"
 
 exec start-stop-daemon --start -c edusign:edusign --exec \
-     /opt/edusign/.venv/bin/gunicorn \
+     /opt/edusign/edusign-webapp/.venv/bin/gunicorn \
      --pidfile "${state_dir}/${edusign_name}.pid" \
      --user=edusign --group=edusign -- \
      --bind 0.0.0.0:8080 \
