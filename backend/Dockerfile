@@ -76,7 +76,6 @@ ENV LC_ALL en_US.UTF-8
 ADD https://astral.sh/uv/0.7.8/install.sh /uv-installer.sh
 RUN sh /uv-installer.sh && rm /uv-installer.sh
 ENV PATH="/root/.local/bin/:$PATH"
-RUN uv python install 3.12
 
 # Add edusign user to run the service as
 
@@ -117,6 +116,7 @@ ENV UV_PROJECT_ENVIRONMENT /opt/edusign
 
 WORKDIR /opt/edusign/edusign-webapp
 
+RUN uv python install 3.12
 RUN uv sync $INSTALL_PACKAGE
 RUN uv add gunicorn
 
