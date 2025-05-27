@@ -28,10 +28,6 @@ case $DEBUG in
   (true) extra_args="--reload"
 esac
 
-# nice to have in docker run output, to check what
-# version of something is actually running.
-/opt/edusign/venv/bin/pip freeze
-
 echo ""
 echo "$0: Starting ${edusign_name}"
 
