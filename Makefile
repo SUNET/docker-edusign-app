@@ -30,13 +30,13 @@ publish-app: build-app push-app
 ## Build the APP image
 .PHONY: build-app
 build-app:
-	docker build --no-cache=$(NO_CACHE) -t $(NAME_APP):$(VERSION_APP) $(DIR_APP)
+	docker build --build-arg INSTALL_PACKAGE="--no-editable" --no-cache=$(NO_CACHE) -t $(NAME_APP):$(VERSION_APP) $(DIR_APP)
 	docker tag $(NAME_APP):$(VERSION_APP) docker.sunet.se/$(NAME_APP):$(VERSION_APP)
 
 ## Build the APP image for development
 .PHONY: build-app-develop
 build-app-develop:
-	docker build --build-arg INSTALL_PACKAGE="--editable" --no-cache=$(NO_CACHE) -t $(NAME_APP):$(VERSION_APP) $(DIR_APP)
+	docker build --no-cache=$(NO_CACHE) -t $(NAME_APP):$(VERSION_APP) $(DIR_APP)
 	docker tag $(NAME_APP):$(VERSION_APP) docker.sunet.se/$(NAME_APP):$(VERSION_APP)
 
 ## Update the APP image

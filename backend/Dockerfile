@@ -73,15 +73,8 @@ ENV LC_ALL en_US.UTF-8
 
 # install python
 
-RUN curl -O https://www.python.org/ftp/python/3.12.6/Python-3.12.6.tar.xz && \
-    tar -xf Python-3.12.6.tar.xz && \
-    cd Python-3.12.6 && \
-    ./configure --enable-optimizations --enable-loadable-sqlite-extensions && \
-    make -j 4 && \
-    make install && \
-    cd .. && \
-    rm -rf Python-3.12.6 Python-3.12.6.tar.xz  
-
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+RUN uv python install 3.12
 
 # Add edusign user to run the service as
 
@@ -111,23 +104,19 @@ COPY custom/*.md /etc/edusign
 
 ENV EDUSIGN_APP_VERSION v1.6.0b31
 
-RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
-RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp
-RUN rm -rf /tmp/edusign-app
+RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app && \
+    mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp && \
+    rm -rf /tmp/edusign-app
 
-WORKDIR /opt/edusign
-
-# Make a python virtualenv, update pip, and install the edusign backend code
+# Install the edusign backend code
 # and gunicorn.
 
-RUN python3 -m venv venv
-RUN venv/bin/pip install -U pip wheel
+ENV UV_PROJECT_ENVIRONMENT /opt/edusign
 
 WORKDIR /opt/edusign/edusign-webapp
 
-RUN ../venv/bin/pip install -r requirements.txt
-RUN ../venv/bin/python -m pip install $INSTALL_PACKAGE .
-RUN ../venv/bin/pip install gunicorn
+RUN uv sync $INSTALL_PACKAGE
+RUN uv add gunicorn
 
 # Add the script with the main command.
 
