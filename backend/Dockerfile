@@ -73,7 +73,9 @@ ENV LC_ALL en_US.UTF-8
 
 # install python
 
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ADD https://astral.sh/uv/0.7.8/install.sh /uv-installer.sh
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+ENV PATH="/root/.local/bin/:$PATH"
 RUN uv python install 3.12
 
 # Add edusign user to run the service as
