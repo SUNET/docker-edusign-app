@@ -18,8 +18,6 @@ worker_timeout=${worker_timeout-30}
 # Need to tell Gunicorn to trust the X-Forwarded-* headers
 forwarded_allow_ips=${forwarded_allow_ips-'*'}
 
-chown -R edusign: "${log_dir}" "${state_dir}"
-
 extra_args=""
 
 case $DEBUG in
@@ -29,10 +27,7 @@ esac
 echo ""
 echo "$0: Starting ${edusign_name}"
 
-exec start-stop-daemon --start -c edusign:edusign --exec /home/edusign/.local/bin/uv \
-     --pidfile "${state_dir}/${edusign_name}.pid" \
-     --user=edusign --group=edusign -- \
-     run --with gunicorn gunicorn \
+exec uv run gunicorn \
      --bind 0.0.0.0:8080 \
      --workers ${workers} --worker-class ${worker_class} \
      --threads ${worker_threads} --timeout ${worker_timeout} \

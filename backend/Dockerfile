@@ -121,13 +121,14 @@ WORKDIR /opt/edusign/edusign-webapp
 
 RUN uv python install 3.12
 RUN uv sync $INSTALL_PACKAGE
+RUN uv add gunicorn
 
 # Add the script with the main command.
 
-COPY ./start.sh /start.sh
+COPY ./start.sh /opt/edusign/edusign-webapp/start.sh
 
 EXPOSE 8080
 
 ENV DEBUG=false
 
-CMD ["bash", "/start.sh"]
+CMD ["bash", "./start.sh"]
