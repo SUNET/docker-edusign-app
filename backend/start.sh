@@ -29,10 +29,12 @@ esac
 echo ""
 echo "$0: Starting ${edusign_name}"
 
-exec start-stop-daemon --start -c edusign:edusign --exec \
-     uv run gunicorn \
+exec start-stop-daemon --start -c edusign:edusign --exec /usr/local/bin/uv --pidfile /opt/edusign/run/edusign-webapp.pid --user=edusign --group=edusign -- run gunicorn --bind 0.0.0.0:8080 --workers 1 --worker-class sync --threads 1 --timeout 30 '--forwarded-allow-ips=*' --access-logfile /var/log/edusign/edusign-webapp-access.log --error-logfile /var/log/edusign/edusign-webapp-error.log --capture-output --reload edusign_webapp.run:app
+
+exec start-stop-daemon --start -c edusign:edusign --exec uv \
      --pidfile "${state_dir}/${edusign_name}.pid" \
      --user=edusign --group=edusign -- \
+     run gunicorn \
      --bind 0.0.0.0:8080 \
      --workers ${workers} --worker-class ${worker_class} \
      --threads ${worker_threads} --timeout ${worker_timeout} \

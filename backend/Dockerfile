@@ -71,16 +71,10 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
-# install python
-
-ADD https://astral.sh/uv/0.7.8/install.sh /uv-installer.sh
-RUN sh /uv-installer.sh && rm /uv-installer.sh
-ENV PATH="/root/.local/bin/:$PATH"
-
 # Add edusign user to run the service as
 
-RUN addgroup --system edusign
-RUN adduser --system --shell /bin/false edusign
+RUN addgroup edusign
+RUN adduser edusign
 
 # Create run and log directories
 
@@ -105,9 +99,16 @@ COPY custom/*.md /etc/edusign
 
 ENV EDUSIGN_APP_VERSION v1.6.0b38
 
+USER edusign
+
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app && \
     mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp && \
     rm -rf /tmp/edusign-app
+
+# install uv
+
+ADD https://astral.sh/uv/0.7.8/install.sh /uv-installer.sh
+RUN sh /uv-installer.sh && rm /uv-installer.sh
 
 # Install the edusign backend code
 # and gunicorn.
