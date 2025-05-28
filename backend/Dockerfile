@@ -106,8 +106,7 @@ RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/e
 
 # install uv
 
-ADD https://astral.sh/uv/0.7.8/install.sh /opt/edusign/uv-installer.sh
-RUN sh /opt/edusign/uv-installer.sh && rm /opt/edusign/uv-installer.sh
+RUN curl -LsSf https://astral.sh/uv/0.7.8/install.sh | sh
 
 # Install the edusign backend code
 # and gunicorn.
