@@ -73,7 +73,6 @@ ENV LC_ALL en_US.UTF-8
 
 # Add edusign user to run the service as
 
-RUN addgroup edusign
 RUN adduser edusign
 
 # Create run and log directories
