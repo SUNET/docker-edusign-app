@@ -82,8 +82,8 @@ RUN chown -R edusign /var/log/edusign
 RUN chmod -R 770 /var/log/edusign
 
 RUN mkdir -p /opt/edusign/run
-RUN chown -R edusign /opt/edusign/run
-RUN chmod -R 770 /opt/edusign/run
+RUN chown -R edusign /opt/edusign
+RUN chmod -R 770 /opt/edusign
 
 # Add custom markdown pages
 
