@@ -97,7 +97,7 @@ COPY custom/*.md /etc/edusign
 # Get the edusign sources from github, pick the backend sources
 # and put them in /opt/edusign, and get rid of the rest.
 
-ENV EDUSIGN_APP_VERSION v1.6.0b38
+ENV EDUSIGN_APP_VERSION v1.6.0b39
 
 USER edusign
 
