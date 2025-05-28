@@ -93,6 +93,12 @@ RUN chmod -R 770 /etc/edusign
 
 COPY custom/*.md /etc/edusign
 
+# installing uv
+
+ADD https://astral.sh/uv/0.7.8/install.sh /opt/edusign/uv-installer.sh
+RUN chown edusign /opt/edusign/uv-installer.sh
+RUN chmod 775 /opt/edusign/uv-installer.sh
+
 # Get the edusign sources from github, pick the backend sources
 # and put them in /opt/edusign, and get rid of the rest.
 
@@ -103,10 +109,11 @@ USER edusign
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app && \
     mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp && \
     rm -rf /tmp/edusign-app
+RUN sh /opt/edusign/uv-installer.sh && rm /opt/edusign/uv-installer.sh
 
-# install uv
+# installing uv
 
-RUN curl -LsSf https://astral.sh/uv/0.7.8/install.sh | sh
+RUN /opt/edusign/uv-installer.sh
 
 # Install the edusign backend code
 # and gunicorn.
