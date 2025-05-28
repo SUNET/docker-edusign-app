@@ -121,7 +121,6 @@ WORKDIR /opt/edusign/edusign-webapp
 
 RUN uv python install 3.12
 RUN uv sync $INSTALL_PACKAGE
-RUN uv add gunicorn
 
 # Add the script with the main command.
 
