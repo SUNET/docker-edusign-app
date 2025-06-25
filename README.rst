@@ -430,6 +430,11 @@ UI_ORDERED_INVITATIONS
 
     Default: False
 
+DEFAULT_LOA
+    Default assurance level in the invitation form. Can be one of 'none', 'low', 'medium', 'high'
+
+    Default: none
+
 In addition it is necessary to provide the app with access to some SMTP server,
 setting the variables `indicated here <https://flask-mailman.readthedocs.io/en/latest/>`_.
 
