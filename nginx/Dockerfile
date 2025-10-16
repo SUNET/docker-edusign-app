@@ -7,6 +7,137 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Install needed software
 
+
+# Builder stage
+FROM debian:bookworm AS builder
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpcre3-dev \
+    zlib1g-dev \
+    libssl-dev \
+    libgd-dev \
+    libgeoip-dev \
+    wget \
+    git \
+    checkinstall \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set nginx version
+ENV NGINX_VERSION=1.26.2
+
+# Download and extract nginx
+WORKDIR /tmp
+RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
+    && tar -xzf nginx-${NGINX_VERSION}.tar.gz
+
+# Clone the modules
+RUN git clone https://github.com/nginx-shib/nginx-http-shibboleth.git \
+    && git clone https://github.com/openresty/headers-more-nginx-module.git
+
+# Compile nginx with modules
+WORKDIR /tmp/nginx-${NGINX_VERSION}
+RUN ./configure \
+    --prefix=/etc/nginx \
+    --sbin-path=/usr/sbin/nginx \
+    --modules-path=/usr/lib/nginx/modules \
+    --conf-path=/etc/nginx/nginx.conf \
+    --error-log-path=/var/log/nginx/error.log \
+    --http-log-path=/var/log/nginx/access.log \
+    --pid-path=/var/run/nginx.pid \
+    --lock-path=/var/run/nginx.lock \
+    --http-client-body-temp-path=/var/cache/nginx/client_temp \
+    --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+    --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
+    --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
+    --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+    --user=nginx \
+    --group=nginx \
+    --with-http_ssl_module \
+    --with-http_realip_module \
+    --with-http_addition_module \
+    --with-http_sub_module \
+    --with-http_dav_module \
+    --with-http_flv_module \
+    --with-http_mp4_module \
+    --with-http_gunzip_module \
+    --with-http_gzip_static_module \
+    --with-http_random_index_module \
+    --with-http_secure_link_module \
+    --with-http_stub_status_module \
+    --with-http_auth_request_module \
+    --with-http_v2_module \
+    --with-threads \
+    --with-stream \
+    --with-stream_ssl_module \
+    --with-http_slice_module \
+    --with-file-aio \
+    --add-module=/tmp/nginx-http-shibboleth \
+    --add-module=/tmp/headers-more-nginx-module \
+    && make
+
+# Create a .deb package using checkinstall
+RUN checkinstall -y \
+    --pkgname=nginx-custom \
+    --pkgversion=${NGINX_VERSION} \
+    --pkgrelease=1 \
+    --pkggroup=web \
+    --maintainer="custom@example.com" \
+    --requires="libpcre3,zlib1g,libssl3" \
+    --nodoc \
+    --strip=yes \
+    --stripso=yes \
+    --install=no \
+    make install
+
+# Create post-install script
+RUN mkdir -p /packages
+RUN mv *.deb /packages/
+
+# Final stage
+FROM debian:bookworm
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    libpcre3 \
+    zlib1g \
+    libssl3 \
+    libgd3 \
+    libgeoip1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the .deb package from builder
+COPY --from=builder /packages/*.deb /tmp/
+
+# Install the package
+RUN dpkg -i /tmp/*.deb \
+    && rm /tmp/*.deb
+
+# Create nginx user and required directories
+RUN useradd -r -s /bin/false nginx || true \
+    && mkdir -p /var/cache/nginx/client_temp \
+    && mkdir -p /var/cache/nginx/proxy_temp \
+    && mkdir -p /var/cache/nginx/fastcgi_temp \
+    && mkdir -p /var/cache/nginx/uwsgi_temp \
+    && mkdir -p /var/cache/nginx/scgi_temp \
+    && chown -R nginx:nginx /var/cache/nginx
+
+# Expose ports
+EXPOSE 80 443
+
+# Stop signal
+STOPSIGNAL SIGQUIT
+
+CMD ["nginx", "-g", "daemon off;"]
+
+
+
+
+
+
+
+
 RUN apt -y update && apt -y upgrade && apt install -y curl gnupg ca-certificates
 
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
