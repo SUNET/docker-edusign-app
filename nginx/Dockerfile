@@ -22,10 +22,33 @@ RUN apt-get update && apt-get install -y \
     wget \
     git \
     checkinstall \
+    curl \
+    gnupg \
+    ca-certificates \
+    libparse-recdescent-perl \
+    libpcrecpp0v5 \
+    tar \
+    gzip \
+    mercurial \
+    libxml2-utils \
+    xsltproc \
+    apt-utils \
+    lsb-release \
+    devscripts \
+    quilt \
+    sudo \
+    fakeroot \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+ENV NODE_MAJOR 20
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+
+RUN apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 # Set nginx version
-ENV NGINX_VERSION=1.26.2
+ENV NGINX_VERSION=1.29.2
 
 # Download and extract nginx
 WORKDIR /tmp
@@ -95,90 +118,6 @@ RUN checkinstall -y \
 RUN mkdir -p /packages
 RUN mv *.deb /packages/
 
-# Final stage
-FROM debian:bookworm
-
-# Install runtime dependencies
-RUN apt-get update && apt-get install -y \
-    libpcre3 \
-    zlib1g \
-    libssl3 \
-    libgd3 \
-    libgeoip1 \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy the .deb package from builder
-COPY --from=builder /packages/*.deb /tmp/
-
-# Install the package
-RUN dpkg -i /tmp/*.deb \
-    && rm /tmp/*.deb
-
-# Create nginx user and required directories
-RUN useradd -r -s /bin/false nginx || true \
-    && mkdir -p /var/cache/nginx/client_temp \
-    && mkdir -p /var/cache/nginx/proxy_temp \
-    && mkdir -p /var/cache/nginx/fastcgi_temp \
-    && mkdir -p /var/cache/nginx/uwsgi_temp \
-    && mkdir -p /var/cache/nginx/scgi_temp \
-    && chown -R nginx:nginx /var/cache/nginx
-
-# Expose ports
-EXPOSE 80 443
-
-# Stop signal
-STOPSIGNAL SIGQUIT
-
-CMD ["nginx", "-g", "daemon off;"]
-
-
-
-
-
-
-
-
-RUN apt -y update && apt -y upgrade && apt install -y curl gnupg ca-certificates
-
-RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-ENV NODE_MAJOR 20
-RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
-
-RUN curl -fSsL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /etc/apt/keyrings/nginx-keyring.gpg
-RUN echo "deb [signed-by=/etc/apt/keyrings/nginx-keyring.gpg] http://nginx.org/packages/mainline/debian bookworm nginx" | tee /etc/apt/sources.list.d/nginx.list
-
-RUN apt -y update && \
-    apt -y install git nodejs nginx=1.27.1-1~bookworm build-essential fakeroot \
-                   libpcre3 libpcre3-dev libpcre2-dev libparse-recdescent-perl libpcrecpp0v5 libssl-dev \
-                   openssl zlib1g-dev tar gzip mercurial curl wget libxml2-utils xsltproc \
-                   apt-utils lsb-release devscripts quilt sudo && \
-    apt -y clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Get software that builds NGINX modules
-
-RUN mkdir -p /opt/backend/build
-WORKDIR /opt/backend
-
-RUN curl -OL http://hg.nginx.org/pkg-oss/archive/tip.tar.gz
-RUN tar -xzf tip.tar.gz
-RUN mv pkg-* tip
-
-# Build the NGINX modules nginx-http-shibboleth and headers-more-nginx
-# see https://tcg.stanford.edu/?p=131
-
-RUN curl -X GET http://hg.nginx.org/xslscript/raw-file/tip/xslscript.pl -o /usr/local/bin/xslscript.pl
-RUN chmod 755 /usr/local/bin/xslscript.pl
-
-RUN ./tip/build_module.sh -v "$(echo $(nginx -v 2>&1) | grep -o '[0-9.]*$')" https://github.com/nginx-shib/nginx-http-shibboleth.git
-#RUN mv build-module-artifacts/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb build/
-RUN mv build-module-artifacts/*.deb build/
-RUN rm -rf build-module-artifacts
-RUN ./tip/build_module.sh -v "$(echo $(nginx -v 2>&1) | grep -o '[0-9.]*$')" https://github.com/openresty/headers-more-nginx-module.git
-#RUN mv build-module-artifacts/nginx-module-headersmore_1.18.0-1~buster_amd64.deb build/
-RUN mv build-module-artifacts/*.deb build/
-RUN rm -rf build-module-artifacts
-
 # Get the edusign code from github, pick just the frontend code, and remove the
 # rest.
 #
@@ -199,6 +138,7 @@ RUN npm install && npm run build-pro && npm run build-dev && cp node_modules/pdf
 # End builder image
 #----------------------------
 
+# Final stage
 FROM debian:bookworm AS sp
 
 # This will produce an image to create containers that run a supervisor
@@ -221,21 +161,34 @@ ENV MDQ_SIGNER_CERT=md-signer2.crt
 # 20M:
 ENV MAX_FILE_SIZE=28730982
 
-# Add the official NGINX sources repositories and public signing key
-
-RUN apt -y update && apt -y upgrade && apt install -y curl gnupg
-
-RUN curl -fSsL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /etc/apt/keyrings/nginx-keyring.gpg
-RUN echo "deb [signed-by=/etc/apt/keyrings/nginx-keyring.gpg] http://nginx.org/packages/mainline/debian bookworm nginx" | tee /etc/apt/sources.list.d/nginx.list
-
-# Install needed software.
-
-RUN apt update -y && \
-    apt install -y apt-utils  opensaml-schemas opensaml-tools xmltooling-schemas ssl-cert less \
-                   libshibsp11 libshibsp-plugins shibboleth-sp-common shibboleth-sp-utils procps \
-                   libpcre3 libpcrecpp0v5 openssl libxml2-utils xsltproc supervisor locales nginx=1.27.1-1~bookworm wget curl vim && \
-    apt clean -y && \
-    rm -rf /var/lib/apt/lists/*
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    libpcre3 \
+    zlib1g \
+    libssl3 \
+    libgd3 \
+    libgeoip1 \
+    apt-utils  \
+    opensaml-schemas \
+    opensaml-tools \
+    xmltooling-schemas \
+    ssl-cert \
+    less \
+    libshibsp11 \
+    libshibsp-plugins \
+    shibboleth-sp-common \
+    shibboleth-sp-utils \
+    procps \
+    libpcrecpp0v5 \
+    openssl \
+    libxml2-utils \
+    xsltproc \
+    supervisor \
+    locales \
+    wget \
+    curl \
+    vim \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set the locale
 #
@@ -245,14 +198,24 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
-# Install the NGINX modules nginx-http-shibboleth and headers-more-nginx previously built in the builder image
+# Copy the .deb package from builder
+COPY --from=builder /packages/*.deb /tmp/
 
-WORKDIR /opt
+# Install the package
+RUN dpkg -i /tmp/*.deb \
+    && rm /tmp/*.deb
 
-RUN mkdir build
-COPY --from=builder /opt/backend/build/* build/
-RUN dpkg -i build/*.deb
-#RUN dpkg -i build/nginx-module-shibboleth_1.18.0-1~buster_amd64.deb build/nginx-module-headersmore_1.18.0-1~buster_amd64.deb
+# Create nginx user and required directories
+RUN useradd -r -s /bin/false nginx || true \
+    && mkdir -p /var/cache/nginx/client_temp \
+    && mkdir -p /var/cache/nginx/proxy_temp \
+    && mkdir -p /var/cache/nginx/fastcgi_temp \
+    && mkdir -p /var/cache/nginx/uwsgi_temp \
+    && mkdir -p /var/cache/nginx/scgi_temp \
+    && chown -R nginx:nginx /var/cache/nginx
+
+# Expose ports
+EXPOSE 80 443
 
 # Get the js bundle built in the builder image
 #
