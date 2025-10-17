@@ -1,13 +1,3 @@
-FROM debian:bookworm AS builder
-
-# In this temp container we build the frontside bundle and
-# the NGINX modules nginx-http-shibboleth and headers-more-nginx
-
-ENV DEBIAN_FRONTEND noninteractive
-
-# Install needed software
-
-
 # Builder stage
 FROM debian:bookworm AS builder
 
@@ -25,30 +15,23 @@ RUN apt-get update && apt-get install -y \
     curl \
     gnupg \
     ca-certificates \
-    libparse-recdescent-perl \
-    libpcrecpp0v5 \
     tar \
     gzip \
     mercurial \
-    libxml2-utils \
-    xsltproc \
-    apt-utils \
-    lsb-release \
-    devscripts \
     quilt \
     sudo \
     fakeroot \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-ENV NODE_MAJOR 20
-RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
-
-RUN apt-get install -y nodejs \
+    apt-utils \
+    lsb-release \
+    devscripts \
+    libparse-recdescent-perl \
+    libpcrecpp0v5 \
+    libxml2-utils \
+    xsltproc \
     && rm -rf /var/lib/apt/lists/*
 
 # Set nginx version
-ENV NGINX_VERSION=1.29.2
+ENV NGINX_VERSION=1.26.2
 
 # Download and extract nginx
 WORKDIR /tmp
@@ -100,23 +83,41 @@ RUN ./configure \
     --add-module=/tmp/headers-more-nginx-module \
     && make
 
-# Create a .deb package using checkinstall
-RUN checkinstall -y \
-    --pkgname=nginx-custom \
-    --pkgversion=${NGINX_VERSION} \
-    --pkgrelease=1 \
-    --pkggroup=web \
-    --maintainer="custom@example.com" \
-    --requires="libpcre3,zlib1g,libssl3" \
-    --nodoc \
-    --strip=yes \
-    --stripso=yes \
-    --install=no \
-    make install
+# Install to a staging directory
+RUN make install DESTDIR=/tmp/nginx-install
 
-# Create post-install script
-RUN mkdir -p /packages
-RUN mv *.deb /packages/
+# Create directory structure for the package
+RUN mkdir -p /tmp/nginx-package/DEBIAN \
+    && mkdir -p /tmp/nginx-package \
+    && mkdir -p /packages
+
+# Copy installed files to package directory
+RUN cp -a /tmp/nginx-install/* /tmp/nginx-package/
+
+# Create control file
+RUN echo "Package: nginx-custom\n\
+Version: ${NGINX_VERSION}-1\n\
+Section: web\n\
+Priority: optional\n\
+Architecture: amd64\n\
+Depends: libpcre3, zlib1g, libssl3, libgd3, libgeoip1\n\
+Maintainer: Custom <custom@example.com>\n\
+Description: Nginx with Shibboleth and Headers More modules\n\
+ Custom build of nginx ${NGINX_VERSION} with additional modules:\n\
+ - nginx-http-shibboleth\n\
+ - headers-more-nginx-module" > /tmp/nginx-package/DEBIAN/control
+
+# Build the .deb package
+RUN dpkg-deb --build /tmp/nginx-package /packages/nginx-custom_${NGINX_VERSION}-1_amd64.deb
+
+# Build JS bundle
+
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+ENV NODE_MAJOR 20
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+
+RUN apt-get update && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
 # Get the edusign code from github, pick just the frontend code, and remove the
 # rest.
@@ -212,7 +213,9 @@ RUN useradd -r -s /bin/false nginx || true \
     && mkdir -p /var/cache/nginx/fastcgi_temp \
     && mkdir -p /var/cache/nginx/uwsgi_temp \
     && mkdir -p /var/cache/nginx/scgi_temp \
-    && chown -R nginx:nginx /var/cache/nginx
+    && mkdir -p /var/log/nginx \
+    && chown -R nginx:nginx /var/cache/nginx \
+    && chown -R nginx:nginx /var/log/nginx
 
 # Expose ports
 EXPOSE 80 443
