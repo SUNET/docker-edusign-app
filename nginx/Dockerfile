@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set nginx version
-ENV NGINX_VERSION=1.26.2
+ENV NGINX_VERSION=1.29.2
 
 # Download and extract nginx
 WORKDIR /tmp
