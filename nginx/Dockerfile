@@ -121,7 +121,7 @@ RUN mv *.deb /packages/
 # Get the edusign code from github, pick just the frontend code, and remove the
 # rest.
 #
-ENV EDUSIGN_APP_VERSION v1.4.0b303
+ENV EDUSIGN_APP_VERSION v1.4.0b304
 
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/frontend /opt
