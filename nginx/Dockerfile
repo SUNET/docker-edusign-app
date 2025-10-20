@@ -214,11 +214,15 @@ RUN useradd -r -s /bin/false nginx || true \
     && mkdir -p /var/cache/nginx/uwsgi_temp \
     && mkdir -p /var/cache/nginx/scgi_temp \
     && mkdir -p /var/log/nginx \
+    && mkdir -p /usr/lib/nginx/modules \
+    && chown -R nginx:nginx /usr/lib/nginx/modules \
     && chown -R nginx:nginx /var/cache/nginx \
     && chown -R nginx:nginx /var/log/nginx
 
 # Expose ports
 EXPOSE 80 443
+
+WORKDIR /opt
 
 # Get the js bundle built in the builder image
 #

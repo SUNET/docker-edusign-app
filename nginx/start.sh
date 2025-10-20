@@ -157,10 +157,7 @@ EOF
 
 cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 cat>/etc/nginx/nginx.conf<<EOF
-load_module modules/ngx_http_shibboleth_module.so;
-load_module modules/ngx_http_headers_more_filter_module.so;
-
-user www-data;
+user nginx;
 worker_processes  1;
 
 events {
