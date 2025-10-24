@@ -157,6 +157,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ENV SP_HOSTNAME=sp.edusign.docker
 ENV DISCO_URL=https://md.nordu.net/role/idp.ds
+ENV BANKID_ENTITY_ID=https://login.idp.eduid.se/idp.xml
 ENV MDQ_BASE_URL=https://mds.swamid.se/
 ENV MDQ_SIGNER_CERT=md-signer2.crt
 # 20M:

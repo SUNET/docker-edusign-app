@@ -12,7 +12,11 @@ if [ "x$CERTNAME" = "x" ]; then
 fi
 
 if [ "x$DISCO_URL" = "x" ]; then
-   DISCO_URL="https://md.nordu.net/role/idp.ds"
+   DISCO_URL="https://login.idp.eduid.se/idp.xml"
+fi
+
+if [ "x$BANKID_ENTITY_ID" = "x" ]; then
+   BANKID_ENTITY_ID="https://bankid.sunet.se/idp"
 fi
 
 if [ "x$SP_ABOUT" = "x" ]; then
@@ -94,10 +98,19 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
             Configures SSO for a default IdP. To properly allow for >1 IdP, remove
             entityID property and adjust discoveryURL to point to discovery service.
             You can also override entityID on /Login query string, or in RequestMap/htaccess.
-            -->
             <SSO discoveryProtocol="SAMLDS" discoveryURL="${DISCO_URL}">
               SAML2
             </SSO>
+            -->
+            <SessionInitiator type="Chaining" Location="/Login" isDefault="true" id="default">
+                <SessionInitiator type="SAML2" defaultACSIndex="1" acsByIndex="false" template="bindingTemplate.html"/>
+                <SessionInitiator type="Shib1" defaultACSIndex="5"/>
+                <SessionInitiator type="SAMLDS" URL="${DISCO_URL}"/>
+            </SessionInitiator>
+
+            <SessionInitiator type="Chaining" Location="/LoginBankID" id="bankid">
+                <SessionInitiator type="SAML2" entityID="${BANKID_ENTITY_ID}"/>
+            </SessionInitiator>
             <!-- SAML and local-only logout. -->
             <Logout>SAML2 Local</Logout>
             <!-- Administrative logout. -->
@@ -249,6 +262,22 @@ http {
       location /sign {
         shib_request /shibauthorizer;
         shib_request_use_headers on;
+        more_set_input_headers 'X-Shibboleth-SessionInitiator: default';
+        include shib_clear_headers;
+        proxy_pass ${BACKEND_URL};
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header Host \$host;
+        proxy_redirect default;
+        proxy_buffering off;
+      }
+
+    # Location secured by Shibboleth
+      location /bankid {
+        shib_request /shibauthorizer;
+        shib_request_use_headers on;
+        more_set_input_headers 'X-Shibboleth-SessionInitiator: bankid';
         include shib_clear_headers;
         proxy_pass ${BACKEND_URL};
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
