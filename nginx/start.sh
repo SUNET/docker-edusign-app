@@ -112,7 +112,9 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
                 <SessionInitiator type="SAML2" entityID="${BANKID_ENTITY_ID}"/>
             </SessionInitiator>
             <!-- SAML and local-only logout. -->
+            <!--
             <Logout>SAML2 Local</Logout>
+            -->
             <!-- Administrative logout. -->
             <LogoutInitiator type="Admin" Location="/Logout/Admin" acl="127.0.0.1 ::1" />
           
