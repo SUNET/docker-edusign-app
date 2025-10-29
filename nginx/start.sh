@@ -16,7 +16,7 @@ if [ "x$DISCO_URL" = "x" ]; then
 fi
 
 if [ "x$BANKID_ENTITY_ID" = "x" ]; then
-   BANKID_ENTITY_ID="https://bankid.sunet.se/idp"
+   BANKID_ENTITY_ID="https://bankidp.swamid.se/bankid/idp"
 fi
 
 if [ "x$SP_ABOUT" = "x" ]; then
@@ -98,23 +98,16 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
             Configures SSO for a default IdP. To properly allow for >1 IdP, remove
             entityID property and adjust discoveryURL to point to discovery service.
             You can also override entityID on /Login query string, or in RequestMap/htaccess.
+            -->
             <SSO discoveryProtocol="SAMLDS" discoveryURL="${DISCO_URL}">
               SAML2
             </SSO>
-            -->
-            <SessionInitiator type="Chaining" Location="/Login" isDefault="true" id="default">
-                <SessionInitiator type="SAML2" defaultACSIndex="1" acsByIndex="false" template="bindingTemplate.html"/>
-                <SessionInitiator type="Shib1" defaultACSIndex="5"/>
-                <SessionInitiator type="SAMLDS" URL="${DISCO_URL}"/>
-            </SessionInitiator>
 
-            <SessionInitiator type="Chaining" Location="/LoginBankID" id="bankid">
-                <SessionInitiator type="SAML2" entityID="${BANKID_ENTITY_ID}"/>
-            </SessionInitiator>
+            <SessionInitiator type="SAML2" Location="/Login/BankID" id="bankid"
+                         entityID="${BANKID_ENTITY_ID}"/>
             <!-- SAML and local-only logout. -->
-            <!--
             <Logout>SAML2 Local</Logout>
-            -->
+
             <!-- Administrative logout. -->
             <LogoutInitiator type="Admin" Location="/Logout/Admin" acl="127.0.0.1 ::1" />
           

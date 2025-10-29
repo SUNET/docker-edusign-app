@@ -541,6 +541,11 @@ DISCO_URL
 
     Default: `https://md.nordu.net/role/idp.ds`
 
+BANKID_ENTITY_ID
+    EntityID of the BankID SAML IdP.
+
+    Default: `https://bankidp.swamid.se/bankid/idp`
+
 MDQ_BASE_URL:
     Base URL for an MDQ server, used 
 
