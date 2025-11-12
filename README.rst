@@ -379,6 +379,36 @@ REDIS_URL
 
     Default: `redis://localhost:6379/0`.
 
+ALLOW_BANKID
+    Whether to show the UI widget that allows inviters to let invitees sign with BankID
+
+    efault: false
+
+BANKID_IDP
+    entityID of the BankID SAML2 IdP
+
+    Default: `https://bankid.com/shibboleth`
+
+BANKID_ORG_NAME
+    Organization name for the BankID IdP
+
+    Default: BankID
+
+BANKID_AUTHN_METHOD
+    Authentication method for the BankID IdP
+
+    Default: `urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport`
+    
+BANKID_AUTHN_CONTEXT_CLASS
+    Authentication Context Class for the BankID IdP.
+
+    Default: `urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport`
+
+BANKID_SSN_ATTR
+    SAML2 attribute that carries the Swedish SSN in assertions coming from the BankID IdP.
+
+    Default: `urn:oid:1.3.6.1.4.1.5923.1.1.1.6`
+
 MAX_SIGNATURES
     The maximum number of signatures that fit in a document.
 
