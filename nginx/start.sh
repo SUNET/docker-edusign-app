@@ -167,7 +167,7 @@ EOF
 
 cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 cat>/etc/nginx/nginx.conf<<EOF
-user nginx;
+user www-data;
 worker_processes  1;
 
 events {

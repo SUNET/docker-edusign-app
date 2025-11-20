@@ -215,10 +215,14 @@ RUN useradd -r -s /bin/false nginx || true \
     && mkdir -p /var/cache/nginx/uwsgi_temp \
     && mkdir -p /var/cache/nginx/scgi_temp \
     && mkdir -p /var/log/nginx \
+    && mkdir -p /var/log/supervisor \
+    && mkdir -p /var/log/edusign \
     && mkdir -p /usr/lib/nginx/modules \
-    && chown -R nginx:nginx /usr/lib/nginx/modules \
-    && chown -R nginx:nginx /var/cache/nginx \
-    && chown -R nginx:nginx /var/log/nginx
+    && mkdir -p /var/run/shibboleth \
+    && chown -R www-data:www-data /usr/lib/nginx/modules \
+    && chown -R www-data:www-data /var/cache/nginx \
+    && chown -R www-data:www-data /var/log/nginx \
+    && chmod -R 777 /var/log
 
 # Expose ports
 EXPOSE 80 443
@@ -235,13 +239,6 @@ COPY custom/* assets/*
 # Create run directory for shibboleth
 
 RUN mkdir -p /var/run/shibboleth
-
-# Create log directories
-#
-RUN mkdir -p /var/log/supervisor
-RUN mkdir -p /var/log/edusign
-RUN mkdir -p /var/log/nginx
-RUN chmod -R 777 /var/log
 
 # Copy NGINX configuration files into /etc/nginx/
 
