@@ -103,12 +103,8 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
               SAML2
             </SSO>
 
-            <SessionInitiator type="SAML2" Location="/Login/BankID" id="bankid"
-                         entityID="${BANKID_ENTITY_ID}"/>
             <!-- SAML and local-only logout. -->
-            <!--
             <Logout>SAML2 Local</Logout>
-            -->
 
             <!-- Administrative logout. -->
             <LogoutInitiator type="Admin" Location="/Logout/Admin" acl="127.0.0.1 ::1" />
@@ -167,7 +163,7 @@ EOF
 
 cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 cat>/etc/nginx/nginx.conf<<EOF
-user nginx;
+user www-data;
 worker_processes  1;
 
 events {
@@ -259,22 +255,6 @@ http {
       location /sign {
         shib_request /shibauthorizer;
         shib_request_use_headers on;
-        more_set_input_headers 'X-Shibboleth-SessionInitiator: default';
-        include shib_clear_headers;
-        proxy_pass ${BACKEND_URL};
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header Host \$host;
-        proxy_redirect default;
-        proxy_buffering off;
-      }
-
-    # Location secured by Shibboleth
-      location /bankid {
-        shib_request /shibauthorizer;
-        shib_request_use_headers on;
-        more_set_input_headers 'X-Shibboleth-SessionInitiator: bankid';
         include shib_clear_headers;
         proxy_pass ${BACKEND_URL};
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
