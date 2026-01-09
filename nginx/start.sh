@@ -16,7 +16,7 @@ if [ "x$DISCO_URL" = "x" ]; then
 fi
 
 if [ "x$BANKID_ENTITY_ID" = "x" ]; then
-   BANKID_ENTITY_ID="https://bankidp.swamid.se/bankid/idp"
+   BANKID_ENTITY_ID="https://sandbox.swedenconnect.se/bankid/idp"
 fi
 
 if [ "x$SP_ABOUT" = "x" ]; then
