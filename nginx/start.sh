@@ -147,7 +147,6 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
         </MetadataProvider>
         <!-- Local BankID metadata. -->
         <MetadataProvider type="XML" validate="true" path="${BANKID_MD_PATH}" reloadChanges="true">
-            <MetadataFilter type="Signature" certificate="${BANKID_MD_CERT_PATH}" />
         </MetadataProvider>
         <!-- Map to extract attributes from SAML assertions. -->
         <AttributeExtractor type="XML" validate="true" reloadChanges="false" path="attribute-map.xml"/>
