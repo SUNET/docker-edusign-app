@@ -389,21 +389,6 @@ BANKID_IDP
 
     Default: `https://bankid.com/shibboleth`
 
-BANKID_ORG_NAME
-    Organization name for the BankID IdP
-
-    Default: BankID
-
-BANKID_AUTHN_METHOD
-    Authentication method for the BankID IdP
-
-    Default: `urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport`
-    
-BANKID_AUTHN_CONTEXT_CLASS
-    Authentication Context Class for the BankID IdP.
-
-    Default: `urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport`
-
 BANKID_SSN_ATTR
     SAML2 attribute that carries the Swedish SSN in assertions coming from the BankID IdP.
 
