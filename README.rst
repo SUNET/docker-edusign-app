@@ -412,7 +412,7 @@ BANKID_SSN_ATTR
 MAX_SIGNATURES
     The maximum number of signatures that fit in a document.
 
-    Default: 10
+    Default: 12
 
 UI_SEND_SIGNED
     Default value for the invitation form field indicating whether to send the final signed document by mail.
