@@ -276,6 +276,21 @@ EDUSIGN_API_PASSWORD_20
 
     Default: `dummy`
 
+EDUSIGN_API_PROFILE_BANKID
+    Profile of the eduSign API to use for the BankID IdP.
+
+    Default: `edusign-test`
+
+EDUSIGN_API_USERNAME_BANKID
+    Username for Basic Auth for the eduSign API for the BankID profile.
+
+    Default: `dummy`
+
+EDUSIGN_API_PASSWORD_BANKID
+    Password for Basic Auth for the eduSign API for the BankID profile.
+
+    Default: `dummy`
+
 SIGN_REQUESTER_ID
     This is providedto the integration API to construct the sign request.
     It should be set to the SAML entity ID of the sign service as an SP,
@@ -387,12 +402,12 @@ ALLOW_BANKID
 BANKID_IDP
     entityID of the BankID SAML2 IdP
 
-    Default: `https://bankid.com/shibboleth`
+    Default: `https://sandbox.swedenconnect.se/bankid/idp`
 
 BANKID_SSN_ATTR
     SAML2 attribute that carries the Swedish SSN in assertions coming from the BankID IdP.
 
-    Default: `urn:oid:1.3.6.1.4.1.5923.1.1.1.6`
+    Default: `urn:oid:1.2.752.29.4.13`
 
 MAX_SIGNATURES
     The maximum number of signatures that fit in a document.
@@ -409,6 +424,10 @@ UI_SKIP_FINAL
 
     Default: True
 
+UI_ALLOW_BANKID
+    Default value for the "Allow BankID" invitation form field - in case ALLOW_BANKID is True
+    Default: False
+
 UI_ORDERED_INVITATIONS
     Default value for the invitation form field indicating whether the invitations should be sent in order.
 
@@ -418,6 +437,10 @@ DEFAULT_LOA
     Default assurance level in the invitation form. Can be one of 'none', 'low', 'medium', 'high'
 
     Default: none
+
+USER_INFO_DETAIL
+    Data to be shown in the user information modal when clicking on the display name in the UI.
+    Default: `display_name,mail,mail_aliases,eppn,idp,loa,authn_context`
 
 In addition it is necessary to provide the app with access to some SMTP server,
 setting the variables `indicated here <https://flask-mailman.readthedocs.io/en/latest/>`_.
