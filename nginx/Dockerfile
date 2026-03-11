@@ -113,7 +113,7 @@ RUN dpkg-deb --build /tmp/nginx-package /packages/nginx-custom_${NGINX_VERSION}-
 # Build JS bundle
 
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-ENV NODE_MAJOR 20
+ENV NODE_MAJOR=20
 RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
 RUN apt-get update && apt-get install -y nodejs \
@@ -122,7 +122,7 @@ RUN apt-get update && apt-get install -y nodejs \
 # Get the edusign code from github, pick just the frontend code, and remove the
 # rest.
 #
-ENV EDUSIGN_APP_VERSION v1.5.0b41
+ENV EDUSIGN_APP_VERSION=v1.5.0b41
 
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/frontend /opt
@@ -153,7 +153,7 @@ FROM debian:bookworm AS sp
 #    locations, proxies the edusign WSGI app at one of those
 #    locations, and serves the JS bundles statically.
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 ENV SP_HOSTNAME=sp.edusign.docker
 ENV DISCO_URL=https://md.nordu.net/role/idp.ds
@@ -198,9 +198,9 @@ RUN apt-get update && apt-get install -y \
 #
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
     locale-gen
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
 # Copy the .deb package from builder
 COPY --from=builder /packages/*.deb /tmp/

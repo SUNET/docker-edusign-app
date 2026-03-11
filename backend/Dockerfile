@@ -6,7 +6,7 @@ ARG INSTALL_PACKAGE=""
 # sources and gunicorn, and with a script to start a gunicorn process running
 # the edusign backend app.
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Environment attributes
 
@@ -62,9 +62,9 @@ RUN apt -y update && apt -y upgrade && \
 
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
     locale-gen
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
 # install python
 
@@ -104,7 +104,7 @@ COPY custom/*.md /etc/edusign
 # Get the edusign sources from github, pick the backend sources
 # and put them in /opt/edusign, and get rid of the rest.
 
-ENV EDUSIGN_APP_VERSION v1.5.0b41
+ENV EDUSIGN_APP_VERSION=v1.5.0b41
 
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp
