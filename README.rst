@@ -310,10 +310,21 @@ SIGNER_ATTRIBUTES_20
 
     Default: `urn:oid:2.16.840.1.113730.3.1.241,displayName`
 
+SIGNER_ATTRIBUTES_BANKID
+    The attributes that are displayed in the image representation of the signature when signing with BankID, given as
+    :code:`<name>,<friendlyName>`, and separated by semicolons.
+
+    Default: `urn:oid:2.16.840.1.113730.3.1.241,displayName`
+
 AUTHN_ATTRIBUTES_20
     The attributes that are used to make sure that the identity used for signing is the same as the one used for authentication.
 
     Default: `urn:oid:1.3.6.1.4.1.5923.1.1.1.6,eduPersonPrincipalName`
+
+AUTHN_ATTRIBUTES_BANKID
+    The attributes that are used to make sure that the identity used for signing is the same as the one used for authentication - when signing with BankID.
+
+    Default: `urn:oid:1.2.752.29.4.13,personalIdentityNumber`
 
 SCOPE_WHITELIST
     Comma separated list of domain names, so users having an eppn belonging to those domains can start signing documents.
