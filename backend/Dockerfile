@@ -47,6 +47,11 @@ ENV MAX_FILE_SIZE=28730982
 ENV MAX_FILE_SIZE_FRONT=20971520
 ENV HASH_METHOD=scrypt
 
+ENV ALLOW_BANKID=true
+ENV BANKID_WHITELIST=sunet.se,eduid.se
+ENV BANKID_IDP=https://sandbox.swedenconnect.se/bankid/idp
+ENV BANKID_SSN_ATTR=urn:oid:1.2.752.29.4.13
+
 # Install needed software
 
 RUN apt -y update && apt -y upgrade && \

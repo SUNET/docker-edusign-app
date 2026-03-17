@@ -397,7 +397,12 @@ REDIS_URL
 ALLOW_BANKID
     Whether to show the UI widget that allows inviters to let invitees sign with BankID
 
-    efault: false
+    Default: false
+
+BANKID_WHITELIST
+    Comma separated list of scopes, so users having an eppn belonging to those scopes can allow BankID signatures in their invitations.
+
+    Default: `sunet.se,eduid.se`
 
 BANKID_IDP
     entityID of the BankID SAML2 IdP
