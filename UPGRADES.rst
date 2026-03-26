@@ -17,5 +17,6 @@ For this we need to:
 * EDUSIGN_API_PASSWORD_BANKID: Basic Auth password of the profile
 
 4. Configure the `edusign-app` container of the webapp with a variable `BANKID_IDP` with value the entityID of the BankID IdP in Sweden Connect. For the sandbox: `https://sandbox.swedenconnect.se/bankid/idp`;
+4. Configure the `edusign-sp` container of the webapp with a variable `BANKID_ENTITY_ID` with value the entityID of the BankID IdP in Sweden Connect. For the sandbox: `https://sandbox.swedenconnect.se/bankid/idp`;
 
 5. Provide the `edusign-sp` container of the webapp with the Sweden Connect metadata. For now we are providing it as an XML local file, and configuring the `edusign-sp` container with an environment variable `BANKID_MD_PATH` with the path to the XML file within the container. For the sandbox, we can cURL the feed from http://eid.svelegtest.se/metadata/mdx/role/idp.xml
