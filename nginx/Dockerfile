@@ -159,8 +159,7 @@ ENV SP_HOSTNAME=sp.edusign.docker
 ENV DISCO_URL=https://md.nordu.net/role/idp.ds
 ENV BANKID_ENTITY_ID=https://bankidp.qa.swamid.se/bankid/idp
 ENV BANKID_MD_PATH=/etc/shibboleth/bankid-metadata.xml
-ENV FREJA_ENTITY_ID=https://freja.qa.swamid.se/freja/idp
-ENV FREJA_MD_PATH=/etc/shibboleth/freja-metadata.xml
+ENV FREJA_ENTITY_ID=https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com
 ENV MDQ_BASE_URL=https://mds.swamid.se/
 ENV MDQ_SIGNER_CERT=md-signer2.crt
 # 20M:
