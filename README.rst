@@ -600,6 +600,21 @@ BANKID_ENTITY_ID
 
     Default: `https://bankidp.swamid.se/bankid/idp`
 
+BANKID_MD_PATH
+    Path to an XML file with the BankID metadata.
+
+    Default: `/etc/shibboleth/bankid-metadata.xml`
+
+FREJA_ENTITY_ID
+    EntityID of the Freja SAML IdP.
+
+    Default: `https://freja.swamid.se/freja/idp`
+
+FREJA_MD_PATH
+    Path to an XML file with the Freja metadata.
+
+    Default: `/etc/shibboleth/freja-metadata.xml`
+
 MDQ_BASE_URL:
     Base URL for an MDQ server, used 
 

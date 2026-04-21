@@ -105,6 +105,8 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
 
             <SessionInitiator type="SAML2" Location="/Login/BankID" id="bankid"
                          entityID="${BANKID_ENTITY_ID}"/>
+            <SessionInitiator type="SAML2" Location="/Login/Freja" id="freja"
+                         entityID="${FREJA_ENTITY_ID}"/>
             <!-- SAML and local-only logout. -->
             <!--
             <Logout>SAML2 Local</Logout>
@@ -277,6 +279,21 @@ http {
         shib_request /shibauthorizer;
         shib_request_use_headers on;
         more_set_input_headers 'X-Shibboleth-SessionInitiator: bankid';
+        include shib_clear_headers;
+        proxy_pass ${BACKEND_URL};
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header Host \$host;
+        proxy_redirect default;
+        proxy_buffering off;
+      }
+
+    # Location secured by Shibboleth
+      location /freja {
+        shib_request /shibauthorizer;
+        shib_request_use_headers on;
+        more_set_input_headers 'X-Shibboleth-SessionInitiator: freja';
         include shib_clear_headers;
         proxy_pass ${BACKEND_URL};
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;

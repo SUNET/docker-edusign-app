@@ -6,7 +6,7 @@ Upgrade from 1.4.X to 1.5.X
 We need to configure signatures with BankID.
 For this we need to:
 
-1. Integrate the webapp as an SP in the Sweden Connect federation. To use the sandbox, register here: `https://eid.svelegtest.se/mdreg/home`.
+1. Integrate the webapp as an SP in the Sweden Connect federation. To use the sandbox, register here: `https://eid.svelegtest.se/mdreg/home`. The AttributeConsumingService shoopuld require the personalIdentityNumber (urn:oid:1.2.752.29.4.13) attribute.
 
 2. Enable signing with BankID. Provide the `edusign-app` container of the webapp with environment variable: `ALLOW_BANKID = True`.
 
@@ -22,4 +22,4 @@ For this we need to:
 
 6. Provide the `edusign-sp` container of the webapp with the Sweden Connect metadata. For now we are providing it as an XML local file, and configuring the `edusign-sp` container with an environment variable `BANKID_MD_PATH` with the path to the XML file within the container. For the sandbox, we can cURL the feed from http://eid.svelegtest.se/metadata/mdx/role/idp.xml
 
-7. Provide the `edusign-sp` container with the certificate for the Sweden connect metadata. Get it from `https://eid.svelegtest.se/mdreg/pub/metadata-cert.crt` and provide the path to it in the container in an environment variable `BANKID_MD_CERT_PATH`.
+7. [NOT NEEDED FOR NOW - NEEDED FOR PROD FOR MDQ] Provide the `edusign-sp` container with the certificate for the Sweden connect metadata. Get it from `https://eid.svelegtest.se/mdreg/pub/metadata-cert.crt` and provide the path to it in the container in an environment variable `BANKID_MD_CERT_PATH`.

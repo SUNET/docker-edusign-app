@@ -122,7 +122,7 @@ RUN apt-get update && apt-get install -y nodejs \
 # Get the edusign code from github, pick just the frontend code, and remove the
 # rest.
 #
-ENV EDUSIGN_APP_VERSION=v1.5.0b54
+ENV EDUSIGN_APP_VERSION=v1.5.2b6
 
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/frontend /opt
@@ -159,7 +159,7 @@ ENV SP_HOSTNAME=sp.edusign.docker
 ENV DISCO_URL=https://md.nordu.net/role/idp.ds
 ENV BANKID_ENTITY_ID=https://bankidp.qa.swamid.se/bankid/idp
 ENV BANKID_MD_PATH=/etc/shibboleth/bankid-metadata.xml
-ENV BANKID_MD_CERT_PATH=/etc/shibboleth/bankid-metadata.crt
+ENV FREJA_ENTITY_ID=https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com
 ENV MDQ_BASE_URL=https://mds.swamid.se/
 ENV MDQ_SIGNER_CERT=md-signer2.crt
 # 20M:
