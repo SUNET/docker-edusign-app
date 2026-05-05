@@ -1,0 +1,231 @@
+#
+# Full replacement application.yml for the SignService demo app, configured
+# to act as a SAML SP in the SWAMID QA federation.
+#
+# Loaded via SPRING_CONFIG_LOCATION=file:/etc/signservice/application.yml
+# so that the bundled application.yml on the classpath is NOT merged in
+# (avoids leaking Sweden Connect entity-categories, requested-attributes,
+# and demo engines through Spring's leaf-level list merging).
+#
+
+server:
+  port: 8443
+  servlet:
+    context-path: /
+  ssl:
+    enabled: true
+    key-store: classpath:localhost.jks
+    key-store-type: JKS
+    key-alias: localhost
+    key-store-password: secret
+    key-password: secret
+
+management:
+  server:
+    port: 8081
+  auditevents:
+    enabled: true
+  endpoint:
+    auditevents:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,auditevents
+
+credential:
+  bundles:
+    keystore:
+      saml-sign-ks:
+        location: file:/etc/signservice-secrets/swamid-saml-sp-sign.p12
+        type: PKCS12
+        password: changeit
+      saml-encrypt-ks:
+        location: file:/etc/signservice-secrets/swamid-saml-sp-encrypt.p12
+        type: PKCS12
+        password: changeit
+
+signservice:
+  domain: ${SIGNSERVICE_DOMAIN:localhost}
+  base-url: ${SIGNSERVICE_BASE_URL:https://${signservice.domain}:${server.port}}
+  default-sign-service-id: ${SIGNSERVICE_SIGN_SERVICE_ID:https://${signservice.domain}/signservice}
+
+  system-audit:
+    actuator:
+      name: "SignService System Audit Logger"
+      principal: "SignService"
+
+  default-credential:
+    props:
+      jks:
+        name: SignService
+        store:
+          location: classpath:signservice.jks
+          password: secret
+          type: JKS
+        key:
+          alias: signservice
+          key-password: secret
+
+  validation-config:
+    allowed-clock-skew: PT30S
+    max-message-age: PT3M
+
+  common-beans:
+    protocol:
+      bean-name: signservice.DssProtocolHandler
+      dss:
+        include-assertion: true
+        include-request-message: false
+    sign:
+      bean-name: signservice.DefaultSignatureHandler
+      default-handler:
+        name: DefaultSignatureHandler
+        tbs-processors:
+          - type: xml
+            strict-processing: false
+            include-issuer-serial: true
+          - type: pdf
+    key-provider:
+      bean-name: signservice.DefaultKeyProvider
+      security-provider: BC
+    cert:
+      bean-name: signservice.BuiltInCa
+      built-in-ca:
+        base-url: ${signservice.base-url}
+        ca-credential:
+          props:
+            jks:
+              store:
+                location: classpath:ca/test-ca.jks
+                type: JKS
+                password: secret
+              key:
+                alias: test-ca
+                key-password: secret
+        ca-signing-algorithm: http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256
+        key-provider-ref: signservice.DefaultKeyProvider
+        cert-validity: P365D
+        crl-validity: P2D
+        crl-dp-path: /sign/signca/signca.crl
+        crl-file-location: ${SIGNSERVICE_HOME}/signca/signca.crl
+        default-value-policy-checker:
+          default-reply: false
+          rules:
+            - attribute-type: rdn
+              ref: "2.5.4.6"
+              allowed-values:
+                - SE
+    saml:
+      metadata-provider:
+        bean-name: signservice.SamlMetadataProvider
+        url: https://mds.swamid.se/qa/
+        mdq: true
+        backup-location: ${SIGNSERVICE_HOME}/swamid-qa-mdq
+        validation-certificate: file:/etc/signservice-secrets/swamid-qa-md-signer.crt
+
+  default-handler-config:
+    authn:
+      saml:
+        # Use the generic SAML SP, NOT the Sweden Connect handler.
+        saml-type: default
+        sp-paths:
+          base-url: ${signservice.base-url}
+        metadata-provider-ref: signservice.SamlMetadataProvider
+        signature-credential:
+          props:
+            jks:
+              store-reference: saml-sign-ks
+              name: SignService SAML Signing
+              key:
+                alias: sign
+                key-password: changeit
+        decryption-credential:
+          props:
+            jks:
+              store-reference: saml-encrypt-ks
+              name: SignService SAML Decryption
+              key:
+                alias: encrypt
+                key-password: changeit
+        sign-authn-requests: true
+        require-encrypted-assertions: true
+        require-signed-assertions: false
+        message-replay-checker-ref: signservice.MessageReplayChecker
+        metadata:
+          # Entity categories advertised by the SP. Picked for SWAMID/REFEDS.
+          entity-categories:
+            - http://refeds.org/category/research-and-scholarship
+            - https://refeds.org/category/code-of-conduct/v2
+            - https://refeds.org/sirtfi
+          # Attributes the SP wants from the IdP (REFEDS R&S core + assurance).
+          requested-attributes:
+            - name: urn:oid:1.3.6.1.4.1.5923.1.1.1.6   # eduPersonPrincipalName
+              required: true
+            - name: urn:oid:0.9.2342.19200300.100.1.3  # mail
+              required: true
+            - name: urn:oid:2.16.840.1.113730.3.1.241  # displayName
+              required: false
+            - name: urn:oid:2.5.4.4                    # sn
+              required: false
+            - name: urn:oid:2.5.4.42                   # givenName
+              required: false
+            - name: urn:oid:1.3.6.1.4.1.5923.1.1.1.9   # eduPersonScopedAffiliation
+              required: false
+            - name: urn:oid:1.3.6.1.4.1.25178.1.2.9    # schacHomeOrganization
+              required: false
+            - name: urn:oid:1.3.6.1.4.1.5923.1.1.1.11  # eduPersonAssurance
+              required: false
+          service-names:
+            - "en-${SIGNSERVICE_SP_DISPLAY_NAME:Dev SignService}"
+            - "sv-${SIGNSERVICE_SP_DISPLAY_NAME:Dev SignService}"
+          ui-info:
+            display-names:
+              - "en-${SIGNSERVICE_SP_DISPLAY_NAME:Dev SignService}"
+              - "sv-${SIGNSERVICE_SP_DISPLAY_NAME:Dev SignService}"
+            descriptions:
+              - "en-Development SignService SP for SWAMID QA"
+              - "sv-Utvecklingsmiljö för SignService-SP i SWAMID QA"
+          organization:
+            names:
+              - "en-${SIGNSERVICE_SP_ORG_NAME:Dev Organization}"
+              - "sv-${SIGNSERVICE_SP_ORG_NAME:Dev Organization}"
+            display-names:
+              - "en-${SIGNSERVICE_SP_ORG_NAME:Dev Organization}"
+              - "sv-${SIGNSERVICE_SP_ORG_NAME:Dev Organization}"
+            urls:
+              - "en-${SIGNSERVICE_SP_ORG_URL:https://example.org/}"
+          contact-persons:
+            support:
+              company: "${SIGNSERVICE_SP_ORG_NAME:Dev Organization}"
+              email-address: "${SIGNSERVICE_SP_CONTACT_EMAIL:noreply@example.org}"
+            technical:
+              company: "${SIGNSERVICE_SP_ORG_NAME:Dev Organization}"
+              email-address: "${SIGNSERVICE_SP_CONTACT_EMAIL:noreply@example.org}"
+
+  engines:
+    - name: integration-rest-dev
+      processing-paths:
+        - /sign/integration-rest/signreq
+      client:
+        client-id: https://dev.local/integration-rest
+        trusted-certificates:
+          - file:/etc/signservice-secrets/integration-rest-signing.crt
+      authn:
+        saml:
+          default-config-ref: authn.saml
+          entity-id: ${SIGNSERVICE_SP_ENTITY_ID:https://signservice.dev.local/sp/integration-rest}
+          sp-paths:
+            metadata-publishing-path: /sign/integration-rest/saml/metadata
+            assertion-consumer-path: /sign/integration-rest/saml/sso
+      audit:
+        file:
+          name: "integration-rest-dev-audit"
+          file-name: ${SIGNSERVICE_HOME}/integration-rest/audit.log
+
+logging:
+  level:
+    se.swedenconnect.signservice: DEBUG
+    se.swedenconnect.security: INFO
+    org.opensaml: INFO
+    root: INFO

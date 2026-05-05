@@ -1,21 +1,83 @@
----
-version: '3.8'
+name: signservice-dev
+
 services:
 
-  # Container that will execute a supervisor with 4 child processes:
-  # shibauthorizer, shibresponder, and shibd (which together will act as a SAML
-  # SP) and an NGINX, that will use Shibboleth to secure certain locations,
-  # proxy the edusign backen app at the www container, and serve the js bundles
-  # from the jsbuild volume.
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  signservice:
+    build:
+      context: ../ss-dev-src/signservice
+      dockerfile: ../ss-dev-docker/signservice.Dockerfile
+    restart: unless-stopped
+    environment:
+      # Full replacement of the demo-app's classpath application.yml.
+      SPRING_CONFIG_LOCATION: file:/etc/signservice/application.yml
+      SIGNSERVICE_HOME: /signservice/data
+      # SP identity advertised in SAML metadata. Override in .env for your deployment.
+      SIGNSERVICE_DOMAIN: ${SIGNSERVICE_DOMAIN:-localhost}
+      SIGNSERVICE_BASE_URL: ${SIGNSERVICE_BASE_URL:-https://localhost:8443}
+      SIGNSERVICE_SIGN_SERVICE_ID: ${SIGNSERVICE_SIGN_SERVICE_ID:-https://localhost.swedenconnect.se/signservice}
+      SIGNSERVICE_SP_ENTITY_ID: ${SIGNSERVICE_SP_ENTITY_ID:-https://signservice.dev.local/sp/integration-rest}
+      SIGNSERVICE_SP_DISPLAY_NAME: ${SIGNSERVICE_SP_DISPLAY_NAME:-Dev SignService}
+      SIGNSERVICE_SP_ORG_NAME: ${SIGNSERVICE_SP_ORG_NAME:-Dev Organization}
+      SIGNSERVICE_SP_ORG_URL: ${SIGNSERVICE_SP_ORG_URL:-https://example.org/}
+      SIGNSERVICE_SP_CONTACT_EMAIL: ${SIGNSERVICE_SP_CONTACT_EMAIL:-noreply@example.org}
+    volumes:
+      - ./ss-dev-config/signservice:/etc/signservice:ro
+      - ./secrets:/etc/signservice-secrets:ro
+      - ./data/signservice:/signservice/data
+    ports:
+      - "127.0.0.1:8443:8443"
+      - "127.0.0.1:8081:8081"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "--no-check-certificate", "https://localhost:8081/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  integration-rest:
+    build:
+      context: ../ss-dev-src/integration-rest
+      dockerfile: ../ss-dev-docker/integration-rest.Dockerfile
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+      signservice:
+        condition: service_started
+    environment:
+      SPRING_CONFIG_ADDITIONAL_LOCATION: file:/etc/signservice/
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATA_REDIS_ENABLED: "true"
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: "6379"
+      # Must match signservice's default-sign-service-id - dev policy reads this.
+      SIGNSERVICE_SIGN_SERVICE_ID: ${SIGNSERVICE_SIGN_SERVICE_ID:-https://localhost.swedenconnect.se/signservice}
+      JAVA_OPTS: "-Djava.net.preferIPv4Stack=true -Dorg.apache.xml.security.ignoreLineBreaks=true"
+    volumes:
+      - ./ss-dev-config/integration-rest:/etc/signservice:ro
+      - ./secrets:/etc/signservice-secrets:ro
+    ports:
+      - "127.0.0.1:8543:8443"
+      - "127.0.0.1:8549:8449"
 
   sp:
-    image: docker.sunet.se/edusign-sp:latest
+    build:
+      context: ../nginx
+      dockerfile: ../nginx/Dockerfile
     expose:
       - 80
       - 443
-    networks:
-      edusign:
-        ipv4_address: 172.20.10.201
     volumes:
       - edusignlogs:/var/log/edusign:rw
     environment:
@@ -30,10 +92,9 @@ services:
   # app.
 
   www:
-    image: docker.sunet.se/edusign-app:latest
-    networks:
-      edusign:
-        ipv4_address: 172.20.10.202
+    build:
+      context: ../backend
+      dockerfile: ../backend/Dockerfile
     expose:
       - 8080
     volumes:
@@ -71,19 +132,6 @@ services:
       - MAIL_ASCII_ATTACHMENTS
 
 volumes:
-
   # Volume to hold all the interesting logs
-
   edusignlogs:
     name: edusignlogs
-
-networks:
-  edusign:
-    driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: br-edusign
-    ipam:
-      driver: default
-      config:
-      - subnet: 172.20.10.0/24
-

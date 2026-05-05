@@ -1,0 +1,6 @@
+[submodule "ss-dev-src/integration-rest"]
+	path = ss-dev-src/integration-rest
+	url = https://github.com/idsec-solutions/signservice-integration-rest.git
+[submodule "ss-dev-src/signservice"]
+	path = ss-dev-src/signservice
+	url = https://github.com/swedenconnect/signservice.git
