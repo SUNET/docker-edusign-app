@@ -202,7 +202,7 @@ services:
     environment:
       DEFAULT_EMAIL: ${DEFAULT_EMAIL:-android@cazalla.net}
     volumes:
-      - certs:/etc/nginx/certs
+      - httpscerts:/etc/nginx/certs
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
