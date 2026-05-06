@@ -15,8 +15,8 @@ services:
 
   signservice:
     build:
-      context: ../ss-dev-src/signservice
-      dockerfile: ../ss-dev-docker/signservice.Dockerfile
+      context: ./ss-dev-src/signservice
+      dockerfile: ./ss-dev-docker/signservice.Dockerfile
     restart: unless-stopped
     environment:
       # Full replacement of the demo-app's classpath application.yml.
@@ -47,8 +47,8 @@ services:
 
   integration-rest:
     build:
-      context: ../ss-dev-src/integration-rest
-      dockerfile: ../ss-dev-docker/integration-rest.Dockerfile
+      context: ./ss-dev-src/integration-rest
+      dockerfile: ./ss-dev-docker/integration-rest.Dockerfile
     restart: unless-stopped
     depends_on:
       redis:
@@ -73,8 +73,8 @@ services:
 
   sp:
     build:
-      context: ../nginx
-      dockerfile: ../nginx/Dockerfile
+      context: ./nginx
+      dockerfile: ./nginx/Dockerfile
     expose:
       - 80
       - 443
@@ -104,8 +104,8 @@ services:
 
   www:
     build:
-      context: ../backend
-      dockerfile: ../backend/Dockerfile
+      context: ./backend
+      dockerfile: ./backend/Dockerfile
     expose:
       - 8080
     volumes:
