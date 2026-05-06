@@ -73,7 +73,6 @@ services:
 
   sp:
     build:
-      context: ./nginx
       dockerfile: ./nginx/Dockerfile
     expose:
       - 80
@@ -104,7 +103,6 @@ services:
 
   www:
     build:
-      context: ./backend
       dockerfile: ./backend/Dockerfile
     expose:
       - 8080
