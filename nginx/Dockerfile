@@ -256,6 +256,10 @@ COPY ./docker/supervisord.conf /etc/supervisor/conf.d/
 
 COPY ./docker/attribute-map.xml /etc/shibboleth/
 
+COPY $SSL_CERT_DIR /etc
+RUN wget $MDQ_SIGNER_CERT_URL -o /etc/shibboleth/$MDQ_SIGNER_CERT
+RUN wget $MDQ_SIGNER_CERT_URL_EID -o /etc/shibboleth/$MDQ_SIGNER_CERT_EID
+
 # Copy start script and set it as entry point
 #
 COPY start.sh /start.sh
