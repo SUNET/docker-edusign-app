@@ -202,7 +202,7 @@ services:
     environment:
       DEFAULT_EMAIL: ${DEFAULT_EMAIL:-android@cazalla.net}
     volumes:
-      - httpscerts:/etc/nginx/certs
+      - certs:/etc/nginx/certs
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
@@ -215,7 +215,7 @@ volumes:
   # Volume to hold all the interesting logs
   edusignlogs:
     name: edusignlogs
-  httpscerts:
+  certs:
     name: certs
   vhost:
     name: vhost
