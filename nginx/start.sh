@@ -43,7 +43,7 @@ if [ "x$BACKEND_URL" = "x" ]; then
    BACKEND_URL="$BACKEND_PROTO://$BACKEND_HOST:$BACKEND_PORT"
 fi
 
-if [ -z "${ACME_CHALLENGE_LOCATION+set}" ]; then
+if [ "$ACME_CHALLENGE_LOCATION" = "x" ]; then
    ACME_CHALLENGE_LOCATION="      location ^~ /.well-known/acme-challenge/ {
           proxy_pass http://${ACMEPROXY}/.well-known/acme-challenge/;
       }"

@@ -89,10 +89,13 @@ services:
       SP_HOSTNAME: ${SP_HOSTNAME:-dev.edusign.sunet.se}
       DISCO_URL: ${DISCO_URL:-https://service.seamlessaccess.org/ds/?trustProfile=edugain}
       BANKID_ENTITY_ID: ${BANKID_ENTITY_ID:-https://bankidp.qa.swamid.se/bankid/idp}
+      FREJA_ENTITY_ID: ${FREJA_ENTITY_ID:-https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com}
       MAX_FILE_SIZE: ${MAX_FILE_SIZE:-28730982}
       BACKEND_HOST: ${BACKEND_HOST:-edusign-app}
       BACKEND_PORT: ${BACKEND_PORT:-8080}
-      BACKEND_SCHEME: ${BACKEND_SCHEME:-http}
+      BACKEND_PROTO: ${BACKEND_PROTO:-http}
+      ACME_CHALLENGE_LOCATION: ${ACME_CHALLENGE_LOCATION-x}
+      ACMEPROXY: ${ACMEPROXY-}
       VIRTUAL_HOST: ${SP_HOSTNAME:-dev.edusign.sunet.se}
       VIRTUAL_PROTO: ${VIRTUAL_PROTO:-https}
       VIRTUAL_PORT: ${VIRTUAL_PORT:-443}
