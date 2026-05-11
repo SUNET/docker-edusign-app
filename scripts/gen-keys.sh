@@ -14,7 +14,7 @@ for tool in openssl curl; do
   command -v "$tool" >/dev/null || { echo "ERROR: $tool not found in PATH" >&2; exit 1; }
 done
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="$(cd ss-dev-src && pwd)"
 SECRETS="$ROOT/secrets"
 FORCE="${1:-}"
 
