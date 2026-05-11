@@ -43,6 +43,12 @@ if [ "x$BACKEND_URL" = "x" ]; then
    BACKEND_URL="$BACKEND_PROTO://$BACKEND_HOST:$BACKEND_PORT"
 fi
 
+if [ -z "${ACME_CHALLENGE_LOCATION+set}" ]; then
+   ACME_CHALLENGE_LOCATION="      location ^~ /.well-known/acme-challenge/ {
+          proxy_pass http://${ACMEPROXY}/.well-known/acme-challenge/;
+      }"
+fi
+
 if [ -z "$KEYDIR" ]; then
    KEYDIR=/etc/ssl
    mkdir -p $KEYDIR
@@ -244,10 +250,8 @@ http {
       proxy_buffer_size   256k;
       proxy_buffers   8 256k;
       proxy_busy_buffers_size   256k;
- 
-      location ^~ /.well-known/acme-challenge/ {
-          proxy_pass http://${ACMEPROXY}/.well-known/acme-challenge/;
-      }
+
+${ACME_CHALLENGE_LOCATION}
 
     # FastCGI authorizer for Shibboleth Auth Request module
       location = /shibauthorizer {

@@ -203,7 +203,6 @@ services:
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./configs/dev.conf:/etc/nginx/conf.d/dev.conf:ro
       - acme:/etc/acme.sh
     depends_on:
       - nginx-proxy
