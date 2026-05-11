@@ -162,8 +162,18 @@ ENV BANKID_MD_PATH=/etc/shibboleth/bankid-metadata.xml
 ENV FREJA_ENTITY_ID=https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com
 ENV MDQ_BASE_URL=https://mds.swamid.se/
 ENV MDQ_SIGNER_CERT=md-signer2.crt
+ENV MDQ_SIGNER_CERT_URL=https://mds.swamid.se/qa/md/swamid-qa.crt
+ENV MDQ_BASE_URL_EID=https://mds.swamid.se/qa/
+ENV MDQ_SIGNER_CERT_EID=md-signer2.crt
+ENV MDQ_SIGNER_CERT_URL_EID=https://mds.swamid.se/qa/md/swamid-qa.crt
+
 # 20M:
 ENV MAX_FILE_SIZE=28730982
+
+ENV BACKEND_HOST=edusign-app
+ENV BACKEND_PORT=8080
+ENV BACKEND_SCHEME=http
+ENV SSL_CERT_DIR=./ssl
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y \
@@ -262,6 +272,6 @@ RUN wget $MDQ_SIGNER_CERT_URL_EID -o /etc/shibboleth/$MDQ_SIGNER_CERT_EID
 
 # Copy start script and set it as entry point
 #
-COPY start.sh /start.sh
+COPY ./start.sh /start.sh
 
 CMD ["bash", "/start.sh"]

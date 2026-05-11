@@ -73,7 +73,7 @@ services:
 
   sp:
     build:
-      dockerfile: ./nginx/Dockerfile
+      context: nginx
     expose:
       - 80
       - 443
@@ -103,7 +103,7 @@ services:
 
   www:
     build:
-      dockerfile: ./backend/Dockerfile
+      context: backend
     expose:
       - 8080
     volumes:
