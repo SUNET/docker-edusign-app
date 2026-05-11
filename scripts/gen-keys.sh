@@ -28,7 +28,7 @@ chmod 755 "$SECRETS"
 # writes audit logs, CRL files, and MDQ backup material here at runtime, so
 # the host dir must be writable by that UID. 1777 (sticky world-writable) is
 # the simplest option that doesn't require sudo on the host.
-DATA="$ROOT/data/signservice"
+DATA="$ROOT/ss-dev-src/signservice"
 mkdir -p "$DATA"
 chmod 1777 "$DATA"
 
