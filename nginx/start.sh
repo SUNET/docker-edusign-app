@@ -49,6 +49,12 @@ if [ "$ACME_CHALLENGE_LOCATION" = "x" ]; then
       }"
 fi
 
+if [ "$ACME_CHALLENGE_LOCATION_HTTP" = "x" ]; then
+   ACME_CHALLENGE_LOCATION_HTTP="      location ^~ /.well-known/acme-challenge/ {
+          proxy_pass http://${ACMEPROXY}/.well-known/acme-challenge/;
+      }"
+fi
+
 if [ -z "$KEYDIR" ]; then
    KEYDIR=/etc/ssl
    mkdir -p $KEYDIR
@@ -212,9 +218,7 @@ http {
     server {
       listen 80 default_server;
       server_name ${SP_HOSTNAME};
-      location ^~ /.well-known/acme-challenge/ {
-          proxy_pass http://${ACMEPROXY}/.well-known/acme-challenge/;
-      }
+${ACME_CHALLENGE_LOCATION_HTTP}
       location / {
           return 301 https://\$host\$request_uri;
       }
