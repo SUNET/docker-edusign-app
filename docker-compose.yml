@@ -16,7 +16,7 @@ services:
   signservice:
     build:
       context: ./ss-dev-src/signservice
-      dockerfile: ./ss-dev-docker/signservice.Dockerfile
+      dockerfile: ../../ss-dev-docker/signservice.Dockerfile
     restart: unless-stopped
     environment:
       # Full replacement of the demo-app's classpath application.yml.
@@ -48,7 +48,7 @@ services:
   integration-rest:
     build:
       context: ./ss-dev-src/integration-rest
-      dockerfile: ./ss-dev-docker/integration-rest.Dockerfile
+      dockerfile: ../../ss-dev-docker/integration-rest.Dockerfile
     restart: unless-stopped
     depends_on:
       redis:
@@ -193,7 +193,6 @@ services:
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./configs/dev.conf:/etc/nginx/conf.d/dev.conf:ro
 
   nginx-acme-companion:
     image: nginxproxy/acme-companion
