@@ -189,6 +189,7 @@ services:
 
   nginx-proxy:
     image: nginxproxy/nginx-proxy
+    container_name: nginx-proxy
     ports:
       - 443
       - 80
@@ -202,6 +203,7 @@ services:
     image: nginxproxy/acme-companion
     environment:
       DEFAULT_EMAIL: ${DEFAULT_EMAIL:-android@cazalla.net}
+      NGINX_PROXY_CONTAINER: nginx-proxy
     volumes:
       - certs:/etc/nginx/certs
       - vhost:/etc/nginx/vhost.d
