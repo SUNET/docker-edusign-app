@@ -31,6 +31,10 @@ services:
       SIGNSERVICE_SP_ORG_NAME: ${SIGNSERVICE_SP_ORG_NAME:-Dev Organization}
       SIGNSERVICE_SP_ORG_URL: ${SIGNSERVICE_SP_ORG_URL:-https://example.org/}
       SIGNSERVICE_SP_CONTACT_EMAIL: ${SIGNSERVICE_SP_CONTACT_EMAIL:-noreply@example.org}
+      VIRTUAL_HOST: ${SIGNSERVICE_DOMAIN:-dev.signservice.edusign.sunet.se}
+      VIRTUAL_PROTO: https
+      VIRTUAL_PORT: 8443
+      LETSENCRYPT_HOST: ${SIGNSERVICE_DOMAIN:-dev.signservice.edusign.sunet.se}
     volumes:
       - ./ss-dev-config/signservice:/etc/signservice:ro
       - ./secrets:/etc/signservice-secrets:ro
@@ -64,6 +68,10 @@ services:
       # Must match signservice's default-sign-service-id - dev policy reads this.
       SIGNSERVICE_SIGN_SERVICE_ID: ${SIGNSERVICE_SIGN_SERVICE_ID:-https://localhost.swedenconnect.se/signservice}
       JAVA_OPTS: "-Djava.net.preferIPv4Stack=true -Dorg.apache.xml.security.ignoreLineBreaks=true"
+      VIRTUAL_HOST: ${SIGNSERVICE_DOMAIN:-dev.signapi.edusign.sunet.se}
+      VIRTUAL_PROTO: https
+      VIRTUAL_PORT: 8543
+      LETSENCRYPT_HOST: ${SIGNSERVICE_DOMAIN:-dev.signapi.edusign.sunet.se}
     volumes:
       - ./ss-dev-config/integration-rest:/etc/signservice:ro
       - ./secrets:/etc/signservice-secrets:ro
