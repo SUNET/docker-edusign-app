@@ -68,10 +68,10 @@ services:
       # Must match signservice's default-sign-service-id - dev policy reads this.
       SIGNSERVICE_SIGN_SERVICE_ID: ${SIGNSERVICE_SIGN_SERVICE_ID:-https://localhost.swedenconnect.se/signservice}
       JAVA_OPTS: "-Djava.net.preferIPv4Stack=true -Dorg.apache.xml.security.ignoreLineBreaks=true"
-      VIRTUAL_HOST: ${SIGNSERVICE_DOMAIN:-dev.signapi.edusign.sunet.se}
+      VIRTUAL_HOST: ${SIGNAPI_DOMAIN:-dev.signapi.edusign.sunet.se}
       VIRTUAL_PROTO: https
       VIRTUAL_PORT: 8543
-      LETSENCRYPT_HOST: ${SIGNSERVICE_DOMAIN:-dev.signapi.edusign.sunet.se}
+      LETSENCRYPT_HOST: ${SIGNAPI_DOMAIN:-dev.signapi.edusign.sunet.se}
     volumes:
       - ./ss-dev-config/integration-rest:/etc/signservice:ro
       - ./secrets:/etc/signservice-secrets:ro
