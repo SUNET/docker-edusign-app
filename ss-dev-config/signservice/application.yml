@@ -127,8 +127,12 @@ signservice:
   default-handler-config:
     authn:
       saml:
-        # Use the generic SAML SP, NOT the Sweden Connect handler.
-        saml-type: default
+        # SUNET Swamid handler: omits RequestedAuthnContext from the AuthnRequest
+        # unless REFEDS MFA is asked for, so the IdP can return its native
+        # AuthnContextClassRef without the strict assurance-certification check
+        # the default handler enforces.
+        factory-class: se.sunet.edusign.saml.SwamidSamlAuthenticationHandlerFactory
+        saml-type: swamid
         sp-paths:
           base-url: ${signservice.base-url}
         metadata-provider-ref: signservice.SamlMetadataProvider

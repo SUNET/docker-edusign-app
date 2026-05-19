@@ -15,7 +15,7 @@ services:
 
   signservice:
     build:
-      context: ./ss-dev-src/signservice
+      context: ./ss-dev-src/signservice-modules
       dockerfile: ../../ss-dev-docker/signservice.Dockerfile
     restart: unless-stopped
     environment:
