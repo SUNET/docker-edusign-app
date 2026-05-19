@@ -46,6 +46,7 @@ relying-party  ─────────────────────�
   ```bash
   git clone https://github.com/idsec-solutions/signservice-integration-rest.git integration-rest
   git clone https://github.com/swedenconnect/signservice.git signservice
+  git clone https://github.com/SUNET/signservice-modules signservice-modules
   ```
 
 ## Bring it up
