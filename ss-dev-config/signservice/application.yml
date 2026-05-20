@@ -60,7 +60,7 @@ signservice:
       jks:
         name: SignService
         store:
-          location: classpath:signservice.jks
+          location: classpath:config/signservice.jks
           password: secret
           type: JKS
         key:
@@ -97,7 +97,7 @@ signservice:
           props:
             jks:
               store:
-                location: classpath:ca/test-ca.jks
+                location: classpath:config/ca/test-ca.jks
                 type: JKS
                 password: secret
               key:

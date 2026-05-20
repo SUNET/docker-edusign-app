@@ -40,8 +40,8 @@ services:
       - ./secrets:/etc/signservice-secrets:ro
       - ./data/signservice:/signservice/data
     ports:
-      - "127.0.0.1:8443:8443"
-      - "127.0.0.1:8081:8081"
+      - "8443:8443"
+      - "8081:8081"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "--no-check-certificate", "https://localhost:8081/actuator/health"]
       interval: 10s
@@ -70,14 +70,14 @@ services:
       JAVA_OPTS: "-Djava.net.preferIPv4Stack=true -Dorg.apache.xml.security.ignoreLineBreaks=true"
       VIRTUAL_HOST: ${SIGNAPI_DOMAIN:-signapi.dev.edusign.sunet.se}
       VIRTUAL_PROTO: https
-      VIRTUAL_PORT: 8543
+      VIRTUAL_PORT: 8443
       LETSENCRYPT_HOST: ${SIGNAPI_DOMAIN:-signapi.dev.edusign.sunet.se}
     volumes:
       - ./ss-dev-config/integration-rest:/etc/signservice:ro
       - ./secrets:/etc/signservice-secrets:ro
     ports:
-      - "127.0.0.1:8543:8443"
-      - "127.0.0.1:8549:8449"
+      - "8543:8443"
+      - "8549:8449"
 
   sp:
     build:
