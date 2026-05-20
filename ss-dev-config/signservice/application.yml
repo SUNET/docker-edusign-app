@@ -14,7 +14,7 @@ server:
     context-path: /
   ssl:
     enabled: true
-    key-store: classpath:localhost.jks
+    key-store: classpath:snakeoil.jks
     key-store-type: JKS
     key-alias: localhost
     key-store-password: secret
