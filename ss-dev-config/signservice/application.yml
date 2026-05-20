@@ -212,7 +212,7 @@ signservice:
       processing-paths:
         - /sign/integration-rest/signreq
       client:
-        client-id: https://dev.local/integration-rest
+        client-id: https://dev.edusign.sunet.se/shibboleth
         trusted-certificates:
           - file:/etc/signservice-secrets/integration-rest-signing.crt
       authn:
