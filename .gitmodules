@@ -7,6 +7,6 @@
 [submodule "sunet-modules"]
 	path = ss-dev-src/signservice-modules
 	url = https://github.com/SUNET/signservice-modules.git
-[submodule "validator"]
-	path = ss-dev-src/validator
-	url = https://github.com/swedenconnect/signature-validation
+[submodule "validation"]
+	path = ss-dev-src/sigval
+	url = https://github.com/SUNET/docker-sigval
