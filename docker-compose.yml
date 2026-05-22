@@ -79,6 +79,19 @@ services:
       - "8543:8443"
       - "8549:8449"
 
+  sigval:
+    build:
+      context: ./ss-dev-src/sigval
+      dockerfile: ../../ss-dev-docker/sigval.Dockerfile
+    restart: unless-stopped
+    environment:
+      VIRTUAL_HOST: ${SIGVAL_DOMAIN:-validator.dev.edusign.sunet.se}
+      VIRTUAL_PROTO: http
+      VIRTUAL_PORT: 8080
+      LETSENCRYPT_HOST: ${SIGVAL_DOMAIN:-validator.dev.edusign.sunet.se}
+    ports:
+      - "8580:8080"
+
   sp:
     build:
       context: nginx
