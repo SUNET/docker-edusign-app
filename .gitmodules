@@ -4,3 +4,9 @@
 [submodule "ss-dev-src/signservice"]
 	path = ss-dev-src/signservice
 	url = https://github.com/swedenconnect/signservice.git
+[submodule "sunet-modules"]
+	path = ss-dev-src/signservice-modules
+	url = https://github.com/SUNET/signservice-modules.git
+[submodule "validator"]
+	path = ss-dev-src/validator
+	url = https://github.com/swedenconnect/signature-validation
