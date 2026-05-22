@@ -26,7 +26,8 @@ RUN useradd --system --uid 10003 sigval \
  && rm -rf /var/lib/apt/lists/* \
  && mkdir -p /data /opt/sigval && chown -R sigval /data /opt/sigval
 COPY --from=download /dl/sigval-service.jar /opt/sigval/app.jar
-COPY resources/eduSign/ /data/
+# /data is bind-mounted from ss-dev-src/sigval/resources/eduSign in
+# docker-compose so trust anchors / properties can be edited without a rebuild.
 USER sigval
 ENV JAVA_OPTS="-Djava.net.preferIPv4Stack=true"
 EXPOSE 8080

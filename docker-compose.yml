@@ -93,6 +93,8 @@ services:
       # signing key is never used. Swap pkcs11 for the lib's ephemeral 'create'
       # key source so we don't need to bootstrap SoftHSM tokens.
       SPRING_APPLICATION_JSON: '{"sigval-service":{"svt":{"keySourceType":"create"}}}'
+    volumes:
+      - ./ss-dev-src/sigval/resources/eduSign:/data:ro
     ports:
       - "8580:8080"
 
