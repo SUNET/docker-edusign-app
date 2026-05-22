@@ -89,6 +89,10 @@ services:
       VIRTUAL_PROTO: http
       VIRTUAL_PORT: 8080
       LETSENCRYPT_HOST: ${SIGVAL_DOMAIN:-validator.dev.edusign.sunet.se}
+      # SVT issuer is off in resources/eduSign/application.properties, so the
+      # signing key is never used. Swap pkcs11 for the lib's ephemeral 'create'
+      # key source so we don't need to bootstrap SoftHSM tokens.
+      SPRING_APPLICATION_JSON: '{"sigval-service":{"svt":{"keySourceType":"create"}}}'
     ports:
       - "8580:8080"
 
