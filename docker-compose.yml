@@ -184,8 +184,8 @@ services:
       MAIL_BACKEND: ${MAIL_BACKEND:-smtp}
       MAIL_SERVER: ${MAIL_SERVER:-postfix}
       MAIL_PORT: ${MAIL_PORT:-587}
-      MAIL_USERNAME: ${MAIL_USERNAME:-changeme}
-      MAIL_PASSWORD: ${MAIL_PASSWORD:-changeme}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
       MAIL_DEFAULT_SENDER: ${MAIL_DEFAULT_SENDER:-changeme}
       MAIL_USE_TLS: ${MAIL_USE_TLS:-false}
       MAIL_USE_SSL: ${MAIL_USE_SSL:-false}
@@ -206,6 +206,7 @@ services:
       ALLOW_BANKID: ${ALLOW_BANKID:-true}
       BANKID_WHITELIST: ${BANKID_WHITELIST:-sunet.se,eduid.se}
       FREJA_IDP: ${FREJA_IDP:-https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com}
+      BANKID_IDP: ${BANKID_IDP:-https://bankidp.qa.swamid.se/bankid/idp}
     depends_on:
       - postfix
 
