@@ -266,7 +266,7 @@ COPY ./docker/supervisord.conf /etc/supervisor/conf.d/
 
 COPY ./docker/attribute-map.xml /etc/shibboleth/
 
-COPY $SSL_CERT_DIR /etc
+COPY $SSL_CERT_DIR /etc/ssl
 RUN curl $MDQ_SIGNER_CERT_URL -o /etc/shibboleth/$MDQ_SIGNER_CERT
 RUN curl $MDQ_SIGNER_CERT_URL_EID -o /etc/shibboleth/$MDQ_SIGNER_CERT_EID
 

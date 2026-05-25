@@ -94,6 +94,7 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
     </RequestMapper>
     <ApplicationDefaults entityID="https://${SP_HOSTNAME}/shibboleth"
         REMOTE_USER="eppn subject-id pairwise-id persistent-id"
+        signing="true"
         metadataAttributePrefix="MD-"
         cipherSuites="DEFAULT:!EXP:!LOW:!aNULL:!eNULL:!DES:!IDEA:!SEED:!RC4:!3DES:!kRSA:!SSLv2:!SSLv3:!TLSv1:!TLSv1.1">
         <!--
