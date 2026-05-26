@@ -10,3 +10,6 @@
 [submodule "validation"]
 	path = ss-dev-src/sigval
 	url = https://github.com/SUNET/docker-sigval
+[submodule "edusign-app"]
+	path = ss-dev-src/edusign-app
+	url = https://github.com/SUNET/edusign-app

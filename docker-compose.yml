@@ -107,6 +107,8 @@ services:
       - 443
     volumes:
       - edusignlogs:/var/log/edusign:rw
+      - ./ss-dev-src/edusign-app/frontend/public:/opt/public:ro
+      - ./ss-dev-src/edusign-app/frontend/build:/opt/jsbuild:ro
     environment:
       MDQ_BASE_URL: ${MDQ_BASE_URL:-https://mds.swamid.se/qa/}
       MDQ_SIGNER_CERT: ${MDQ_SIGNER_CERT:-md-signer2.crt}
@@ -141,6 +143,7 @@ services:
       - 8080
     volumes:
       - edusignlogs:/var/log/edusign:rw
+      - ./ss-dev-src/edusign-app/backend:/opt/edusign/edusign-webapp:ro
     environment:
       SP_HOSTNAME: ${SP_HOSTNAME:-dev.edusign.sunet.se}
       SECRET_KEY: ${SECRET_KEY:-changeme}
@@ -221,6 +224,26 @@ services:
       ALLOWED_SENDER_DOMAINS: ${ALLOWED_SENDER_DOMAINS:-cazalla.net}
       HOSTNAME: postfix
 
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_DB: edusign
+      POSTGRES_USER: edusign
+      POSTGRES_PASSWORD: edusign
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "127.0.0.1:15432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  buildjs:
+    build:
+      dockerfile: ./ss-dev-docker/buildjs.Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./ss-dev-src/edusign-app/frontend:/home/node/app:rw
+
   nginx-proxy:
     image: nginxproxy/nginx-proxy
     container_name: nginx-proxy
@@ -259,3 +282,5 @@ volumes:
     name: html
   acme:
     name: acme
+  postgres:
+    name: postgres
