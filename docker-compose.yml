@@ -108,7 +108,7 @@ services:
     volumes:
       - edusignlogs:/var/log/edusign:rw
       - ./ss-dev-src/edusign-app/frontend/public:/opt/public:ro
-      - ./ss-dev-src/edusign-app/frontend/build:/opt/jsbuild:ro
+      - ./ss-dev-src/edusign-app/frontend/build:/opt/jsbuild:rw
     environment:
       MDQ_BASE_URL: ${MDQ_BASE_URL:-https://mds.swamid.se/qa/}
       MDQ_SIGNER_CERT: ${MDQ_SIGNER_CERT:-md-signer2.crt}
