@@ -1,0 +1,22 @@
+
+To release new version:
+
+- In edusign-app use tbump to create new version.
+- In docker-edusign-app/ss-dev-src/edusign-app checkout the new tag.
+- In docker-edusign-app commit submodule.
+- In docker-edusign-app use tbump to bump version.
+
+To deploy in the dev environment:
+
+- in docker-edusign-app `git fetch`, `git checkout <new tag>`.
+- in docker-edusign-app `git submodule update`.
+- in docker-edusign-app `docker compose down`, `docker compose up`.
+- in docker-edusign-app once the services are up:
+    ```
+    cd local-assets
+    docker cp shibboleth2.xml edusign-sp:/etc/shibboleth/shibboleth2.xml
+    wget http://eid.svelegtest.se/metadata/mdx/role/idp.xml
+    docker cp idp.xml edusign-sp:/etc/shibboleth/bankid-idp.xml
+    docker exec edusign-sp /bin/bash -c "supervisorctl restart shibd shibresponder shibauthorizer nginx"
+    ```
+
