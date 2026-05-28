@@ -143,7 +143,7 @@ services:
       - 8080
     volumes:
       - edusignlogs:/var/log/edusign:rw
-      - ./ss-dev-src/edusign-app/backend:/opt/edusign/edusign-webapp:ro
+      - ./ss-dev-src/edusign-app/backend:/opt/edusign/edusign-webapp:rw
     environment:
       SP_HOSTNAME: ${SP_HOSTNAME:-dev.edusign.sunet.se}
       SECRET_KEY: ${SECRET_KEY:-changeme}
