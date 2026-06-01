@@ -1,25 +1,62 @@
 
 
-Upgrade from 1.4.X to 1.5.X
+Upgrade from 1.4.X to 1.5.2
 ---------------------------
 
-We need to configure signatures with BankID.
-For this we need to:
+This upgrade adds the possibility to sign with BankID and Freja+. Both methods
+integrate the webapp with the Sweden Connect federation and share most of the
+configuration. To enable them:
 
-1. Integrate the webapp as an SP in the Sweden Connect federation. To use the sandbox, register here: `https://eid.svelegtest.se/mdreg/home`. The AttributeConsumingService shoopuld require the personalIdentityNumber (urn:oid:1.2.752.29.4.13) attribute.
+1. Integrate the webapp as an SP in the Sweden Connect federation. To use the
+   sandbox, register here: `https://eid.svelegtest.se/mdreg/home`. The
+   AttributeConsumingService should require the personalIdentityNumber
+   (urn:oid:1.2.752.29.4.13) attribute.
 
-2. Enable signing with BankID. Provide the `edusign-app` container of the webapp with environment variable: `ALLOW_BANKID = True`.
+2. Enable signing with BankID and Freja+. The `edusign-app` container variable
+   `ALLOW_BANKID` controls the widget that lets inviters request BankID / Freja+
+   signatures, and governs both methods. As of 1.5.2 it defaults to `True`
+   (previously `False`); set it explicitly to `False` to hide the widget.
 
-3. Configure and use a dedicated REST API profile that can construct sign requests to be signed with BankID. The `edusign-app` container of the webapp has to be provided with 3 new config variables:
+3. Configure dedicated REST API profiles that can construct sign requests to be
+   signed with BankID and Freja+. The `edusign-app` container has to be provided
+   with these new config variables (one set per method):
 
-* EDUSIGN_API_PROFILE_BANKID: Name of the profile
-* EDUSIGN_API_USERNAME_BANKID: Basic Auth username for the profile
-* EDUSIGN_API_PASSWORD_BANKID: Basic Auth password of the profile
+   * EDUSIGN_API_PROFILE_BANKID / EDUSIGN_API_PROFILE_FREJA: Name of the profile
+   * EDUSIGN_API_USERNAME_BANKID / EDUSIGN_API_USERNAME_FREJA: Basic Auth username for the profile
+   * EDUSIGN_API_PASSWORD_BANKID / EDUSIGN_API_PASSWORD_FREJA: Basic Auth password of the profile
 
-4. Configure the `edusign-app` container of the webapp with a variable `BANKID_IDP` with value the entityID of the BankID IdP in Sweden Connect. For the sandbox: `https://sandbox.swedenconnect.se/bankid/idp`;
+4. Configure the `edusign-app` container with the entityIDs of the BankID and
+   Freja+ IdPs in Sweden Connect:
 
-5. Configure the `edusign-sp` container of the webapp with a variable `BANKID_ENTITY_ID` with value the entityID of the BankID IdP in Sweden Connect. For the sandbox: `https://sandbox.swedenconnect.se/bankid/idp`;
+   * BANKID_IDP. For the sandbox: `https://sandbox.swedenconnect.se/bankid/idp`
+   * FREJA_IDP. For the sandbox: `https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com`
 
-6. Provide the `edusign-sp` container of the webapp with the Sweden Connect metadata. For now we are providing it as an XML local file, and configuring the `edusign-sp` container with an environment variable `BANKID_MD_PATH` with the path to the XML file within the container. For the sandbox, we can cURL the feed from http://eid.svelegtest.se/metadata/mdx/role/idp.xml
+5. Configure the `edusign-sp` container with the same entityIDs, so the
+   `/Login/BankID` and `/Login/Freja` SessionInitiators are configured:
 
-7. [NOT NEEDED FOR NOW - NEEDED FOR PROD FOR MDQ] Provide the `edusign-sp` container with the certificate for the Sweden connect metadata. Get it from `https://eid.svelegtest.se/mdreg/pub/metadata-cert.crt` and provide the path to it in the container in an environment variable `BANKID_MD_CERT_PATH`.
+   * BANKID_ENTITY_ID
+   * FREJA_ENTITY_ID
+
+6. Provide the `edusign-sp` container with the Sweden Connect (eID) metadata. This
+   is obtained from an MDQ feed, configured with these `edusign-sp` variables:
+
+   * MDQ_BASE_URL_EID: base URL of the eID MDQ feed
+   * MDQ_SIGNER_CERT_EID: path, within the container, to the feed signing certificate
+   * MDQ_SIGNER_CERT_URL_EID: URL to download the feed signing certificate
+
+   For the SWAMID QA feed these point at `https://mds.swamid.se/qa/`.
+
+7. Optionally adjust the attributes used for BankID / Freja+ signatures. The
+   defaults match the Swedish SSN / displayName, and can be overridden in the
+   `edusign-app` container with (one variable per method):
+
+   * SIGNER_ATTRIBUTES_BANKID / SIGNER_ATTRIBUTES_FREJA: attributes shown in the signature image (default `urn:oid:2.16.840.1.113730.3.1.241,displayName`)
+   * AUTHN_ATTRIBUTES_BANKID / AUTHN_ATTRIBUTES_FREJA: attributes used to match the signing and authenticating identities (default `urn:oid:1.2.752.29.4.13,personalIdentityNumber`)
+   * BANKID_SSN_ATTR / FREJA_SSN_ATTR: SAML2 attribute carrying the Swedish SSN (default `urn:oid:1.2.752.29.4.13`)
+
+8. The scopes allowed to request BankID / Freja+ signatures are controlled by the
+   `BANKID_WHITELIST` variable on the `edusign-app` container (shared by both
+   methods). Default: `sunet.se,eduid.se`.
+
+Note: the `edusign-app` `SESSION_COOKIE_PATH` default changed from `/sign` to `/`.
+If you relied on the previous value, set it explicitly.

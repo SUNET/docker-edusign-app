@@ -201,7 +201,7 @@ SESSION_COOKIE_DOMAIN
 SESSION_COOKIE_PATH
     Configuration of the Flask session cookie.
 
-    Default: `/sign`
+    Default: `/`
 
 SESSION_COOKIE_SECURE
     Configuration of the Flask session cookie.
@@ -279,7 +279,7 @@ EDUSIGN_API_PASSWORD_20
 EDUSIGN_API_PROFILE_BANKID
     Profile of the eduSign API to use for the BankID IdP.
 
-    Default: `edusign-test`
+    Default: `edusign-bankid-test`
 
 EDUSIGN_API_USERNAME_BANKID
     Username for Basic Auth for the eduSign API for the BankID profile.
@@ -288,6 +288,21 @@ EDUSIGN_API_USERNAME_BANKID
 
 EDUSIGN_API_PASSWORD_BANKID
     Password for Basic Auth for the eduSign API for the BankID profile.
+
+    Default: `dummy`
+
+EDUSIGN_API_PROFILE_FREJA
+    Profile of the eduSign API to use for the Freja+ IdP.
+
+    Default: `edusign-freja-test`
+
+EDUSIGN_API_USERNAME_FREJA
+    Username for Basic Auth for the eduSign API for the Freja+ profile.
+
+    Default: `dummy`
+
+EDUSIGN_API_PASSWORD_FREJA
+    Password for Basic Auth for the eduSign API for the Freja+ profile.
 
     Default: `dummy`
 
@@ -316,6 +331,12 @@ SIGNER_ATTRIBUTES_BANKID
 
     Default: `urn:oid:2.16.840.1.113730.3.1.241,displayName`
 
+SIGNER_ATTRIBUTES_FREJA
+    The attributes that are displayed in the image representation of the signature when signing with Freja+, given as
+    :code:`<name>,<friendlyName>`, and separated by semicolons.
+
+    Default: `urn:oid:2.16.840.1.113730.3.1.241,displayName`
+
 AUTHN_ATTRIBUTES_20
     The attributes that are used to make sure that the identity used for signing is the same as the one used for authentication.
 
@@ -323,6 +344,11 @@ AUTHN_ATTRIBUTES_20
 
 AUTHN_ATTRIBUTES_BANKID
     The attributes that are used to make sure that the identity used for signing is the same as the one used for authentication - when signing with BankID.
+
+    Default: `urn:oid:1.2.752.29.4.13,personalIdentityNumber`
+
+AUTHN_ATTRIBUTES_FREJA
+    The attributes that are used to make sure that the identity used for signing is the same as the one used for authentication - when signing with Freja+.
 
     Default: `urn:oid:1.2.752.29.4.13,personalIdentityNumber`
 
@@ -406,12 +432,13 @@ REDIS_URL
     Default: `redis://localhost:6379/0`.
 
 ALLOW_BANKID
-    Whether to show the UI widget that allows inviters to let invitees sign with BankID
+    Whether to show the UI widget that allows inviters to let invitees sign with BankID or Freja+.
 
-    Default: false
+    Default: true
 
 BANKID_WHITELIST
-    Comma separated list of scopes, so users having an eppn belonging to those scopes can allow BankID signatures in their invitations.
+    Comma separated list of scopes, so users having an eppn belonging to those scopes can allow BankID and Freja+
+    signatures in their invitations. This whitelist is shared by both BankID and Freja+.
 
     Default: `sunet.se,eduid.se`
 
@@ -422,6 +449,16 @@ BANKID_IDP
 
 BANKID_SSN_ATTR
     SAML2 attribute that carries the Swedish SSN in assertions coming from the BankID IdP.
+
+    Default: `urn:oid:1.2.752.29.4.13`
+
+FREJA_IDP
+    entityID of the Freja+ SAML2 IdP
+
+    Default: `https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com`
+
+FREJA_SSN_ATTR
+    SAML2 attribute that carries the Swedish SSN in assertions coming from the Freja+ IdP.
 
     Default: `urn:oid:1.2.752.29.4.13`
 
@@ -596,34 +633,59 @@ DISCO_URL
     Default: `https://md.nordu.net/role/idp.ds`
 
 BANKID_ENTITY_ID
-    EntityID of the BankID SAML IdP.
+    EntityID of the BankID SAML IdP, used to configure the ``/Login/BankID`` SessionInitiator.
 
-    Default: `https://bankidp.swamid.se/bankid/idp`
+    Default: `https://sandbox.swedenconnect.se/bankid/idp`
+
+FREJA_ENTITY_ID
+    EntityID of the Freja+ SAML IdP, used to configure the ``/Login/Freja`` SessionInitiator.
+
+    Default: `https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com`
 
 BANKID_MD_PATH
-    Path to an XML file with the BankID metadata.
+    Path to an XML file with the BankID metadata. Only used if a local-file ``MetadataProvider`` is
+    enabled; in the default configuration BankID and Freja+ metadata is obtained from the MDQ feed
+    configured with the ``MDQ_*_EID`` variables below.
 
     Default: `/etc/shibboleth/bankid-metadata.xml`
 
-FREJA_ENTITY_ID
-    EntityID of the Freja SAML IdP.
+MDQ_BASE_URL
+    Base URL for the MDQ server providing the federation (SWAMID) metadata.
 
-    Default: `https://freja.swamid.se/freja/idp`
+    Default: `https://mds.swamid.se/qa/`
 
-FREJA_MD_PATH
-    Path to an XML file with the Freja metadata.
-
-    Default: `/etc/shibboleth/freja-metadata.xml`
-
-MDQ_BASE_URL:
-    Base URL for an MDQ server, used 
+MDQ_SIGNER_CERT
+    Path, within the container, to the certificate used to validate the signature of the metadata
+    served by ``MDQ_BASE_URL``.
 
     No Default.
 
-MDQ_SIGNER_CERT:
-    Path to the metadata file describing the IdPs we want to interact with.
+MDQ_SIGNER_CERT_URL
+    URL from which to download the ``MDQ_BASE_URL`` metadata signing certificate.
 
-    No Default.
+    Default: `https://mds.swamid.se/qa/md/swamid-qa.crt`
+
+MDQ_BASE_URL_EID
+    Base URL for the MDQ server providing the BankID / Freja+ (Sweden Connect eID) metadata.
+    This is the feed actually used to resolve the BankID and Freja+ IdPs.
+
+    Default: `https://mds.swamid.se/qa/`
+
+MDQ_SIGNER_CERT_EID
+    Path, within the container, to the certificate used to validate the signature of the metadata
+    served by ``MDQ_BASE_URL_EID``.
+
+    Default: `md-signer2.crt`
+
+MDQ_SIGNER_CERT_URL_EID
+    URL from which to download the ``MDQ_BASE_URL_EID`` metadata signing certificate.
+
+    Default: `https://mds.swamid.se/qa/md/swamid-qa.crt`
+
+SSL_CERT_DIR
+    Directory holding the SSL certificate and key used by NGINX.
+
+    Default: `./ssl`
 
 BACKEND_HOST
     The hostname of the container running the backend WSGI app.
