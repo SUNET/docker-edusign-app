@@ -17,10 +17,19 @@ ENV EDUSIGN_API_BASE_URL=https://sig.idsec.se/signint/v1/
 ENV EDUSIGN_API_PROFILE=edusign-test
 ENV EDUSIGN_API_USERNAME=dummy
 ENV EDUSIGN_API_PASSWORD=dummy
+ENV EDUSIGN_API_PROFILE_BANKID=edusign-bankid-test
+ENV EDUSIGN_API_USERNAME_BANKID=dummy
+ENV EDUSIGN_API_PASSWORD_BANKID=dummy
+ENV EDUSIGN_API_PROFILE_FREJA=edusign-freja-test
+ENV EDUSIGN_API_USERNAME_FREJA=dummy
+ENV EDUSIGN_API_PASSWORD_FREJA=dummy
 ENV MULTISIGN_BUTTONS=yes
 ENV SIGNER_ATTRIBUTES=urn:oid:2.16.840.1.113730.3.1.241,displayName
 ENV SIGNER_ATTRIBUTES_20=urn:oid:2.16.840.1.113730.3.1.241,displayName
 ENV SIGNER_ATTRIBUTES_BANKID=urn:oid:2.16.840.1.113730.3.1.241,displayName
+ENV SIGNER_ATTRIBUTES_FREJA=urn:oid:2.16.840.1.113730.3.1.241,displayName
+ENV AUTHN_ATTRIBUTES_BANKID=urn:oid:1.2.752.29.4.13,personalIdentityNumber
+ENV AUTHN_ATTRIBUTES_FREJA=urn:oid:1.2.752.29.4.13,personalIdentityNumber
 ENV SIGN_REQUESTER_ID=https://sig.idsec.se/shibboleth
 ENV SCOPE_WHITELIST=sunet.se,eduid.se
 ENV USER_BLACKLIST=blacklisted@eduid.se
@@ -53,6 +62,8 @@ ENV ALLOW_BANKID=true
 ENV BANKID_WHITELIST=sunet.se,eduid.se
 ENV BANKID_IDP=https://sandbox.swedenconnect.se/bankid/idp
 ENV BANKID_SSN_ATTR=urn:oid:1.2.752.29.4.13
+ENV FREJA_IDP=https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com
+ENV FREJA_SSN_ATTR=urn:oid:1.2.752.29.4.13
 
 # Install needed software
 
