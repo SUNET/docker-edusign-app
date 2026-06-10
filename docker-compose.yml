@@ -214,6 +214,7 @@ services:
       BANKID_IDP: ${BANKID_IDP:-https://bankidp.qa.swamid.se/bankid/idp}
     depends_on:
       - postfix
+      - postgres
 
   postfix:
     image: boky/postfix
