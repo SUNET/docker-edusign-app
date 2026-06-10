@@ -73,7 +73,7 @@ RUN apt -y update && apt -y upgrade && \
       git build-essential iputils-ping libcairo2-dev pkg-config \
       procps bind9-host netcat-openbsd net-tools curl locales libncurses5-dev \
       libgdbm-dev libnss3-dev libsqlite3-dev libreadline-dev libbz2-dev liblzma-dev \
-      postgresql-libs && \
+      libpq-dev && \
     apt -y clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -123,7 +123,7 @@ COPY custom/*.md /etc/edusign
 # Get the edusign sources from github, pick the backend sources
 # and put them in /opt/edusign, and get rid of the rest.
 
-ENV EDUSIGN_APP_VERSION=v1.6.2b3
+ENV EDUSIGN_APP_VERSION=v1.6.2b2
 
 RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/edusign-app /tmp/edusign-app
 RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp
