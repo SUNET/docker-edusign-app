@@ -65,6 +65,12 @@ ENV BANKID_SSN_ATTR=urn:oid:1.2.752.29.4.13
 ENV FREJA_IDP=https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com
 ENV FREJA_SSN_ATTR=urn:oid:1.2.752.29.4.13
 
+# Gunicorn tuning
+ENV GUNICORN_WORKERS=5
+ENV GUNICORN_WORKER_CLASS=gthread
+ENV GUNICORN_WORKER_THREADS=4
+ENV GUNICORN_WORKER_TIMEOUT=30
+
 # Install needed software
 
 RUN apt -y update && apt -y upgrade && \
