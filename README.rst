@@ -434,6 +434,27 @@ DEFAULT_LOA
 
     Default: none
 
+GUNICORN_WORKERS
+    Number of Gunicorn worker processes serving the backend app.
+
+    Default: 1
+
+GUNICORN_WORKER_CLASS
+    Gunicorn worker class (e.g. `sync`, `gthread`). Threads (see GUNICORN_WORKER_THREADS)
+    require a threaded worker class such as `gthread`.
+
+    Default: `sync`
+
+GUNICORN_WORKER_THREADS
+    Number of threads handling requests in each Gunicorn worker.
+
+    Default: 1
+
+GUNICORN_WORKER_TIMEOUT
+    Gunicorn worker timeout, in seconds. Workers silent for more than this are killed and restarted.
+
+    Default: 30
+
 In addition it is necessary to provide the app with access to some SMTP server,
 setting the variables `indicated here <https://flask-mailman.readthedocs.io/en/latest/>`_.
 
