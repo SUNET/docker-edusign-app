@@ -13,10 +13,12 @@ base_dir=${base_dir-'/opt/edusign'}
 
 log_dir=${log_dir-'/var/log/edusign'}
 state_dir=${state_dir-"${base_dir}/run"}
-workers=${workers-1}
-worker_class=${worker_class-sync}
-worker_threads=${worker_threads-1}
-worker_timeout=${worker_timeout-30}
+# Gunicorn tuning, configurable via uppercase container env vars.
+# The legacy lowercase names are kept as a fallback for compatibility.
+workers=${GUNICORN_WORKERS-4}
+worker_class=${GUNICORN_WORKER_CLASS-gthread}
+worker_threads=${GUNICORN_WORKER_THREADS-4}
+worker_timeout=${GUNICORN_WORKER_TIMEOUT-30}
 # Need to tell Gunicorn to trust the X-Forwarded-* headers
 forwarded_allow_ips=${forwarded_allow_ips-'*'}
 
