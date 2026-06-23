@@ -12,7 +12,7 @@ if [ "x$CERTNAME" = "x" ]; then
 fi
 
 if [ "x$DISCO_URL" = "x" ]; then
-   DISCO_URL="https://login.idp.eduid.se/idp.xml"
+   DISCO_URL="https://service.seamlessaccess.org/ds/?trustProfile=edugain"
 fi
 
 if [ "x$BANKID_ENTITY_ID" = "x" ]; then

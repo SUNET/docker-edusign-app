@@ -156,7 +156,7 @@ FROM debian:bookworm AS sp
 ENV DEBIAN_FRONTEND=noninteractive
 
 ENV SP_HOSTNAME=sp.edusign.docker
-ENV DISCO_URL=https://md.nordu.net/role/idp.ds
+ENV DISCO_URL=https://service.seamlessaccess.org/ds/?trustProfile=edugain
 ENV BANKID_ENTITY_ID=https://bankidp.qa.swamid.se/bankid/idp
 ENV BANKID_MD_PATH=/etc/shibboleth/bankid-metadata.xml
 ENV FREJA_ENTITY_ID=https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com
@@ -173,7 +173,6 @@ ENV MAX_FILE_SIZE=28730982
 ENV BACKEND_HOST=edusign-app
 ENV BACKEND_PORT=8080
 ENV BACKEND_SCHEME=http
-ENV SSL_CERT_DIR=./ssl
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y \
@@ -266,7 +265,6 @@ COPY ./docker/supervisord.conf /etc/supervisor/conf.d/
 
 COPY ./docker/attribute-map.xml /etc/shibboleth/
 
-COPY $SSL_CERT_DIR /etc/ssl
 RUN curl $MDQ_SIGNER_CERT_URL -o /etc/shibboleth/$MDQ_SIGNER_CERT
 RUN curl $MDQ_SIGNER_CERT_URL_EID -o /etc/shibboleth/$MDQ_SIGNER_CERT_EID
 
