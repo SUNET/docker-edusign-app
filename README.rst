@@ -703,11 +703,6 @@ MDQ_SIGNER_CERT_URL_EID
 
     Default: `https://mds.swamid.se/qa/md/swamid-qa.crt`
 
-SSL_CERT_DIR
-    Directory holding the SSL certificate and key used by NGINX.
-
-    Default: `./ssl`
-
 BACKEND_HOST
     The hostname of the container running the backend WSGI app.
 
