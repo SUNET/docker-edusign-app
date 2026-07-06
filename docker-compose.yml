@@ -113,9 +113,9 @@ services:
       MDQ_BASE_URL: ${MDQ_BASE_URL:-https://mds.swamid.se/qa/}
       MDQ_SIGNER_CERT: ${MDQ_SIGNER_CERT:-md-signer2.crt}
       MDQ_SIGNER_CERT_URL: ${MDQ_SIGNER_CERT_URL:-https://mds.swamid.se/qa/md/swamid-qa.crt}
-      MDQ_BASE_URL_EID: ${MDQ_BASE_URL_EID:-https://mds.swamid.se/qa/}
-      MDQ_SIGNER_CERT_EID: ${MDQ_SIGNER_CERT_EID:-md-signer2-eid.crt}
-      MDQ_SIGNER_CERT_URL_EID: ${MDQ_SIGNER_CERT_URL_EID:-https://mds.swamid.se/qa/md/swamid-qa.crt}
+      MD_FILE_URL: ${MD_FILE_URL:-https://qa.md.swedenconnect.se/role/idp.xml}
+      MD_SIGNER_CERT: ${MD_SIGNER_CERT:-sc-qa-md-signer.crt}
+      MD_SIGNER_CERT_URL: ${MD_SIGNER_CERT_URL:-https://qa.md.swedenconnect.se/sc-qa-md-signer.crt}
       SP_HOSTNAME: ${SP_HOSTNAME:-dev.edusign.sunet.se}
       DISCO_URL: ${DISCO_URL:-https://service.seamlessaccess.org/ds/?trustProfile=edugain}
       BANKID_ENTITY_ID: ${BANKID_ENTITY_ID:-https://bankidp.qa.swamid.se/bankid/idp}

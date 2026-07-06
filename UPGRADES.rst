@@ -38,13 +38,14 @@ configuration. To enable them:
    * FREJA_ENTITY_ID
 
 6. Provide the `edusign-sp` container with the Sweden Connect (eID) metadata. This
-   is obtained from an MDQ feed, configured with these `edusign-sp` variables:
+   cannot be obtained from an MDQ feed, (shibboleth does not like 2 MDQ feeds), so
+   we have to use the published metadata file:
 
-   * MDQ_BASE_URL_EID: base URL of the eID MDQ feed
-   * MDQ_SIGNER_CERT_EID: path, within the container, to the feed signing certificate
-   * MDQ_SIGNER_CERT_URL_EID: URL to download the feed signing certificate
+   * MD_FILE_URL: URL of the metadata file
+   * MD_SIGNER_CERT: path, within the container, to the md signing certificate
+   * MD_SIGNER_CERT_URL: URL to download the feed signing certificate
 
-   For the SWAMID QA feed these point at `https://mds.swamid.se/qa/`.
+   For the SWAMID QA feed these point at `https://qa.md.swedenconnect.se/role/idp.xml`.
 
 7. Optionally adjust the attributes used for BankID / Freja+ signatures. The
    defaults match the Swedish SSN / displayName, and can be overridden in the

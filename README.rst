@@ -686,20 +686,20 @@ MDQ_SIGNER_CERT_URL
 
     Default: `https://mds.swamid.se/qa/md/swamid-qa.crt`
 
-MDQ_BASE_URL_EID
-    Base URL for the MDQ server providing the BankID / Freja+ (Sweden Connect eID) metadata.
+MD_FILE_URL
+    URL for the metadata file providing the BankID / Freja+ (Sweden Connect eID) metadata.
     This is the feed actually used to resolve the BankID and Freja+ IdPs.
 
-    Default: `https://mds.swamid.se/qa/`
+    Default: `https://qa.md.swedenconnect.se/role/idp.xml`
 
-MDQ_SIGNER_CERT_EID
+MD_SIGNER_CERT
     Path, within the container, to the certificate used to validate the signature of the metadata
-    served by ``MDQ_BASE_URL_EID``.
+    served at ``MD_FILE_URL``.
 
     Default: `md-signer2.crt`
 
-MDQ_SIGNER_CERT_URL_EID
-    URL from which to download the ``MDQ_BASE_URL_EID`` metadata signing certificate.
+MD_SIGNER_CERT_URL
+    URL from which to download the ``MD_FILE_URL`` metadata signing certificate.
 
     Default: `https://mds.swamid.se/qa/md/swamid-qa.crt`
 
