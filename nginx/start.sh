@@ -161,10 +161,14 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
             <MetadataFilter type="Signature" certificate="${MDQ_SIGNER_CERT}" />
         </MetadataProvider>
         <!-- Local BankID metadata. -->
-        <MetadataProvider type="MDQ" validate="true" cacheDirectory="mdq"
-	            baseUrl="${MDQ_BASE_URL_EID}" ignoreTransport="true">
-            <MetadataFilter type="RequireValidUntil" maxValidityInterval="2419200"/>
-            <MetadataFilter type="Signature" certificate="${MDQ_SIGNER_CERT_EID}" />
+
+        <MetadataProvider type="XML" url="${MD_FILE_URL}" backingFilePath="Metadata.xml.bck">
+            <MetadataFilter type="Signature" certificate="${MD_SIGNER_CERT}"/>
+          <MetadataFilter type="RequireValidUntil" maxValidityInterval="8640000"/>
+          <DiscoveryFilter type="Exclude" matcher="EntityAttributes" trimTags="true"
+              attributeName="http://macedir.org/entity-category"
+              attributeNameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+              attributeValue="http://refeds.org/category/hide-from-discovery" />
         </MetadataProvider>
         <!-- Map to extract attributes from SAML assertions. -->
         <AttributeExtractor type="XML" validate="true" reloadChanges="false" path="attribute-map.xml"/>

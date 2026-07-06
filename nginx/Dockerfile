@@ -163,9 +163,9 @@ ENV FREJA_ENTITY_ID=https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.
 ENV MDQ_BASE_URL=https://mds.swamid.se/qa/
 ENV MDQ_SIGNER_CERT=md-signer2.crt
 ENV MDQ_SIGNER_CERT_URL=https://mds.swamid.se/qa/md/swamid-qa.crt
-ENV MDQ_BASE_URL_EID=https://mds.swamid.se/qa/
-ENV MDQ_SIGNER_CERT_EID=md-signer2.crt
-ENV MDQ_SIGNER_CERT_URL_EID=https://mds.swamid.se/qa/md/swamid-qa.crt
+ENV MD_FILE_URL=https://qa.md.swedenconnect.se/role/idp.xml
+ENV MD_SIGNER_CERT=sc-qa-md-signer.crt
+ENV MD_SIGNER_CERT_URL=https://qa.md.swedenconnect.se/sc-qa-md-signer.crt
 
 # 20M:
 ENV MAX_FILE_SIZE=28730982
@@ -266,7 +266,7 @@ COPY ./docker/supervisord.conf /etc/supervisor/conf.d/
 COPY ./docker/attribute-map.xml /etc/shibboleth/
 
 RUN curl $MDQ_SIGNER_CERT_URL -o /etc/shibboleth/$MDQ_SIGNER_CERT
-RUN curl $MDQ_SIGNER_CERT_URL_EID -o /etc/shibboleth/$MDQ_SIGNER_CERT_EID
+RUN curl $MD_SIGNER_CERT_URL -o /etc/shibboleth/$MD_SIGNER_CERT
 
 # Copy start script and set it as entry point
 #
