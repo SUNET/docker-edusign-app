@@ -1,6 +1,13 @@
 #
-# Full replacement application.yml for the SignService demo app, configured
-# to act as a SAML SP in the SWAMID QA federation.
+# Full replacement application.yml for the SignService demo app.
+#
+# Two engines, one per IdP "style":
+#   - integration-rest-dev: SWAMID-style IdPs (eduID et al.). SUNET Swamid
+#     SAML handler, REFEDS SP metadata. Paired with the 'dev' policy in
+#     integration-rest.
+#   - integration-rest-sc: Sweden Connect-style IdPs (BankID and Freja+).
+#     Stock sweden-connect SAML handler, Sweden Connect SP metadata. Paired
+#     with the 'sc' policy in integration-rest.
 #
 # Loaded via SPRING_CONFIG_LOCATION=file:/etc/signservice/application.yml
 # so that the bundled application.yml on the classpath is NOT merged in
@@ -124,14 +131,24 @@ signservice:
         backup-location: ${SIGNSERVICE_HOME}/swamid-qa-mdq
         validation-certificate: file:/etc/signservice-secrets/swamid-qa-md-signer.crt
         # Sweden Connect test federation (aggregate IdP metadata, not MDQ).
-        # Used by the 'freja' policy in integration-rest to resolve the Freja
-        # IdP. CompositeMetadataProvider wraps the primary + additional list.
+        # Resolves the Freja IdP. NOTE: the test BankID IdP
+        # (https://bankidp.qa.swamid.se/bankid/idp) is NOT here - it is
+        # registered in the SWAMID QA federation (with Sweden Connect entity
+        # attributes) and resolves through the primary MDQ source above.
+        # CompositeMetadataProvider wraps the primary + additional list, and
+        # both engines share it, so each IdP resolves regardless of which
+        # feed it lives in.
         additional:
           - url: http://eid.svelegtest.se/metadata/mdx/role/idp.xml
             mdq: false
             backup-location: ${SIGNSERVICE_HOME}/sveleg-test-metadata.xml
             validation-certificate: https://eid.svelegtest.se/mdreg/pub/metadata-cert.crt
 
+  # Default SAML handler config, used (via default-config-ref) by the
+  # SWAMID-style 'integration-rest-dev' engine only. The Sweden Connect-style
+  # 'integration-rest-sc' engine deliberately does NOT reference it: it would
+  # inherit the Swamid factory-class and REFEDS metadata, so it spells out its
+  # own config inline instead.
   default-handler-config:
     authn:
       saml:
@@ -216,6 +233,8 @@ signservice:
               email-address: "${SIGNSERVICE_SP_CONTACT_EMAIL:noreply@example.org}"
 
   engines:
+    # SWAMID-style engine: eduID and other academic-federation IdPs.
+    # Paired with the 'dev' policy in integration-rest.
     - name: integration-rest-dev
       processing-paths:
         - /sign/integration-rest/signreq
@@ -234,6 +253,112 @@ signservice:
         file:
           name: "integration-rest-dev-audit"
           file-name: ${SIGNSERVICE_HOME}/integration-rest/audit.log
+
+    # Sweden Connect-style engine: serves BOTH BankID and Freja+ signing
+    # (one engine per IdP style, not per IdP - the IdP entityID and authn
+    # context arrive per-request in the SignRequest). Paired with the 'sc'
+    # policy in integration-rest.
+    #
+    # Uses the stock sweden-connect SAML handler: sends RequestedAuthnContext,
+    # handles the SignMessage extension, and enforces the assurance
+    # certification the Swamid handler above deliberately skips.
+    #
+    # Test-environment twist: the BankID IdP (bankidp.qa.swamid.se) is
+    # registered in the SWAMID QA federation (carrying Sweden Connect entity
+    # attributes), while the Freja IdP lives in the Sweden Connect test
+    # federation. Both resolve through the shared composite metadata provider
+    # (SWAMID QA MDQ + Sweden Connect aggregate). Mind the trust direction
+    # too: this engine's SP metadata (published on its
+    # metadata-publishing-path) must be registered in SWAMID QA for BankID
+    # AND in the Sweden Connect federation for Freja.
+    - name: integration-rest-sc
+      processing-paths:
+        - /sign/integration-rest-sc/signreq
+      client:
+        client-id: https://dev.edusign.sunet.se/shibboleth
+        trusted-certificates:
+          - file:/etc/signservice-secrets/integration-rest-signing.crt
+      authn:
+        saml:
+          # No default-config-ref here: it would inherit the Swamid
+          # factory-class. Omitting factory-class selects the stock factory,
+          # and saml-type picks its Sweden Connect flavor.
+          saml-type: sweden-connect
+          entity-id: ${SIGNSERVICE_SP_SC_ENTITY_ID:https://signservice.dev.local/sp/integration-rest-sc}
+          sp-paths:
+            base-url: ${signservice.base-url}
+            metadata-publishing-path: /sign/integration-rest-sc/saml/metadata
+            assertion-consumer-path: /sign/integration-rest-sc/saml/sso
+          metadata-provider-ref: signservice.SamlMetadataProvider
+          signature-credential:
+            props:
+              jks:
+                store-reference: saml-sign-ks
+                name: SignService SAML Signing
+                key:
+                  alias: sign
+                  key-password: changeit
+          decryption-credential:
+            props:
+              jks:
+                store-reference: saml-encrypt-ks
+                name: SignService SAML Decryption
+                key:
+                  alias: encrypt
+                  key-password: changeit
+          sign-authn-requests: true
+          require-encrypted-assertions: false
+          require-signed-assertions: false
+          message-replay-checker-ref: signservice.MessageReplayChecker
+          metadata:
+            # Sweden Connect entity categories: type category marking the SP
+            # as a signature service (IdPs force re-auth and display the sign
+            # message for these), and the service category asking for the
+            # personal identity number attribute set at LoA 3.
+            entity-categories:
+              - http://id.elegnamnden.se/st/1.0/sigservice
+              - http://id.elegnamnden.se/ec/1.0/loa3-pnr
+            # Attribute release in Sweden Connect is governed by the service
+            # entity category above; the explicit list documents intent.
+            requested-attributes:
+              - name: urn:oid:1.2.752.29.4.13            # personalIdentityNumber
+                required: true
+              - name: urn:oid:2.16.840.1.113730.3.1.241  # displayName
+                required: false
+              - name: urn:oid:2.5.4.4                    # sn
+                required: false
+              - name: urn:oid:2.5.4.42                   # givenName
+                required: false
+            service-names:
+              - "en-${SIGNSERVICE_SP_DISPLAY_NAME:Dev SignService}"
+              - "sv-${SIGNSERVICE_SP_DISPLAY_NAME:Dev SignService}"
+            ui-info:
+              display-names:
+                - "en-${SIGNSERVICE_SP_DISPLAY_NAME:Dev SignService}"
+                - "sv-${SIGNSERVICE_SP_DISPLAY_NAME:Dev SignService}"
+              descriptions:
+                - "en-Development SignService SP for Sweden Connect-style IdPs (BankID, Freja+)"
+                - "sv-Utvecklingsmiljö för SignService-SP för Sweden Connect-IdP:er (BankID, Freja+)"
+            organization:
+              names:
+                - "en-${SIGNSERVICE_SP_ORG_NAME:Dev Organization}"
+                - "sv-${SIGNSERVICE_SP_ORG_NAME:Dev Organization}"
+              display-names:
+                - "en-${SIGNSERVICE_SP_ORG_NAME:Dev Organization}"
+                - "sv-${SIGNSERVICE_SP_ORG_NAME:Dev Organization}"
+              urls:
+                - "en-${SIGNSERVICE_SP_ORG_URL:https://example.org/}"
+            contact-persons:
+              support:
+                company: "${SIGNSERVICE_SP_ORG_NAME:Dev Organization}"
+                email-address: "${SIGNSERVICE_SP_CONTACT_EMAIL:noreply@example.org}"
+              technical:
+                company: "${SIGNSERVICE_SP_ORG_NAME:Dev Organization}"
+                email-address: "${SIGNSERVICE_SP_CONTACT_EMAIL:noreply@example.org}"
+      audit:
+        file:
+          name: "integration-rest-sc-audit"
+          file-name: ${SIGNSERVICE_HOME}/integration-rest-sc/audit.log
 
 logging:
   level:
