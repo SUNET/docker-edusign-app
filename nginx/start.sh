@@ -1,5 +1,8 @@
 #!/bin/sh -x
 
+# Abort startup on any command failure (e.g. a metadata cert that won't fetch)
+# rather than limping on with a broken configuration.
+set -e
 
 printenv
 
@@ -72,6 +75,12 @@ if [ ! -f "$KEYDIR/private/${CERTNAME}.key" -o ! -f "$KEYDIR/certs/${CERTNAME}.c
    cp /etc/ssl/private/ssl-cert-snakeoil.key "$KEYDIR/private/${CERTNAME}.key"
    cp /etc/ssl/certs/ssl-cert-snakeoil.pem "$KEYDIR/certs/${CERTNAME}.crt"
 fi
+
+# Fetch the metadata signing certificates at runtime, so their URLs and file
+# names remain configurable via container env vars (they used to be baked into
+# the image at build time). shibboleth2.xml below references them by name.
+curl -fsSL "$MDQ_SIGNER_CERT_URL" -o "/etc/shibboleth/$MDQ_SIGNER_CERT"
+curl -fsSL "$MD_SIGNER_CERT_URL" -o "/etc/shibboleth/$MD_SIGNER_CERT"
 
 cp /etc/shibboleth/shibboleth2.xml /etc/shibboleth/shibboleth2.xml.bak
 cat>/etc/shibboleth/shibboleth2.xml<<EOF

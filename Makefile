@@ -11,6 +11,9 @@ VERSION=1.5.2b65
 VERSION_SP=$(VERSION)
 NAME_SP=edusign-sp
 DIR_SP=nginx
+# Build-time versions baked into the SP image (overridable on the command line).
+NGINX_VERSION=1.29.2
+NODE_MAJOR=20
 
 VERSION_APP=$(VERSION)
 NAME_APP=edusign-app
@@ -53,13 +56,19 @@ push-app:
 ## Build the SP image
 .PHONY: build-sp
 build-sp:
-	docker build --no-cache=$(NO_CACHE) -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
+	docker build --no-cache=$(NO_CACHE) \
+		--build-arg NGINX_VERSION=$(NGINX_VERSION) \
+		--build-arg NODE_MAJOR=$(NODE_MAJOR) \
+		-t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
 	docker tag $(NAME_SP):$(VERSION_SP) docker.sunet.se/$(NAME_SP):$(VERSION_SP)
 
 ## Update the SP image
 .PHONY: update-sp
 update-sp:
-	docker build -t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
+	docker build \
+		--build-arg NGINX_VERSION=$(NGINX_VERSION) \
+		--build-arg NODE_MAJOR=$(NODE_MAJOR) \
+		-t $(NAME_SP):$(VERSION_SP) $(DIR_SP)
 	docker tag $(NAME_SP):$(VERSION_SP) docker.sunet.se/$(NAME_SP):$(VERSION_SP)
 
 ## Publish the SP image to docker.sunet.se
