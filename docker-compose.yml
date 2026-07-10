@@ -27,6 +27,7 @@ services:
       SIGNSERVICE_BASE_URL: ${SIGNSERVICE_BASE_URL:-https://localhost:8443}
       SIGNSERVICE_SIGN_SERVICE_ID: ${SIGNSERVICE_SIGN_SERVICE_ID:-https://localhost.swedenconnect.se/signservice}
       SIGNSERVICE_SP_ENTITY_ID: ${SIGNSERVICE_SP_ENTITY_ID:-https://signservice.dev.local/sp/integration-rest}
+      SIGNSERVICE_SP_SC_ENTITY_ID: ${SIGNSERVICE_SP_SC_ENTITY_ID:-https://signservice.dev.local/sp/integration-rest-sc}
       SIGNSERVICE_SP_DISPLAY_NAME: ${SIGNSERVICE_SP_DISPLAY_NAME:-Dev SignService}
       SIGNSERVICE_SP_ORG_NAME: ${SIGNSERVICE_SP_ORG_NAME:-Dev Organization}
       SIGNSERVICE_SP_ORG_URL: ${SIGNSERVICE_SP_ORG_URL:-https://example.org/}
