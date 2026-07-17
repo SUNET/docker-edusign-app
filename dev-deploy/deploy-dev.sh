@@ -21,8 +21,6 @@ echo ">>>> Pulling code from git..."
   cd "$EDUSIGN_CODE_DIR"
   git pull
   git checkout v$1
-  cd backend
-  python setup.py build
 )
 
 # echo ">>>> Building app..."

@@ -77,8 +77,7 @@ RUN apt -y update && apt -y upgrade && \
     apt -y install libffi-dev libfreetype6-dev libjpeg62-turbo-dev libssl-dev \
       libtiff5-dev libxml2-dev libxml2-utils libxslt1-dev swig xmlsec1 zlib1g-dev \
       git build-essential iputils-ping libcairo2-dev pkg-config \
-      procps bind9-host netcat-openbsd net-tools curl locales libncurses5-dev \
-      libgdbm-dev libnss3-dev libsqlite3-dev libreadline-dev libbz2-dev liblzma-dev \
+      procps bind9-host netcat-openbsd net-tools curl locales \
       libpq-dev && \
     apt -y clean && \
     rm -rf /var/lib/apt/lists/*
@@ -91,16 +90,14 @@ ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
 
-# install python
+# install uv; it manages the virtualenv and downloads the CPython pinned
+# in the backend's .python-version file.
 
-RUN curl -O https://www.python.org/ftp/python/3.12.6/Python-3.12.6.tar.xz && \
-    tar -xf Python-3.12.6.tar.xz && \
-    cd Python-3.12.6 && \
-    ./configure --enable-optimizations --enable-loadable-sqlite-extensions && \
-    make -j 4 && \
-    make install && \
-    cd .. && \
-    rm -rf Python-3.12.6 Python-3.12.6.tar.xz  
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+
+# The default python install dir is under /root, which the edusign user
+# that runs gunicorn cannot read.
+ENV UV_PYTHON_INSTALL_DIR=/opt/edusign/python
 
 
 # Add edusign user to run the service as
@@ -135,19 +132,17 @@ RUN git clone --depth 1 --branch $EDUSIGN_APP_VERSION https://github.com/SUNET/e
 RUN mv -f /tmp/edusign-app/backend /opt/edusign/edusign-webapp
 RUN rm -rf /tmp/edusign-app
 
-WORKDIR /opt/edusign
-
-# Make a python virtualenv, update pip, and install the edusign backend code
-# and gunicorn.
-
-RUN python3 -m venv venv
-RUN venv/bin/pip install -U pip wheel
-
 WORKDIR /opt/edusign/edusign-webapp
 
-RUN ../venv/bin/pip install -r requirements.txt
-RUN ../venv/bin/python -m pip install $INSTALL_PACKAGE .
-RUN ../venv/bin/pip install gunicorn
+# Create the venv at /opt/edusign/venv with the locked dependencies and the
+# edusign backend code (installed editable, pointing at
+# /opt/edusign/edusign-webapp/src). pip is seeded into the venv because
+# start.sh runs `pip freeze`; gunicorn is a deployment concern kept out of
+# the project dependencies.
+
+ENV UV_PROJECT_ENVIRONMENT=/opt/edusign/venv
+RUN uv sync --frozen --no-dev
+RUN uv pip install --python /opt/edusign/venv pip gunicorn $INSTALL_PACKAGE
 
 # Add the script with the main command.
 
