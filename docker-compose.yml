@@ -142,8 +142,6 @@ services:
   www:
     build:
       context: backend
-      args:
-        INSTALL_PACKAGE: ${INSTALL_PACKAGE:- }
     container_name: edusign-app
     expose:
       - 8080
