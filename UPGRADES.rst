@@ -56,8 +56,12 @@ configuration. To enable them:
    * BANKID_SSN_ATTR / FREJA_SSN_ATTR: SAML2 attribute carrying the Swedish SSN (default `urn:oid:1.2.752.29.4.13`)
 
 8. The scopes allowed to request BankID / Freja+ signatures are controlled by the
-   `BANKID_WHITELIST` variable on the `edusign-app` container (shared by both
-   methods). Default: `sunet.se,eduid.se`.
+   `EID_WHITELIST` variable on the `edusign-app` container (shared by both
+   methods). Default: `sunet.se,eduid.se`. Entries can carry the number of paid
+   signatures per method, shown as caps in the admin dashboard:
+   `<scope>:<cap bankid>:<cap freja>`, or `<scope>:<cap>` for a common cap.
+   The variable was previously named `BANKID_WHITELIST`; the old name is still
+   read as a fallback when `EID_WHITELIST` is not set.
 
 Note: the `edusign-app` `SESSION_COOKIE_PATH` default changed from `/sign` to `/`.
 If you relied on the previous value, set it explicitly.

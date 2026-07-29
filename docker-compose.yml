@@ -213,7 +213,7 @@ services:
       MAX_FILE_SIZE_FRONT: ${MAX_FILE_SIZE_FRONT:-20971520}
       DEFAULT_LOA: ${DEFAULT_LOA:-low}
       ALLOW_BANKID: ${ALLOW_BANKID:-true}
-      BANKID_WHITELIST: ${BANKID_WHITELIST:-sunet.se,eduid.se}
+      EID_WHITELIST: ${EID_WHITELIST:-sunet.se,eduid.se}
       FREJA_IDP: ${FREJA_IDP:-https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com}
       BANKID_IDP: ${BANKID_IDP:-https://bankidp.qa.swamid.se/bankid/idp}
     depends_on:
