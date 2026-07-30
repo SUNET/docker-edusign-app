@@ -143,7 +143,9 @@ services:
     build:
       context: backend
       args:
-        INSTALL_PACKAGE: ${INSTALL_PACKAGE:- }
+        # -e: editable install, the container runs the sources mounted below
+        # from ss-dev-src and gunicorn --reload picks up changes live
+        INSTALL_PACKAGE: ${INSTALL_PACKAGE:--e}
     container_name: edusign-app
     expose:
       - 8080

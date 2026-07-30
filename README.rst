@@ -171,6 +171,17 @@ Configuration variables
 For the edusign-app container
 .............................
 
+INSTALL_PACKAGE
+    Extra arguments for the `pip install` of the backend package at image
+    build time. Set to `-e` (the default) for an editable install: the
+    container then runs the sources bind mounted from
+    `ss-dev-src/edusign-app/backend`, and gunicorn's `--reload` (active with
+    DEBUG=true) picks up changes to them without rebuilding the image. Set
+    it empty to run the sources baked into the image from the git tag in
+    `backend/Dockerfile` (EDUSIGN_APP_VERSION), ignoring the mount.
+
+    Default: `-e`
+
 DEBUG
     Turn on debug mode for the app.
 
