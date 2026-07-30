@@ -58,8 +58,8 @@ configuration. To enable them:
 8. The scopes allowed to request BankID / Freja+ signatures are controlled by the
    `EID_WHITELIST` variable on the `edusign-app` container (shared by both
    methods). Default: `sunet.se,eduid.se`. Entries can carry the number of paid
-   signatures per method, shown as caps in the admin dashboard:
-   `<scope>:<cap bankid>:<cap freja>`, or `<scope>:<cap>` for a common cap.
+   signatures per method, shown as quotas in the admin dashboard:
+   `<scope>:<quota bankid>:<quota freja>`, or `<scope>:<quota>` for a common quota.
    The variable was previously named `BANKID_WHITELIST`; the old name is still
    read as a fallback when `EID_WHITELIST` is not set.
 

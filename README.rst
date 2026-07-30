@@ -439,8 +439,8 @@ ALLOW_BANKID
 EID_WHITELIST
     Comma separated list of scopes, so users having an eppn belonging to those scopes can allow BankID and Freja+
     signatures in their invitations. This whitelist is shared by both BankID and Freja+. Each entry can carry the
-    number of signatures the institution has paid for, shown as caps in the admin dashboard: `<scope>:<cap bankid>:<cap freja>`,
-    or `<scope>:<cap>` for a cap common to both methods, or a bare `<scope>` for no caps.
+    number of signatures the institution has paid for, shown as quotas in the admin dashboard: `<scope>:<quota bankid>:<quota freja>`,
+    or `<scope>:<quota>` for a quota common to both methods, or a bare `<scope>` for no quotas.
     The old name of the variable, `BANKID_WHITELIST`, is still read as a fallback.
 
     Default: `sunet.se,eduid.se`
