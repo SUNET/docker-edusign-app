@@ -98,6 +98,7 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
         <RequestMap>
             <Host name="${SP_HOSTNAME}">
                 <Path name="sign" authType="shibboleth" requireSession="true"/>
+                <Path name="admin" authType="shibboleth" requireSession="true"/>
             </Host>
         </RequestMap>
     </RequestMapper>
@@ -339,8 +340,20 @@ ${ACME_CHALLENGE_LOCATION}
           try_files \$uri \$uri/;
       }
 
+    # Location secured by Shibboleth; the backend only serves it
+    # to the users listed in the ADMIN_WHITELIST env var
       location /admin {
-          deny all;
+        shib_request /shibauthorizer;
+        shib_request_use_headers on;
+        more_set_input_headers 'X-Shibboleth-SessionInitiator: default';
+        include shib_clear_headers;
+        proxy_pass ${BACKEND_URL};
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header Host \$host;
+        proxy_redirect default;
+        proxy_buffering off;
       }
 
       location / {

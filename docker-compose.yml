@@ -176,6 +176,7 @@ services:
       SIGN_REQUESTER_ID: ${SIGN_REQUESTER_ID:-https://test.edusign.sunet.se/shibboleth}
       SCOPE_WHITELIST: ${SCOPE_WHITELIST:-sunet.se,nordu.net,eduid.se,auth.gr,dev.eduid.se,umu.se}
       USER_BLACKLIST: ${USER_BLACKLIST:-viduj-vamir@eduid.se}
+      ADMIN_WHITELIST: ${ADMIN_WHITELIST:-}
       POLLING: ${POLLING:-inviter}
       STORAGE_CLASS_PATH: ${STORAGE_CLASS_PATH:-edusign_webapp.document.storage.local.LocalStorage}
       AWS_ENDPOINT_URL: ${AWS_ENDPOINT_URL:-https://storage.googleapis.com}
