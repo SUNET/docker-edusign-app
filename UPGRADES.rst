@@ -56,8 +56,21 @@ configuration. To enable them:
    * BANKID_SSN_ATTR / FREJA_SSN_ATTR: SAML2 attribute carrying the Swedish SSN (default `urn:oid:1.2.752.29.4.13`)
 
 8. The scopes allowed to request BankID / Freja+ signatures are controlled by the
-   `BANKID_WHITELIST` variable on the `edusign-app` container (shared by both
-   methods). Default: `sunet.se,eduid.se`.
+   `EID_WHITELIST` variable on the `edusign-app` container (shared by both
+   methods). Default: `sunet.se,eduid.se`. Entries can carry the number of paid
+   signatures per method, shown as quotas in the admin dashboard:
+   `<scope>:<quota bankid>:<quota freja>`, or `<scope>:<quota>` for a common quota.
+   The variable was previously named `BANKID_WHITELIST`; the old name is still
+   read as a fallback when `EID_WHITELIST` is not set.
+
+9. The admin views at `/admin` are now reachable through the front `edusign-sp`
+   (secured by Shibboleth) instead of being blocked by nginx. The `edusign-app`
+   container serves them only to the eppn's listed in the new `ADMIN_WHITELIST`
+   variable (comma-separated, exact eppn's). Its default is empty, meaning no
+   one is allowed, so existing deployments keep `/admin` closed until you set
+   it. In-network callers that reach the backend directly (e.g. a cleanup cron
+   job) must now send an `Edupersonprincipalname-20` header with a whitelisted
+   eppn.
 
 Note: the `edusign-app` `SESSION_COOKIE_PATH` default changed from `/sign` to `/`.
 If you relied on the previous value, set it explicitly.
