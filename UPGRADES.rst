@@ -71,6 +71,3 @@ configuration. To enable them:
    it. In-network callers that reach the backend directly (e.g. a cleanup cron
    job) must now send an `Edupersonprincipalname-20` header with a whitelisted
    eppn.
-
-Note: the `edusign-app` `SESSION_COOKIE_PATH` default changed from `/sign` to `/`.
-If you relied on the previous value, set it explicitly.
