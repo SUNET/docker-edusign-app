@@ -200,6 +200,12 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
 </SPConfig>
 EOF
 
+# nginx's default mime.types has no .mjs mapping, so the pdfjs module worker
+# (/js/pdf.worker.min.mjs) would be served as application/octet-stream and the
+# browser would refuse to load it as a module worker ("disallowed MIME type"),
+# leaving PDFs unreadable. Add the mapping before nginx reads its config.
+grep -q 'mjs' /etc/nginx/mime.types || sed -i '/^types {/a\    text/javascript                        mjs;' /etc/nginx/mime.types
+
 cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 cat>/etc/nginx/nginx.conf<<EOF
 user www-data;
