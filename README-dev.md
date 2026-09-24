@@ -201,6 +201,7 @@ The signservice is configured as a SAML SP in the [SWAMID QA federation](https:/
 | `secrets/swamid-saml-sp-encrypt.p12` (alias `encrypt`) | signservice SAML SP — decrypts incoming assertions | 5 y |
 | `secrets/swamid-saml-sp-{sign,encrypt}.crt`   | published in the SP metadata uploaded to SWAMID | 5 y |
 | `secrets/swamid-qa-md-signer.crt`             | signservice validates the signature on SWAMID federation metadata | re-fetched on rotation |
+| `secrets/sc-sandbox-md-signer.crt`            | signservice validates the signature on Sweden Connect sandbox metadata | re-fetched on rotation |
 | `secrets/sign-service-cert.pem`               | integration-rest verifies SignResponse signatures | bundled, dev-only |
 
 > **Note:** the bundled `gen-keys.sh` copies `sign-service-cert.pem` from the legacy `ss-dev-src/signservice/demo-apps/app/src/main/resources/signservice.crt`. The active build uses SUNET's signservice-modules, whose response-signing cert lives at `ss-dev-src/signservice-modules/signservice-app/src/main/resources/config/signservice.crt`. Run `cp ss-dev-src/signservice-modules/signservice-app/src/main/resources/config/signservice.crt secrets/sign-service-cert.pem` after `gen-keys.sh` (or update the script).

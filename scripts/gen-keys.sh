@@ -130,6 +130,34 @@ else
   echo "==> SWAMID QA metadata signing cert already present"
 fi
 
+# --- Sweden Connect sandbox metadata signing certificate --------------------
+# Source of truth: https://sandbox.swedenconnect.se/home/saml.html
+SANDBOX_CRT_URL="https://md.sandbox.swedenconnect.se/mdreg/pub/metadata-cert.crt"
+SANDBOX_CRT_FP="86:B5:30:63:55:63:6B:18:4D:E4:B0:E2:9C:7C:41:74:29:EC:E7:91:64:FB:46:80:AC:F0:B5:F2:8B:1C:C0:EA"
+SANDBOX_CRT="$SECRETS/sc-sandbox-md-signer.crt"
+
+if [[ "$FORCE" == "--force" ]]; then
+  rm -f "$SANDBOX_CRT"
+fi
+
+if [[ ! -f "$SANDBOX_CRT" ]]; then
+  echo "==> Downloading Sweden Connect sandbox metadata signing certificate"
+  curl -fsSL "$SANDBOX_CRT_URL" -o "$SANDBOX_CRT.tmp"
+  ACTUAL_FP=$(openssl x509 -in "$SANDBOX_CRT.tmp" -noout -fingerprint -sha256 \
+    | sed 's/^.*Fingerprint=//')
+  if [[ "$ACTUAL_FP" != "$SANDBOX_CRT_FP" ]]; then
+    echo "ERROR: Sweden Connect sandbox cert fingerprint mismatch" >&2
+    echo "  expected: $SANDBOX_CRT_FP" >&2
+    echo "  got:      $ACTUAL_FP" >&2
+    rm -f "$SANDBOX_CRT.tmp"
+    exit 1
+  fi
+  mv "$SANDBOX_CRT.tmp" "$SANDBOX_CRT"
+  echo "    fingerprint verified: $SANDBOX_CRT_FP"
+else
+  echo "==> Sweden Connect sandbox metadata signing cert already present"
+fi
+
 # --- signservice response-signing cert (from cloned demo app) --------------
 SS_CRT="$SECRETS/sign-service-cert.pem"
 SRC_SS_CRT="$ROOT/signservice/demo-apps/app/src/main/resources/signservice.crt"
