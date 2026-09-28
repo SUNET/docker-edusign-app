@@ -448,13 +448,43 @@ ALLOW_BANKID
     Default: true
 
 EID_WHITELIST
-    Comma separated list of scopes, so users having an eppn belonging to those scopes can allow BankID and Freja+
-    signatures in their invitations. This whitelist is shared by both BankID and Freja+. Each entry can carry the
-    number of signatures the institution has paid for, shown as quotas in the admin dashboard: `<scope>:<quota bankid>:<quota freja>`,
-    or `<scope>:<quota>` for a quota common to both methods, or a bare `<scope>` for no quotas.
+    Comma separated list of the institutions whose users can allow BankID and Freja+ signatures in their
+    invitations, identified by the scope of the users' eppn. The whitelist is shared by both eID methods.
+    An entry has one of two forms:
+
+    - `<customer id>:<agreement number>:<scope>` for an institution that is billed for its eID use. The customer
+      id and the agreement number go into the eID usage report downloaded from the admin dashboard, and the
+      institution gets the quota `EID_QUOTA`.
+    - `<scope>` for an institution that is whitelisted without billing. It has no quota and no line in the report.
+
+    The scope must contain a dot. Any other form of entry stops the app at startup with an error naming the
+    entry. This includes the old quota forms `<scope>:<quota>` and `<scope>:<quota bankid>:<quota freja>`,
+    which must be rewritten.
     The old name of the variable, `BANKID_WHITELIST`, is still read as a fallback.
 
+    Example: `C001:ES-020-T:sunet.se,C002:ES-021-T:kth.se,eduid.se`
+
     Default: `sunet.se,eduid.se`
+
+EID_QUOTA
+    The number of eID authentications included in the monthly base price of every billed institution. An
+    authentication is a login or a signature with BankID or Freja+, and the quota counts all eID methods
+    together. The admin dashboard shows each institution's monthly use split into within and over the quota.
+
+    Default: `100`
+
+EID_BASE_PRICE
+    The monthly base price for a billed institution, in SEK, which includes the `EID_QUOTA` authentications.
+    It is the Basis column of the eID usage report. A decimal number with a dot as decimal separator.
+
+    Default: `0`
+
+EXTRA_EID_COST
+    The price of each authentication over the quota, in SEK. The Cost column of the eID usage report is
+    `EID_BASE_PRICE + EXTRA_EID_COST x` the number of authentications over the quota. A decimal number with a
+    dot as decimal separator.
+
+    Default: `0`
 
 BANKID_IDP
     entityID of the BankID SAML2 IdP

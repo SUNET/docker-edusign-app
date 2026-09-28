@@ -217,6 +217,9 @@ services:
       DEFAULT_LOA: ${DEFAULT_LOA:-low}
       ALLOW_BANKID: ${ALLOW_BANKID:-true}
       EID_WHITELIST: ${EID_WHITELIST:-sunet.se,eduid.se}
+      EID_QUOTA: ${EID_QUOTA:-100}
+      EID_BASE_PRICE: ${EID_BASE_PRICE:-0}
+      EXTRA_EID_COST: ${EXTRA_EID_COST:-0}
       FREJA_IDP: ${FREJA_IDP:-https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com}
       BANKID_IDP: ${BANKID_IDP:-https://bankidp.qa.swamid.se/bankid/idp}
     depends_on:
