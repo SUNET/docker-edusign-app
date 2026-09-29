@@ -139,10 +139,11 @@ signservice:
         # both engines share it, so each IdP resolves regardless of which
         # feed it lives in.
         additional:
-          - url: http://eid.svelegtest.se/metadata/mdx/role/idp.xml
+          - url: https://md.sandbox.swedenconnect.se/metadata/mdx/role/idp.xml
             mdq: false
             backup-location: ${SIGNSERVICE_HOME}/sveleg-test-metadata.xml
-            validation-certificate: https://eid.svelegtest.se/mdreg/pub/metadata-cert.crt
+            # fetched and fingerprint-checked by scripts/gen-keys.sh
+            validation-certificate: file:/etc/signservice-secrets/sc-sandbox-md-signer.crt
 
   # Default SAML handler config, used (via default-config-ref) by the
   # SWAMID-style 'integration-rest-dev' engine only. The Sweden Connect-style
