@@ -199,9 +199,12 @@ SESSION_COOKIE_DOMAIN
     Default: the value of SP_HOSTNAME
 
 SESSION_COOKIE_PATH
-    Configuration of the Flask session cookie.
+    Configuration of the Flask session cookie. Keep it at the default: a change
+    leaves returning browsers with two cookies of the same name on different
+    paths, and the backend reads the stale one on every request until the
+    browser is closed (1.5.2 and 1.5.2r1 shipped with `/` and had to go back).
 
-    Default: `/`
+    Default: `/sign`
 
 SESSION_COOKIE_SECURE
     Configuration of the Flask session cookie.
