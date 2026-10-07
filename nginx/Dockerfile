@@ -1,4 +1,8 @@
-FROM debian:bookworm AS builder
+ARG NGINX_VERSION=1.31.6-1~trixie
+
+FROM debian:trixie AS builder
+
+ARG NGINX_VERSION
 
 # In this temp container we build the frontside bundle and
 # the NGINX modules nginx-http-shibboleth and headers-more-nginx
@@ -14,11 +18,11 @@ ENV NODE_MAJOR 20
 RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
 RUN curl -fSsL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /etc/apt/keyrings/nginx-keyring.gpg
-RUN echo "deb [signed-by=/etc/apt/keyrings/nginx-keyring.gpg] http://nginx.org/packages/mainline/debian bookworm nginx" | tee /etc/apt/sources.list.d/nginx.list
+RUN echo "deb [signed-by=/etc/apt/keyrings/nginx-keyring.gpg] http://nginx.org/packages/mainline/debian trixie nginx" | tee /etc/apt/sources.list.d/nginx.list
 
 RUN apt -y update && \
-    apt -y install git nodejs nginx=1.27.1-1~bookworm build-essential fakeroot \
-                   libpcre3 libpcre3-dev libpcre2-dev libparse-recdescent-perl libpcrecpp0v5 libssl-dev \
+    apt -y install git nodejs nginx=$NGINX_VERSION build-essential fakeroot \
+                   libpcre2-dev libparse-recdescent-perl libssl-dev \
                    openssl zlib1g-dev tar gzip mercurial curl wget libxml2-utils xsltproc \
                    apt-utils lsb-release devscripts quilt sudo && \
     apt -y clean && \
@@ -29,14 +33,14 @@ RUN apt -y update && \
 RUN mkdir -p /opt/backend/build
 WORKDIR /opt/backend
 
-RUN curl -OL http://hg.nginx.org/pkg-oss/archive/tip.tar.gz
-RUN tar -xzf tip.tar.gz
-RUN mv pkg-* tip
+RUN curl -fL https://github.com/nginx/pkg-oss/archive/refs/tags/${NGINX_VERSION%~*}.tar.gz -o pkg-oss.tar.gz
+RUN tar -xzf pkg-oss.tar.gz
+RUN mv pkg-oss-* tip
 
 # Build the NGINX modules nginx-http-shibboleth and headers-more-nginx
 # see https://tcg.stanford.edu/?p=131
 
-RUN curl -X GET http://hg.nginx.org/xslscript/raw-file/tip/xslscript.pl -o /usr/local/bin/xslscript.pl
+RUN curl -fL https://raw.githubusercontent.com/nginx/xslscript/main/xslscript.pl -o /usr/local/bin/xslscript.pl
 RUN chmod 755 /usr/local/bin/xslscript.pl
 
 RUN ./tip/build_module.sh -v "$(echo $(nginx -v 2>&1) | grep -o '[0-9.]*$')" https://github.com/nginx-shib/nginx-http-shibboleth.git
@@ -68,7 +72,9 @@ RUN npm install && npm run build-pro && npm run build-dev && cp node_modules/pdf
 # End builder image
 #----------------------------
 
-FROM debian:bookworm AS sp
+FROM debian:trixie AS sp
+
+ARG NGINX_VERSION
 
 # This will produce an image to create containers that run a supervisor
 # process, supervising 4 child processes:
@@ -95,14 +101,14 @@ ENV MAX_FILE_SIZE=28730982
 RUN apt -y update && apt -y upgrade && apt install -y curl gnupg
 
 RUN curl -fSsL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /etc/apt/keyrings/nginx-keyring.gpg
-RUN echo "deb [signed-by=/etc/apt/keyrings/nginx-keyring.gpg] http://nginx.org/packages/mainline/debian bookworm nginx" | tee /etc/apt/sources.list.d/nginx.list
+RUN echo "deb [signed-by=/etc/apt/keyrings/nginx-keyring.gpg] http://nginx.org/packages/mainline/debian trixie nginx" | tee /etc/apt/sources.list.d/nginx.list
 
 # Install needed software.
 
 RUN apt update -y && \
     apt install -y apt-utils  opensaml-schemas opensaml-tools xmltooling-schemas ssl-cert less \
-                   libshibsp11 libshibsp-plugins shibboleth-sp-common shibboleth-sp-utils procps \
-                   libpcre3 libpcrecpp0v5 openssl libxml2-utils xsltproc supervisor locales nginx=1.27.1-1~bookworm wget curl vim && \
+                   libshibsp12 libshibsp-plugins shibboleth-sp-common shibboleth-sp-utils procps \
+                   libpcre2-8-0 openssl libxml2-utils xsltproc supervisor locales nginx=$NGINX_VERSION wget curl vim && \
     apt clean -y && \
     rm -rf /var/lib/apt/lists/*
 

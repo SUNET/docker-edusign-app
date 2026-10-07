@@ -93,12 +93,12 @@ env-stop:
 ## Tail some log file
 .PHONY: logs-tailf
 logs-tailf:
-	@docker run -it --rm --init -v edusignlogs:/var/log/edusign debian:buster bash -c "tail -F /var/log/edusign/*$(call args)*"
+	@docker run -it --rm --init -v edusignlogs:/var/log/edusign debian:trixie bash -c "tail -F /var/log/edusign/*$(call args)*"
 
 ## List available log files
 .PHONY: logs-list
 logs-list:
-	@docker run -it --rm --init -v edusignlogs:/var/log/edusign debian:buster bash -c "ls /var/log/edusign/"
+	@docker run -it --rm --init -v edusignlogs:/var/log/edusign debian:trixie bash -c "ls /var/log/edusign/"
 
 ## Print this help message
 .PHONY: help
