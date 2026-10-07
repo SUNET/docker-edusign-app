@@ -1,4 +1,4 @@
-FROM debian:bookworm
+FROM debian:trixie
 
 ARG INSTALL_PACKAGE=""
 
@@ -51,9 +51,9 @@ ENV HASH_METHOD=scrypt
 
 RUN apt -y update && apt -y upgrade && \
     apt -y install libffi-dev libfreetype6-dev libjpeg62-turbo-dev libssl-dev \
-      libtiff5-dev libxml2-dev libxml2-utils libxslt1-dev swig xmlsec1 zlib1g-dev \
+      libtiff-dev libxml2-dev libxml2-utils libxslt1-dev swig xmlsec1 zlib1g-dev \
       git build-essential iputils-ping libcairo2-dev pkg-config \
-      procps bind9-host netcat-openbsd net-tools curl locales libncurses5-dev \
+      procps bind9-host netcat-openbsd net-tools curl locales libncurses-dev \
       libgdbm-dev libnss3-dev libsqlite3-dev libreadline-dev libbz2-dev liblzma-dev && \
     apt -y clean && \
     rm -rf /var/lib/apt/lists/*
@@ -123,6 +123,8 @@ WORKDIR /opt/edusign/edusign-webapp
 RUN ../venv/bin/pip install -r requirements.txt
 RUN ../venv/bin/python -m pip install $INSTALL_PACKAGE .
 RUN ../venv/bin/pip install gunicorn
+# edusign_webapp still imports pkg_resources, which was removed in setuptools 81
+RUN ../venv/bin/pip install "setuptools<81"
 
 # Add the script with the main command.
 
