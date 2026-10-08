@@ -1,5 +1,5 @@
 # Builder stage
-FROM debian:bookworm AS builder
+FROM debian:trixie AS builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set nginx version (build-time only, overridable via --build-arg)
-ARG NGINX_VERSION=1.29.2
+ARG NGINX_VERSION=1.31.6
 
 # Download and extract nginx
 WORKDIR /tmp
@@ -141,7 +141,7 @@ RUN npm install && npm run build-pro && npm run build-dev && cp node_modules/pdf
 #----------------------------
 
 # Final stage
-FROM debian:bookworm AS sp
+FROM debian:trixie AS sp
 
 # This will produce an image to create containers that run a supervisor
 # process, supervising 4 child processes:

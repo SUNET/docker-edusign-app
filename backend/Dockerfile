@@ -1,4 +1,4 @@
-FROM debian:bookworm
+FROM debian:trixie
 
 # This will create an image with a virtualenv containing the edusign backend
 # sources and gunicorn, and with a script to start a gunicorn process running
@@ -73,7 +73,7 @@ ENV GUNICORN_WORKER_TIMEOUT=30
 
 RUN apt -y update && apt -y upgrade && \
     apt -y install libffi-dev libfreetype6-dev libjpeg62-turbo-dev libssl-dev \
-      libtiff5-dev libxml2-dev libxml2-utils libxslt1-dev swig xmlsec1 zlib1g-dev \
+      libtiff-dev libxml2-dev libxml2-utils libxslt1-dev swig xmlsec1 zlib1g-dev \
       git build-essential iputils-ping libcairo2-dev pkg-config \
       procps bind9-host netcat-openbsd net-tools curl locales \
       libpq-dev && \
@@ -96,7 +96,6 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 # The default python install dir is under /root, which the edusign user
 # that runs gunicorn cannot read.
 ENV UV_PYTHON_INSTALL_DIR=/opt/edusign/python
-
 
 # Add edusign user to run the service as
 
