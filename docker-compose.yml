@@ -124,6 +124,7 @@ services:
       DISCO_URL: ${DISCO_URL:-https://service.seamlessaccess.org/ds/?trustProfile=edugain}
       BANKID_ENTITY_ID: ${BANKID_ENTITY_ID:-https://bankidp.qa.swamid.se/bankid/idp}
       FREJA_ENTITY_ID: ${FREJA_ENTITY_ID:-https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com}
+      BROKEN_NETWORKS: ${BROKEN_NETWORKS-}
       MAX_FILE_SIZE: ${MAX_FILE_SIZE:-28730982}
       BACKEND_HOST: ${BACKEND_HOST:-edusign-app}
       BACKEND_PORT: ${BACKEND_PORT:-8080}

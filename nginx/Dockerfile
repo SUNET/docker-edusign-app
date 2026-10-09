@@ -161,6 +161,7 @@ ENV DISCO_URL=https://service.seamlessaccess.org/ds/?trustProfile=edugain
 ENV BANKID_ENTITY_ID=https://bankidp.qa.swamid.se/bankid/idp
 ENV BANKID_MD_PATH=/etc/shibboleth/bankid-metadata.xml
 ENV FREJA_ENTITY_ID=https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com
+ENV BROKEN_NETWORKS=
 ENV MDQ_BASE_URL=https://mds.swamid.se/qa/
 ENV MDQ_SIGNER_CERT=md-signer2.crt
 ENV MDQ_SIGNER_CERT_URL=https://mds.swamid.se/qa/md/swamid-qa.crt

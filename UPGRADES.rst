@@ -81,6 +81,14 @@ configuration. To enable them:
    job) must now send an `Edupersonprincipalname-20` header with a whitelisted
    eppn.
 
+10. Users on networks that present a different client address on successive
+    requests are sent back to login on every request, since the Shibboleth SP
+    binds a session to the client address. The new `edusign-sp` variable
+    `BROKEN_NETWORKS` lists such networks, as a whitespace-separated list of
+    CIDR masks (Shibboleth `SessionCache/@unreliableNetworks`). A session is
+    kept when the address recorded in it and the current one both lie in one
+    listed network. Default: empty, no change in behaviour.
+
 Note for deployments already running an earlier 1.5.2 release: the quota forms of
 `EID_WHITELIST` entries, `<scope>:<quota>` and `<scope>:<quota bankid>:<quota freja>`,
 are no longer accepted. The quota is now one for all eID methods together and the

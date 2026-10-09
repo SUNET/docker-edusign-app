@@ -58,6 +58,13 @@ if [ "$ACME_CHALLENGE_LOCATION_HTTP" = "x" ]; then
       }"
 fi
 
+# Networks where the client address changes between requests, as a
+# whitespace-separated list of CIDR masks. Empty: no relaxation.
+UNRELIABLE_NETWORKS=""
+if [ "x$BROKEN_NETWORKS" != "x" ]; then
+   UNRELIABLE_NETWORKS="unreliableNetworks=\"${BROKEN_NETWORKS}\""
+fi
+
 if [ -z "$KEYDIR" ]; then
    KEYDIR=/etc/ssl
    mkdir -p $KEYDIR
@@ -90,9 +97,15 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
     <OutOfProcess tranLogFormat="%u|%s|%IDP|%i|%ac|%t|%attr|%n|%b|%E|%S|%SS|%L|%UA|%a" />
   
     <!--
-    By default, in-memory StorageService, ReplayCache, ArtifactMap, and SessionCache
-    are used. See example-shibboleth2.xml for samples of explicitly configuring them.
+    In-memory StorageService and SessionCache, as the defaults, made explicit so that
+    the SessionCache can relax the client address check on the networks listed in
+    BROKEN_NETWORKS. ReplayCache and ArtifactMap keep their in-memory defaults.
     -->
+    <StorageService type="Memory" id="mem" cleanupInterval="900"/>
+    <SessionCache type="StorageService" StorageService="mem" cacheAssertions="false"
+                  cacheAllowance="900" inprocTimeout="900" cleanupInterval="900"
+                  ${UNRELIABLE_NETWORKS}/>
+
     <!-- The ApplicationDefaults element is where most of Shibboleth's SAML bits are defined. -->
     <RequestMapper type="Native">
         <RequestMap>

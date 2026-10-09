@@ -707,6 +707,16 @@ FREJA_ENTITY_ID
 
     Default: `https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com`
 
+BROKEN_NETWORKS
+    Networks where the client address changes between requests, as a whitespace-separated
+    list of CIDR masks, e.g. ``130.237.0.0/16 2001:6b0:1::/48``. The Shibboleth SP binds a
+    session to the client address and treats a request from another address as having no
+    session, which sends the user back to login. With this variable set
+    (``SessionCache/@unreliableNetworks``), the session is kept when the address recorded in
+    it and the current one both lie in one listed network. Empty: no relaxation.
+
+    Default: empty
+
 BANKID_MD_PATH
     Path to an XML file with the BankID metadata. Only used if a local-file ``MetadataProvider`` is
     enabled; in the default configuration BankID and Freja+ metadata is obtained from the MDQ feed
