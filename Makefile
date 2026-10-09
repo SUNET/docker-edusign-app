@@ -6,7 +6,7 @@
 # Get any extra command line arguments
 args=`arg="$(filter-out $@,$(MAKECMDGOALS))" && echo $${arg:-${1}}`
 
-VERSION=1.5.2r14
+VERSION=1.5.2r15
 
 VERSION_SP=$(VERSION)
 NAME_SP=edusign-sp
