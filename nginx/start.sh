@@ -213,6 +213,38 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
 </SPConfig>
 EOF
 
+cp /etc/shibboleth/native.logger /etc/shibboleth/native.logger.bak
+cat>/etc/shibboleth/native.logger<<EOF
+# set overall behavior
+log4j.rootCategory=WARN, native_log
+
+# fairly verbose for DEBUG, so generally leave at WARN/INFO
+log4j.category.XMLTooling.XMLObject=WARN
+log4j.category.XMLTooling.XMLObjectBuilder=WARN
+log4j.category.XMLTooling.KeyInfoResolver=WARN
+log4j.category.Shibboleth.IPRange=WARN
+log4j.category.Shibboleth.PropertySet=WARN
+
+# useful categories to tune independently:
+#
+# interprocess message remoting
+#log4j.category.Shibboleth.Listener=DEBUG
+# mapping of requests to applicationId
+#log4j.category.Shibboleth.RequestMapper=DEBUG
+# high level session cache operations
+#log4j.category.Shibboleth.SessionCache=DEBUG
+
+# define the appender
+
+# Change to SyslogAppender for remote syslog, and set host/port
+log4j.appender.native_log=org.apache.log4j.FileAppender
+log4j.appender.native_log.fileName=/var/log/shibboleth/native.log
+log4j.appender.native_log.maxFileSize=1000000
+log4j.appender.native_log.maxBackupIndex=10
+log4j.appender.native_log.layout=org.apache.log4j.PatternLayout
+log4j.appender.native_log.layout.ConversionPattern=%d{%Y-%m-%d %H:%M:%S} %p %c %x: %m%n
+EOF
+
 cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 cat>/etc/nginx/nginx.conf<<EOF
 user www-data;
