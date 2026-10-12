@@ -4,7 +4,7 @@ FROM debian:trixie AS builder
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
-    libpcre3-dev \
+    libpcre2-dev \
     zlib1g-dev \
     libssl-dev \
     libgd-dev \
@@ -25,7 +25,6 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     devscripts \
     libparse-recdescent-perl \
-    libpcrecpp0v5 \
     libxml2-utils \
     xsltproc \
     && rm -rf /var/lib/apt/lists/*
@@ -100,7 +99,7 @@ Version: ${NGINX_VERSION}-1\n\
 Section: web\n\
 Priority: optional\n\
 Architecture: amd64\n\
-Depends: libpcre3, zlib1g, libssl3, libgd3, libgeoip1\n\
+Depends: libpcre2-8-0, zlib1g, libssl3, libgd3, libgeoip1\n\
 Maintainer: Custom <custom@example.com>\n\
 Description: Nginx with Shibboleth and Headers More modules\n\
  Custom build of nginx ${NGINX_VERSION} with additional modules:\n\
@@ -178,7 +177,7 @@ ENV BACKEND_SCHEME=http
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y \
-    libpcre3 \
+    libpcre2-8-0 \
     zlib1g \
     libssl3 \
     libgd3 \
@@ -189,12 +188,11 @@ RUN apt-get update && apt-get install -y \
     xmltooling-schemas \
     ssl-cert \
     less \
-    libshibsp11 \
+    libshibsp12 \
     libshibsp-plugins \
     shibboleth-sp-common \
     shibboleth-sp-utils \
     procps \
-    libpcrecpp0v5 \
     openssl \
     libxml2-utils \
     xsltproc \
