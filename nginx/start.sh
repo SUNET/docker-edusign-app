@@ -247,13 +247,6 @@ log4j.appender.native_log.layout=org.apache.log4j.PatternLayout
 log4j.appender.native_log.layout.ConversionPattern=%d{%Y-%m-%d %H:%M:%S} %p %c %x: %m%n
 EOF
 
-
-# nginx's default mime.types has no .mjs mapping, so the pdfjs module worker
-# (/js/pdf.worker.min.mjs) would be served as application/octet-stream and the
-# browser would refuse to load it as a module worker ("disallowed MIME type"),
-# leaving PDFs unreadable. Add the mapping before nginx reads its config.
-grep -q 'mjs' /etc/nginx/mime.types || sed -i '/^types {/a\    text/javascript                        mjs;' /etc/nginx/mime.types
-
 cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 cat>/etc/nginx/nginx.conf<<EOF
 user www-data;
@@ -266,6 +259,11 @@ events {
 
 http {
     include       mime.types;
+    # nginx's mime.types lacks the .mjs extension; browsers refuse to load
+    # a module worker (pdf.js) served as application/octet-stream.
+    types {
+        application/javascript mjs;
+    }
     default_type  application/octet-stream;
 
     charset utf-8;
