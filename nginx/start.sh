@@ -77,6 +77,12 @@ if [ ! -f "$KEYDIR/private/shibsp-${SP_HOSTNAME}.key" -o ! -f "$KEYDIR/certs/shi
    mv /tmp/sp-cert.pem "$KEYDIR/certs/shibsp-${SP_HOSTNAME}.crt"
 fi
 
+# Key for the session recovery cookie (DataSealer below). Every SP instance
+# behind the same hostname must read the same file, so KEYDIR is shared.
+if [ ! -f "$KEYDIR/private/sealer.keys" ]; then
+   shib-seckeygen -o "$KEYDIR/private" 2>/dev/null
+fi
+
 if [ ! -f "$KEYDIR/private/${CERTNAME}.key" -o ! -f "$KEYDIR/certs/${CERTNAME}.crt" ]; then
    make-ssl-cert generate-default-snakeoil --force-overwrite
    cp /etc/ssl/private/ssl-cert-snakeoil.key "$KEYDIR/private/${CERTNAME}.key"
@@ -97,13 +103,24 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
     <OutOfProcess tranLogFormat="%u|%s|%IDP|%i|%ac|%t|%attr|%n|%b|%E|%S|%SS|%L|%UA|%a" />
   
     <!--
-    In-memory StorageService and SessionCache, as the defaults, made explicit so that
-    the SessionCache can relax the client address check on the networks listed in
-    BROKEN_NETWORKS. ReplayCache and ArtifactMap keep their in-memory defaults.
+    In-memory StorageService and SessionCache. Sessions are not shared between SP
+    instances; instead the session cookie carries the session and the attributes
+    listed in persistedAttributes, encrypted with the DataSealer key, so that an
+    instance that does not know a session rebuilds it from the cookie. The list
+    holds the attribute ids the backend reads (see attribute-map.xml and the
+    Metadata AttributeExtractor). unreliableNetworks comes from BROKEN_NETWORKS.
+    ReplayCache and ArtifactMap keep their in-memory defaults.
     -->
     <StorageService type="Memory" id="mem" cleanupInterval="900"/>
+    <DataSealer type="Versioned" path="${KEYDIR}/private/sealer.keys"/>
     <SessionCache type="StorageService" StorageService="mem" cacheAssertions="false"
                   cacheAllowance="900" inprocTimeout="900" cleanupInterval="900"
+                  persistedAttributes="eduPersonPrincipalName-20 eduPersonPrincipalName-11
+                                       mail-20 mail-11 mailLocalAddress-20
+                                       displayName-20 displayName-11 givenName-20 givenName-11
+                                       sn-20 sn-11 eduPersonAssurance-20 eduPersonAssurance-11
+                                       personalIdentityNumber-20
+                                       organizationName registrationAuthority"
                   ${UNRELIABLE_NETWORKS}/>
 
     <!-- The ApplicationDefaults element is where most of Shibboleth's SAML bits are defined. -->
@@ -128,7 +145,7 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
         cookieProps to "https" for SSL-only sites. Note that while we default checkAddress to
         "false", this makes an assertion stolen in transit easier for attackers to misuse.
         -->
-        <Sessions lifetime="28800" timeout="3600" relayState="ss:mem" redirectLimit="exact"
+        <Sessions lifetime="28800" timeout="3600" relayState="cookie" redirectLimit="exact"
                   checkAddress="false" handlerSSL="false" cookieProps="; path=/; secure; HttpOnly; SameSite=None">
             <!--
             Configures SSO for a default IdP. To properly allow for >1 IdP, remove
