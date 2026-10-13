@@ -257,6 +257,11 @@ events {
 
 http {
     include       mime.types;
+    # nginx's mime.types lacks the .mjs extension; browsers refuse to load
+    # a module worker (pdf.js) served as application/octet-stream.
+    types {
+        application/javascript mjs;
+    }
     default_type  application/octet-stream;
 
     charset utf-8;
