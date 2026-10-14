@@ -689,7 +689,15 @@ MAX_FILE_SIZE
 
 PROXY_NETWORK
     If the NGINX server is behind a proxy server / load balancer, it needs to know the network address(es) of the proxy
-    to be able to recover the real IP from the client. It can be set to an IP address / hostname/ CIDR / unix socket.
+    to be able to recover the real IP from the client. A whitespace-separated list of IP addresses or CIDR masks, e.g.
+    ``172.18.0.0/16``. The client address is then taken from the ``X-Forwarded-For`` header sent by the proxy, and
+    Shibboleth's client address check (and ``BROKEN_NETWORKS``) sees the client instead of the proxy. Default: empty.
+
+KEYDIR_REQUIRE
+    Set to ``1`` to make the *sp* container exit at start when the Shibboleth SP key, certificate or the session
+    recovery key (``sealer.keys``) is missing under ``KEYDIR``, instead of generating them. For deployments with
+    *sp* instances on several hosts, where these files are distributed beforehand and must be identical. Default:
+    empty, missing files are generated.
 
 DISCO_URL
     URL of SAML discovery service to provide to Shibboleth SP.
