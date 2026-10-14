@@ -559,6 +559,13 @@ GUNICORN_WORKER_TIMEOUT
 
     Default: 30
 
+LOG_INSTANCE
+    Instance part of the gunicorn log file names, ``edusign-webapp-<LOG_INSTANCE>-access.log`` and
+    ``-error.log``. Set it when several *edusign-app* instances share the logs volume, so they do not write the
+    same files. A literal, or ``hostname`` for the container hostname.
+
+    Default: empty, file names without instance part.
+
 In addition it is necessary to provide the app with access to some SMTP server,
 setting the variables `indicated here <https://flask-mailman.readthedocs.io/en/latest/>`_.
 

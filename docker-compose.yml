@@ -156,6 +156,7 @@ services:
     environment:
       SP_HOSTNAME: ${SP_HOSTNAME:-dev.edusign.sunet.se}
       SECRET_KEY: ${SECRET_KEY:-changeme}
+      LOG_INSTANCE: ${LOG_INSTANCE-}
       DEBUG: ${DEBUG:-true}
       EDUSIGN_API_BASE_URL: ${EDUSIGN_API_BASE_URL:-https://api.test.edusign.sunet.se/v1/}
       EDUSIGN_API_PROFILE: ${EDUSIGN_API_PROFILE:-edusign-test}
