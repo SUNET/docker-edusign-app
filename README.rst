@@ -153,14 +153,21 @@ After all this, and using lynx, I get a 500 at ``https://www.edusign.docker/sign
 
 Once the environment is up and running, there are a few files we want to
 update / provide in the *sp* container (with :code:`docker cp`), mainly
-certificates and metadata:
+certificates and metadata. The keys and certificates live under
+:code:`KEYDIR` (default :code:`/opt/spkeys`), a named volume (:code:`spkeys`)
+shared by every *sp* instance. The first instance to start generates any
+missing file; copy yours in once, and restart the *sp* container(s):
 
-* SSL certificate for HTTPS, at :code:`sp:/etc/ssl/certs/<SP_HOSTNAME>.crt` and
-  :code:`sp:/etc/ssl/private/<SP_HOSTNAME>.key`
+* SSL certificate for HTTPS, at :code:`sp:/opt/spkeys/certs/<SP_HOSTNAME>.crt`
+  and :code:`sp:/opt/spkeys/private/<SP_HOSTNAME>.key`
 
 * SSL certificate for the Shibboleth SP, at
-  :code:`sp:/etc/ssl/certs/shibsp-<SP_HOSTNAME>.crt` and
-  :code:`sp:/etc/ssl/private/shibsp-<SP_HOSTNAME>.key`
+  :code:`sp:/opt/spkeys/certs/shibsp-<SP_HOSTNAME>.crt` and
+  :code:`sp:/opt/spkeys/private/shibsp-<SP_HOSTNAME>.key`
+
+* Key for the Shibboleth session recovery cookie, at
+  :code:`sp:/opt/spkeys/private/sealer.keys`. Generated on first start; all
+  *sp* instances must share it. Keep it as secret as the SP private key.
 
 * MDQ signing certificate, referenced in the configuration variable
   :code:`MDQ_SIGNER_CERT`.

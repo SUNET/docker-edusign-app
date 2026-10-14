@@ -111,6 +111,8 @@ services:
       - 443
     volumes:
       - edusignlogs:/var/log/edusign:rw
+      # SAML key pair, DataSealer key and HTTPS certificate, shared by all sp instances.
+      - spkeys:/opt/spkeys:rw
       - ./ss-dev-src/edusign-app/frontend/public:/opt/public:ro
       - ./ss-dev-src/edusign-app/frontend/build:/opt/jsbuild:rw
     environment:
@@ -284,6 +286,9 @@ volumes:
   # Volume to hold all the interesting logs
   edusignlogs:
     name: edusignlogs
+  # Keys and certificates of the sp container(s), see KEYDIR in nginx/start.sh
+  spkeys:
+    name: spkeys
   certs:
     name: certs
   vhost:
