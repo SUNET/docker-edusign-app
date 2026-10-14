@@ -772,9 +772,16 @@ MD_SIGNER_CERT_URL
     Default: `https://mds.swamid.se/qa/md/swamid-qa.crt`
 
 BACKEND_HOST
-    The hostname of the container running the backend WSGI app.
+    The hostname of the container running the backend WSGI app. nginx resolves it on each request, so with
+    several backend instances behind the name (a compose network alias, a service name) the requests are spread
+    over all of them, including instances started later.
 
-    Default: www
+    Default: edusign-app
+
+RESOLVER
+    The DNS server nginx uses to resolve ``BACKEND_HOST``.
+
+    Default: 127.0.0.11, Docker's embedded DNS
 
 BACKEND_PORT
     The TCP port the WSGI app is listening at.

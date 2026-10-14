@@ -177,6 +177,7 @@ ENV MAX_FILE_SIZE=28730982
 ENV BACKEND_HOST=edusign-app
 ENV BACKEND_PORT=8080
 ENV BACKEND_SCHEME=http
+ENV RESOLVER=127.0.0.11
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y \

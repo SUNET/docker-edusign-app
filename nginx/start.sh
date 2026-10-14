@@ -46,6 +46,11 @@ if [ "x$BACKEND_URL" = "x" ]; then
    BACKEND_URL="$BACKEND_PROTO://$BACKEND_HOST:$BACKEND_PORT"
 fi
 
+# nginx resolves BACKEND_HOST per request (proxy_pass with a variable), so
+# backend instances added or removed at runtime are seen. Docker's embedded
+# DNS is at 127.0.0.11.
+RESOLVER=${RESOLVER-127.0.0.11}
+
 if [ "$ACME_CHALLENGE_LOCATION" = "x" ]; then
    ACME_CHALLENGE_LOCATION="      location ^~ /.well-known/acme-challenge/ {
           proxy_pass http://${ACMEPROXY}/.well-known/acme-challenge/;
@@ -330,6 +335,8 @@ http {
 
 ${REALIP_CONF}
 
+    resolver ${RESOLVER} valid=10s ipv6=off;
+
     server {
       listen 80 default_server;
       server_name ${SP_HOSTNAME};
@@ -343,6 +350,7 @@ ${ACME_CHALLENGE_LOCATION_HTTP}
       listen 443 ssl;
       server_name ${SP_HOSTNAME};
       #root /opt/public;
+      set \$backend ${BACKEND_URL};
 
       ssl_certificate ${KEYDIR}/certs/${CERTNAME}.crt;
       ssl_certificate_key ${KEYDIR}/private/${CERTNAME}.key;
@@ -391,7 +399,7 @@ ${ACME_CHALLENGE_LOCATION}
         shib_request_use_headers on;
         more_set_input_headers 'X-Shibboleth-SessionInitiator: default';
         include shib_clear_headers;
-        proxy_pass ${BACKEND_URL};
+        proxy_pass \$backend;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
@@ -406,7 +414,7 @@ ${ACME_CHALLENGE_LOCATION}
         shib_request_use_headers on;
         more_set_input_headers 'X-Shibboleth-SessionInitiator: bankid';
         include shib_clear_headers;
-        proxy_pass ${BACKEND_URL};
+        proxy_pass \$backend;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
@@ -421,7 +429,7 @@ ${ACME_CHALLENGE_LOCATION}
         shib_request_use_headers on;
         more_set_input_headers 'X-Shibboleth-SessionInitiator: freja';
         include shib_clear_headers;
-        proxy_pass ${BACKEND_URL};
+        proxy_pass \$backend;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
@@ -447,7 +455,7 @@ ${ACME_CHALLENGE_LOCATION}
         shib_request_use_headers on;
         more_set_input_headers 'X-Shibboleth-SessionInitiator: default';
         include shib_clear_headers;
-        proxy_pass ${BACKEND_URL};
+        proxy_pass \$backend;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
@@ -457,7 +465,7 @@ ${ACME_CHALLENGE_LOCATION}
       }
 
       location / {
-        proxy_pass ${BACKEND_URL};
+        proxy_pass \$backend;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;

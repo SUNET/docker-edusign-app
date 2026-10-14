@@ -105,7 +105,6 @@ services:
       args:
         NGINX_VERSION: ${NGINX_VERSION:-1.29.2}
         NODE_MAJOR: ${NODE_MAJOR:-20}
-    container_name: edusign-sp
     expose:
       - 80
       - 443
@@ -147,7 +146,13 @@ services:
   www:
     build:
       context: backend
-    container_name: edusign-app
+    # No container_name on sp and www, so that `docker compose up --scale` can
+    # run several instances. The alias keeps the default BACKEND_HOST resolving,
+    # to every www instance.
+    networks:
+      default:
+        aliases:
+          - edusign-app
     expose:
       - 8080
     volumes:
