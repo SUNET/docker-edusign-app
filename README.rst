@@ -172,6 +172,44 @@ missing file; copy yours in once, and restart the *sp* container(s):
 * MDQ signing certificate, referenced in the configuration variable
   :code:`MDQ_SIGNER_CERT`.
 
+Running several instances
+-------------------------
+
+Several *sp* and *edusign-app* containers can serve one hostname. The Shibboleth
+session is not shared between *sp* instances; the session cookie carries the
+session, encrypted with the key in :code:`sealer.keys`, and an instance that
+does not know a session rebuilds it from the cookie. Requirements:
+
+* Every *sp* instance reads the same :code:`KEYDIR`: SP key and certificate,
+  :code:`sealer.keys`. On one host, share the directory (the :code:`spkeys`
+  volume). On several hosts, distribute the files before the first start and
+  set :code:`KEYDIR_REQUIRE=1`, so that a host with missing files refuses to
+  start instead of generating its own.
+
+* A load balancer in front of the *sp* instances. No session stickiness is
+  needed. Set :code:`PROXY_NETWORK` to its address(es), so that Shibboleth
+  sees the client address and not the balancer's.
+
+* Every *edusign-app* instance has the same :code:`SECRET_KEY`, and uses the
+  shared backends: :code:`DOC_METADATA_CLASS_PATH` set to
+  :code:`edusign_webapp.document.metadata.postgres.PostgresqlMD` and
+  :code:`STORAGE_CLASS_PATH` set to
+  :code:`edusign_webapp.document.storage.s3.S3Storage`, with their variables.
+  The sqlite and local file defaults are per container.
+
+* :code:`BACKEND_HOST` resolves to every *edusign-app* instance: with
+  :code:`docker run`, start each with :code:`--network-alias edusign-app` on a
+  user-defined network; with compose, the service alias in the compose file.
+  nginx resolves the name on each request through :code:`RESOLVER`, Docker's
+  embedded DNS, which exists only on user-defined networks. On the default
+  bridge, set :code:`BACKEND_HOST` to the backend's IP address.
+
+* With a shared logs volume, set :code:`LOG_INSTANCE` on each *edusign-app*
+  instance, so they do not write the same log files.
+
+The replay cache of the Shibboleth SP stays per instance. The Shibboleth
+project does not recommend clustering it.
+
 Configuration variables
 -----------------------
 

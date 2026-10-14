@@ -1,5 +1,40 @@
 
 
+Upgrade from 1.5.X to 1.6.2
+---------------------------
+
+This upgrade makes it possible to run several `edusign-sp` and `edusign-app`
+instances behind one hostname (see "Running several instances" in README.rst).
+A single-instance deployment is affected by the first two points only.
+
+1. The SP key and certificate, and the HTTPS certificate, live under `KEYDIR`,
+   whose default moved from `/etc/ssl` to `/opt/spkeys`. A deployment that
+   copies these files into the container must copy them to the new path, or
+   set `KEYDIR=/etc/ssl` to keep the old layout. Missing files are still
+   generated at start. Mount the directory as a volume, so that the files
+   survive the container.
+
+2. The Shibboleth session cookie now carries the session data, encrypted with
+   the key in `KEYDIR/private/sealer.keys`, so that any `edusign-sp` instance
+   can serve it (Shibboleth session recovery; `relayState` is a cookie too).
+   The key is generated on first start when missing. Guard it like the SP
+   private key. A session recovered this way has no idle timeout, only the
+   fixed lifetime of 8 hours.
+
+3. nginx in `edusign-sp` resolves `BACKEND_HOST` on each request, through the
+   DNS server in `RESOLVER` (default `127.0.0.11`, Docker's embedded DNS, which
+   exists only on user-defined networks). On the default bridge network, set
+   `BACKEND_HOST` to the backend's IP address.
+
+4. New `edusign-sp` variables: `PROXY_NETWORK` (addresses of the proxies / load
+   balancers in front of nginx; the client address is then taken from
+   `X-Forwarded-For`, which Shibboleth's address check needs), `KEYDIR_REQUIRE`
+   (refuse to start when a key file is missing, for several hosts), `RESOLVER`.
+   New `edusign-app` variable: `LOG_INSTANCE` (instance part of the gunicorn
+   log file names, for a shared logs volume). All default to the previous
+   behaviour.
+
+
 Upgrade from 1.4.X to 1.5.2
 ---------------------------
 
