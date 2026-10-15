@@ -183,6 +183,10 @@ signservice:
         require-signed-assertions: false
         message-replay-checker-ref: signservice.MessageReplayChecker
         metadata:
+          # Base document for the generated metadata. Used to put the
+          # transient NameIDFormat before the persistent one; the service
+          # itself writes persistent first.
+          template: file:/etc/signservice/sp-metadata-template.xml
           # Entity categories advertised by the SP. Picked for SWAMID/REFEDS.
           entity-categories:
             - http://refeds.org/category/research-and-scholarship

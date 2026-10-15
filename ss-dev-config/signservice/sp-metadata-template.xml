@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Template for the SP metadata of the SWAMID-style engine, referenced from
+  application.yml as authn.saml.metadata.template.
+
+  The sign service builds the metadata on top of this document: entityID,
+  Extensions, Organization, ContactPerson, KeyDescriptor,
+  AttributeConsumingService and AssertionConsumerService are filled in from the
+  configuration. NameIDFormat elements are only appended when missing, so the
+  order given here is kept. Without a template the service writes persistent
+  first, then transient; here transient comes first.
+-->
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+    entityID="https://replaced-from-configuration">
+  <md:SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</md:NameIDFormat>
+  </md:SPSSODescriptor>
+</md:EntityDescriptor>
