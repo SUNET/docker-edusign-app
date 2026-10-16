@@ -350,6 +350,9 @@ ${ACME_CHALLENGE_LOCATION_HTTP}
       listen 443 ssl;
       server_name ${SP_HOSTNAME};
       #root /opt/public;
+      # proxy_pass with a variable, so that the host is resolved per request.
+      # nginx rejects "proxy_redirect default" with a variable proxy_pass,
+      # hence the explicit proxy_redirect in each location.
       set \$backend ${BACKEND_URL};
 
       ssl_certificate ${KEYDIR}/certs/${CERTNAME}.crt;
@@ -404,7 +407,7 @@ ${ACME_CHALLENGE_LOCATION}
         proxy_set_header X-Forwarded-Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header Host \$host;
-        proxy_redirect default;
+        proxy_redirect ${BACKEND_URL}/ /;
         proxy_buffering off;
       }
 
@@ -419,7 +422,7 @@ ${ACME_CHALLENGE_LOCATION}
         proxy_set_header X-Forwarded-Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header Host \$host;
-        proxy_redirect default;
+        proxy_redirect ${BACKEND_URL}/ /;
         proxy_buffering off;
       }
 
@@ -434,7 +437,7 @@ ${ACME_CHALLENGE_LOCATION}
         proxy_set_header X-Forwarded-Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header Host \$host;
-        proxy_redirect default;
+        proxy_redirect ${BACKEND_URL}/ /;
         proxy_buffering off;
       }
 
@@ -460,7 +463,7 @@ ${ACME_CHALLENGE_LOCATION}
         proxy_set_header X-Forwarded-Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header Host \$host;
-        proxy_redirect default;
+        proxy_redirect ${BACKEND_URL}/ /;
         proxy_buffering off;
       }
 
@@ -470,7 +473,7 @@ ${ACME_CHALLENGE_LOCATION}
         proxy_set_header X-Forwarded-Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header Host \$host;
-        proxy_redirect default;
+        proxy_redirect ${BACKEND_URL}/ /;
         proxy_buffering off;
       }
     }
