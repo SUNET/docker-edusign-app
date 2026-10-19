@@ -20,7 +20,7 @@ IMAGES
 ------
 
 Three images can be overriden: The logo for the app `app-logo.png`,
-the logo for the company `company-logo.png`, and the favicon `favicon.png`.
+the logo for the company `company-logo.svg`, and the favicon `favicon.png`.
 The custom images are simply put in the custom directory.
 
 MARKDOWN FILES
