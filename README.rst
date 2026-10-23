@@ -160,7 +160,9 @@ certificates and metadata:
 
 * SSL certificate for the Shibboleth SP, at
   :code:`sp:/etc/ssl/certs/shibsp-<SP_HOSTNAME>.crt` and
-  :code:`sp:/etc/ssl/private/shibsp-<SP_HOSTNAME>.key`
+  :code:`sp:/etc/ssl/private/shibsp-<SP_HOSTNAME>.key`. shibd runs as the user
+  :code:`_shibd`, so the key must be readable by it: owned by :code:`_shibd` with mode 600, or
+  group :code:`ssl-cert` with mode 640. A key generated at start already is.
 
 * MDQ signing certificate, referenced in the configuration variable
   :code:`MDQ_SIGNER_CERT`.

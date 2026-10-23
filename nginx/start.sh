@@ -424,4 +424,11 @@ cat /etc/shibboleth/shibboleth2.xml
 echo "----"
 cat /etc/nginx/nginx.conf
 
+# shibd runs as _shibd (supervisord.conf) and writes its pid file and
+# listener socket here. The package's tmpfiles rule would own the
+# directory to _shibd; nothing applies it in the container.
+chown _shibd:_shibd /run/shibboleth
+# The SP key lives under /etc/ssl/private, mode 710 and group ssl-cert.
+usermod -a -G ssl-cert _shibd
+
 exec /usr/bin/supervisord
