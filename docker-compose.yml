@@ -221,6 +221,10 @@ services:
       EID_QUOTA: ${EID_QUOTA:-100}
       EID_BASE_PRICE: ${EID_BASE_PRICE:-0}
       EXTRA_EID_COST: ${EXTRA_EID_COST:-0}
+      NEXTCLOUD_URL: ${NEXTCLOUD_URL:-}
+      NEXTCLOUD_USER: ${NEXTCLOUD_USER:-}
+      NEXTCLOUD_PASSWORD: ${NEXTCLOUD_PASSWORD:-}
+      NEXTCLOUD_FOLDER: ${NEXTCLOUD_FOLDER:-eid-reports}
       FREJA_IDP: ${FREJA_IDP:-https://idp-sweden-connect-valfr-2017-sandbox.test.frejaeid.com}
       BANKID_IDP: ${BANKID_IDP:-https://bankidp.qa.swamid.se/bankid/idp}
     depends_on:
