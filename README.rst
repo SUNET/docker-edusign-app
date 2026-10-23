@@ -523,6 +523,29 @@ EXTRA_EID_COST
 
     Default: `0`
 
+NEXTCLOUD_URL
+    Base URL of a Nextcloud instance, e.g. `https://cloud.example.se`. When set, the eID usage report dialog
+    of the admin dashboard offers a second button that stores the report in a folder of that instance,
+    over WebDAV, instead of downloading it. The file is `eid-usage-<year>-<month>.txt` and is overwritten
+    if it exists.
+
+    Default: empty, the button is not shown.
+
+NEXTCLOUD_USER
+    The Nextcloud user whose files the report is stored in.
+
+    Default: empty
+
+NEXTCLOUD_PASSWORD
+    An app password for `NEXTCLOUD_USER`, made in Nextcloud under Settings > Security > Devices & sessions.
+
+    Default: empty
+
+NEXTCLOUD_FOLDER
+    Path of the folder under the user's files where the report is stored. It is created if it does not exist.
+
+    Default: `eid-reports`
+
 BANKID_IDP
     entityID of the BankID SAML2 IdP
 
