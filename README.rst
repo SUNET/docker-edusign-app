@@ -764,8 +764,10 @@ PROXY_NETWORK
 KEYDIR_REQUIRE
     Set to ``1`` to make the *sp* container exit at start when the Shibboleth SP key, certificate or the session
     recovery key (``sealer.keys``) is missing under ``KEYDIR``, instead of generating them. For deployments with
-    *sp* instances on several hosts, where these files are distributed beforehand and must be identical. Default:
-    empty, missing files are generated.
+    *sp* instances on several hosts, where these files are distributed beforehand and must be identical. shibd
+    runs as the user ``_shibd``, so a distributed key file must be readable by it: owned by ``_shibd`` with mode
+    600, or group ``_shibd`` with mode 640. A generated key file already is. Default: empty, missing files are
+    generated.
 
 DISCO_URL
     URL of SAML discovery service to provide to Shibboleth SP.
