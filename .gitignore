@@ -5,3 +5,4 @@
 secrets/
 data/
 .env
+*-notes.md
