@@ -34,6 +34,16 @@ A single-instance deployment is affected by the first two points only.
    log file names, for a shared logs volume). All default to the previous
    behaviour.
 
+5. Log levels are variables, all defaulting to the previous behaviour. For
+   `edusign-sp`: `NGINX_LOG_LEVEL` (`crit`), `SHIB_NATIVE_LOG_LEVEL` (`WARN`,
+   the shibauthorizer and shibresponder log) and `SHIBD_LOG_LEVEL` (`INFO`).
+   For `edusign-app`: `GUNICORN_LOG_LEVEL` (`info`) and `LOG_LEVEL` (`INFO`,
+   the webapp's own messages). An unknown level stops the container at start.
+   Two changes for users of `docker-compose.yml`: `DEBUG` now defaults to
+   `false` there, matching the image and the README, and
+   `MAIL_DEBUG` is its own variable (default `false`) instead of following
+   `DEBUG`; set it explicitly to keep SMTP debugging.
+
 
 Upgrade from 1.4.X to 1.5.2
 ---------------------------
