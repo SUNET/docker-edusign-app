@@ -217,7 +217,8 @@ For the edusign-app container
 .............................
 
 DEBUG
-    Turn on debug mode for the app.
+    Turn on Flask debug mode, and reloading of the code by gunicorn when it changes. It does not change any
+    log level; see ``LOG_LEVEL`` and ``GUNICORN_LOG_LEVEL``.
 
     Default: false
 
@@ -620,6 +621,12 @@ GUNICORN_WORKER_TIMEOUT
 
     Default: 30
 
+GUNICORN_LOG_LEVEL
+    Level of gunicorn's own messages in ``edusign-webapp-error.log``: ``debug``, ``info``, ``warning``,
+    ``error`` or ``critical``. Another value stops the container at start with a message naming the variable.
+
+    Default: info
+
 LOG_INSTANCE
     Instance part of the gunicorn log file names, ``edusign-webapp-<LOG_INSTANCE>-access.log`` and
     ``-error.log``. Set it when several *edusign-app* instances share the logs volume, so they do not write the
@@ -627,8 +634,21 @@ LOG_INSTANCE
 
     Default: empty, file names without instance part.
 
+LOG_LEVEL
+    Level of the webapp's own log messages, written to ``edusign-webapp-error.log``: ``DEBUG``, ``INFO``,
+    ``WARNING``, ``ERROR`` or ``CRITICAL``. At ``DEBUG`` the app logs the traffic with the sign service, the
+    SAML attributes of the users and the session, which contain personal data. Another value stops the
+    container at start with a message naming the variable.
+
+    Default: INFO
+
 In addition it is necessary to provide the app with access to some SMTP server,
 setting the variables `indicated here <https://flask-mailman.readthedocs.io/en/latest/>`_.
+
+MAIL_DEBUG
+    Print the SMTP conversation of outgoing mail to ``edusign-webapp-error.log``.
+
+    Default: false
 
 And finally, these variables are used to construct the SAML metadata file.
 
@@ -855,6 +875,28 @@ BACKEND_SCHEME
     The protocol to access the WSGI app.
 
     Default: http
+
+NGINX_LOG_LEVEL
+    Level of ``nginx-error.log``: ``debug``, ``info``, ``notice``, ``warn``, ``error``, ``crit``, ``alert``
+    or ``emerg``. Another value stops the container at start with a message naming the variable.
+
+    Default: crit
+
+SHIB_NATIVE_LOG_LEVEL
+    Level of ``/var/log/shibboleth/native.log``, written by the shibauthorizer and shibresponder processes of
+    the Shibboleth SP: ``DEBUG``, ``INFO``, ``NOTICE``, ``WARN``, ``ERROR``, ``CRIT``, ``ALERT`` or ``FATAL``.
+    Another value stops the container at start with a message naming the variable. The file is inside the
+    container, not on the logs volume.
+
+    Default: WARN
+
+SHIBD_LOG_LEVEL
+    Level of ``/var/log/shibboleth/shibd.log``, written by shibd, with the same names as
+    ``SHIB_NATIVE_LOG_LEVEL``. ``shibd_warn.log`` keeps its own WARN threshold and ``transaction.log`` is not
+    affected. At ``DEBUG`` the file rotates quickly (1 MB, 10 kept), so older entries are lost fast. The files
+    are inside the container, not on the logs volume.
+
+    Default: INFO
 
 ACMEPROXY
     For the .well-known/acme-challenge nginx location for letsencrypt.
