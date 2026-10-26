@@ -19,6 +19,13 @@ workers=${GUNICORN_WORKERS-4}
 worker_class=${GUNICORN_WORKER_CLASS-gthread}
 worker_threads=${GUNICORN_WORKER_THREADS-4}
 worker_timeout=${GUNICORN_WORKER_TIMEOUT-30}
+# Checked here: gunicorn silently falls back to info on an unknown level.
+log_level=$(echo "${GUNICORN_LOG_LEVEL:-info}" | tr '[:upper:]' '[:lower:]')
+case $log_level in
+  (debug|info|warning|error|critical) ;;
+  (*) echo "$0: GUNICORN_LOG_LEVEL=$log_level: expected one of: debug info warning error critical" >&2
+      exit 1 ;;
+esac
 # Need to tell Gunicorn to trust the X-Forwarded-* headers
 forwarded_allow_ips=${forwarded_allow_ips-'*'}
 # Several backend instances share the logs volume, so each needs its own log
@@ -56,5 +63,6 @@ exec start-stop-daemon --start -c edusign:edusign --exec \
      --access-logfile "${log_dir}/${log_name}-access.log" \
      --error-logfile "${log_dir}/${log_name}-error.log" \
      --capture-output \
+     --log-level "${log_level}" \
      ${extra_args} \
      edusign_webapp.run:app
