@@ -51,6 +51,25 @@ fi
 # DNS is at 127.0.0.11.
 RESOLVER=${RESOLVER-127.0.0.11}
 
+# Log levels. They are checked here because log4shib accepts any string in a
+# .logger file and a bad one leaves the process running with no log at all,
+# and a bad nginx level only shows as nginx restarting under supervisord.
+check_level() {
+   name=$1; value=$2; shift 2
+   for allowed in "$@"; do
+      [ "$value" = "$allowed" ] && return 0
+   done
+   echo "$name=$value: expected one of: $*" >&2
+   exit 1
+}
+NGINX_LOG_LEVEL=$(echo "${NGINX_LOG_LEVEL:-crit}" | tr '[:upper:]' '[:lower:]')
+check_level NGINX_LOG_LEVEL "$NGINX_LOG_LEVEL" debug info notice warn error crit alert emerg
+SHIB_LEVELS="DEBUG INFO NOTICE WARN ERROR CRIT ALERT FATAL"
+SHIB_NATIVE_LOG_LEVEL=$(echo "${SHIB_NATIVE_LOG_LEVEL:-WARN}" | tr '[:lower:]' '[:upper:]')
+check_level SHIB_NATIVE_LOG_LEVEL "$SHIB_NATIVE_LOG_LEVEL" $SHIB_LEVELS
+SHIBD_LOG_LEVEL=$(echo "${SHIBD_LOG_LEVEL:-INFO}" | tr '[:lower:]' '[:upper:]')
+check_level SHIBD_LOG_LEVEL "$SHIBD_LOG_LEVEL" $SHIB_LEVELS
+
 if [ "$ACME_CHALLENGE_LOCATION" = "x" ]; then
    ACME_CHALLENGE_LOCATION="      location ^~ /.well-known/acme-challenge/ {
           proxy_pass http://${ACMEPROXY}/.well-known/acme-challenge/;
@@ -269,7 +288,7 @@ EOF
 cp /etc/shibboleth/native.logger /etc/shibboleth/native.logger.bak
 cat>/etc/shibboleth/native.logger<<EOF
 # set overall behavior
-log4j.rootCategory=WARN, native_log
+log4j.rootCategory=${SHIB_NATIVE_LOG_LEVEL}, native_log
 
 # fairly verbose for DEBUG, so generally leave at WARN/INFO
 log4j.category.XMLTooling.XMLObject=WARN
@@ -297,6 +316,16 @@ log4j.appender.native_log.maxBackupIndex=10
 log4j.appender.native_log.layout=org.apache.log4j.PatternLayout
 log4j.appender.native_log.layout.ConversionPattern=%d{%Y-%m-%d %H:%M:%S} %p %c %x: %m%n
 EOF
+
+# shibd.logger is the package file; only its root level is changed. The
+# pattern matches any level, so a restart of the container re-running this
+# script finds the line again.
+SHIBD_ROOT='^log4j.rootCategory=[A-Z]*, shibd_log, warn_log$'
+grep -q "$SHIBD_ROOT" /etc/shibboleth/shibd.logger || {
+   echo "/etc/shibboleth/shibd.logger: root category line not found" >&2
+   exit 1
+}
+sed -i "s/$SHIBD_ROOT/log4j.rootCategory=${SHIBD_LOG_LEVEL}, shibd_log, warn_log/" /etc/shibboleth/shibd.logger
 
 cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 cat>/etc/nginx/nginx.conf<<EOF
@@ -331,7 +360,7 @@ http {
     proxy_read_timeout 3000;
 
     access_log /var/log/edusign/nginx-access.log;
-    error_log /var/log/edusign/nginx-error.log crit;
+    error_log /var/log/edusign/nginx-error.log ${NGINX_LOG_LEVEL};
 
 ${REALIP_CONF}
 
