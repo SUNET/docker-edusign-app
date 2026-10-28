@@ -73,7 +73,7 @@ configuration. To enable them:
    eppn.
 
 
-Upgrade from 1.5.2r7 to 1.5.2r21
+Upgrade from 1.5.2r7 to 1.5.2r22
 --------------------------------
 
 This upgrade changes how eID use is whitelisted and billed, adds a monthly eID
