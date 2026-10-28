@@ -214,7 +214,7 @@ SESSION_COOKIE_DOMAIN
 SESSION_COOKIE_PATH
     Configuration of the Flask session cookie.
 
-    Default: `/`
+    Default: `/sign`
 
 SESSION_COOKIE_SECURE
     Configuration of the Flask session cookie.
@@ -379,6 +379,12 @@ USER_WHITELIST
     Comma separated list of eppn's, so users identified by them can start signing documents.
 
     Default: `whitelisted@eduid.se`
+
+ADMIN_WHITELIST
+    Comma separated list of eppn's, so users identified by them can access the admin views at `/admin`.
+    Empty means no one can.
+
+    Default: empty
 
 POLLING
     When does the frontend poll the backend for changes in the invitations. One of 'always', 'inviter', 'never'.
