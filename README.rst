@@ -416,6 +416,12 @@ USER_WHITELIST
 
     Default: `whitelisted@eduid.se`
 
+ADMIN_WHITELIST
+    Comma separated list of eppn's, so users identified by them can access the admin views at `/admin`.
+    Empty means no one can.
+
+    Default: empty
+
 POLLING
     When does the frontend poll the backend for changes in the invitations. One of 'always', 'inviter', 'never'.
     The value 'inviter' indicates to poll only when the user has invited others to sign some document.

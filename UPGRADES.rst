@@ -45,8 +45,62 @@ A single-instance deployment is affected by the first two points only.
    `DEBUG`; set it explicitly to keep SMTP debugging.
 
 
-Upgrade from 1.4.X to 1.5.2
----------------------------
+Upgrade from 1.5.2r7 to 1.5.2r22
+--------------------------------
+
+This upgrade changes how eID use is whitelisted and billed, adds a monthly eID
+usage report to the admin dashboard, and makes the `edusign-sp` container keep
+sessions on networks that change the client address. To upgrade:
+
+1. Rewrite the `EID_WHITELIST` entries on the `edusign-app` container. An entry
+   is now either `<customer id>:<agreement number>:<scope>`, for an institution
+   billed for its eID use, or a bare `<scope>`, for one whitelisted without
+   billing. The quota forms `<scope>:<quota>` and
+   `<scope>:<quota bankid>:<quota freja>` are no longer accepted: an entry in an
+   old form stops the container at startup with an error naming the entry.
+
+   The quota is now one for all eID methods together and the same for every
+   billed institution. Billing is configured with three new variables:
+
+   * EID_QUOTA: authentications (logins and signatures, all eID methods together)
+     included in the monthly base price (default `100`)
+   * EID_BASE_PRICE: the monthly base price in SEK (default `0`)
+   * EXTRA_EID_COST: the price in SEK of each authentication over the quota
+     (default `0`)
+
+   The admin dashboard downloads a monthly eID usage report with one line per
+   billed institution.
+
+2. Users on networks that present a different client address on successive
+   requests are sent back to login on every request, since the Shibboleth SP
+   binds a session to the client address. The new `edusign-sp` variable
+   `BROKEN_NETWORKS` lists such networks, as a whitespace-separated list of
+   CIDR masks (Shibboleth `SessionCache/@unreliableNetworks`). A session is
+   kept when the address recorded in it and the current one both lie in one
+   listed network. Default: empty, no change in behaviour.
+
+3. Optionally let the admin dashboard store the monthly eID usage report in a
+   folder of a Nextcloud instance (e.g. SUNET Drive) instead of downloading
+   it. When configured, the report dialog offers a second button that uploads
+   the report over WebDAV as `eid-usage-<year>-<month>.txt`, overwriting an
+   existing file. Four new `edusign-app` variables:
+
+   * NEXTCLOUD_URL: base URL of the instance, e.g. `https://cloud.example.se`.
+     Default: empty, the button is not shown.
+   * NEXTCLOUD_USER: the Nextcloud user whose files the report is stored in.
+   * NEXTCLOUD_PASSWORD: an app password for that user, made in Nextcloud
+     under Settings > Security > Devices & sessions.
+   * NEXTCLOUD_FOLDER: path of the folder under the user's files. It is
+     created if it does not exist. Default: `eid-reports`.
+
+4. In the `edusign-sp` container, shibd now runs as the user `_shibd`. If you
+   mount your own SP key at `/etc/ssl/private/shibsp-<SP_HOSTNAME>.key`, it
+   must be readable by that user: owned by `_shibd` with mode 600, or group
+   `ssl-cert` with mode 640. A key generated at start already is.
+
+
+Upgrade from 1.4.X to 1.5.2r7
+-----------------------------
 
 This upgrade adds the possibility to sign with BankID and Freja+. Both methods
 integrate the webapp with the Sweden Connect federation and share most of the
@@ -102,20 +156,11 @@ configuration. To enable them:
 
 8. The scopes allowed to request BankID / Freja+ signatures are controlled by the
    `EID_WHITELIST` variable on the `edusign-app` container (shared by both
-   methods). Default: `sunet.se,eduid.se`. An entry is either
-   `<customer id>:<agreement number>:<scope>`, for an institution billed for its
-   eID use, or a bare `<scope>`, for one whitelisted without billing. Billing is
-   configured with three more variables, the same for every billed institution:
-
-   * EID_QUOTA: authentications (logins and signatures, all eID methods together)
-     included in the monthly base price (default `100`)
-   * EID_BASE_PRICE: the monthly base price in SEK (default `0`)
-   * EXTRA_EID_COST: the price in SEK of each authentication over the quota
-     (default `0`)
-
-   The admin dashboard downloads a monthly eID usage report with one line per
-   billed institution. The variable was previously named `BANKID_WHITELIST`; the
-   old name is still read as a fallback when `EID_WHITELIST` is not set.
+   methods). Default: `sunet.se,eduid.se`. Entries can carry the number of paid
+   signatures per method, shown as quotas in the admin dashboard:
+   `<scope>:<quota bankid>:<quota freja>`, or `<scope>:<quota>` for a common quota.
+   The variable was previously named `BANKID_WHITELIST`; the old name is still
+   read as a fallback when `EID_WHITELIST` is not set.
 
 9. The admin views at `/admin` are now reachable through the front `edusign-sp`
    (secured by Shibboleth) instead of being blocked by nginx. The `edusign-app`
@@ -125,20 +170,3 @@ configuration. To enable them:
    it. In-network callers that reach the backend directly (e.g. a cleanup cron
    job) must now send an `Edupersonprincipalname-20` header with a whitelisted
    eppn.
-
-10. Users on networks that present a different client address on successive
-    requests are sent back to login on every request, since the Shibboleth SP
-    binds a session to the client address. The new `edusign-sp` variable
-    `BROKEN_NETWORKS` lists such networks, as a whitespace-separated list of
-    CIDR masks (Shibboleth `SessionCache/@unreliableNetworks`). A session is
-    kept when the address recorded in it and the current one both lie in one
-    listed network. Default: empty, no change in behaviour.
-
-Note for deployments already running a release whose `EID_WHITELIST` entries
-carry quotas: the quota forms, `<scope>:<quota>` and
-`<scope>:<quota bankid>:<quota freja>`, are no longer accepted. The quota is now
-one for all eID methods together and the same for every institution, set with
-`EID_QUOTA`. An entry in an old form stops the `edusign-app` container at startup
-with an error naming the entry. Rewrite each such entry as
-`<customer id>:<agreement number>:<scope>`, or as a bare `<scope>` if the
-institution is not billed.
