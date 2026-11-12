@@ -125,3 +125,28 @@ sessions on networks that change the client address. To upgrade:
    mount your own SP key at `/etc/ssl/private/shibsp-<SP_HOSTNAME>.key`, it
    must be readable by that user: owned by `_shibd` with mode 600, or group
    `ssl-cert` with mode 640. A key generated at start already is.
+
+
+Upgrade from 1.5.2r22 to 1.5.2r23
+---------------------------------
+
+This upgrade lets the admin dashboard store the monthly eID usage report in a
+public share of a Nextcloud instance, for a receiver that hands out a file drop
+link instead of an account. Nothing changes for a deployment that keeps the
+user and folder variables. To use a share:
+
+1. Set `NEXTCLOUD_URL` on the `edusign-app` container as before, and two new
+   variables:
+
+   * NEXTCLOUD_SHARE_TOKEN: the token of the share, the last part of its link
+     `https://cloud.example.se/s/<token>`. A file drop share is enough. When
+     set, `NEXTCLOUD_USER`, `NEXTCLOUD_PASSWORD` and `NEXTCLOUD_FOLDER` are
+     ignored. Default: empty.
+   * NEXTCLOUD_SHARE_PASSWORD: the password of the share, if it has one.
+     Default: empty.
+
+   The report is uploaded into the share as `eid-usage-<year>-<month>.txt`. A
+   file drop does not let the uploader overwrite, so a second upload of the
+   same month is handled by the instance, which stores it under another name
+   or refuses it.
+

@@ -496,14 +496,28 @@ EXTRA_EID_COST
 
 NEXTCLOUD_URL
     Base URL of a Nextcloud instance, e.g. `https://cloud.example.se`. When set, the eID usage report dialog
-    of the admin dashboard offers a second button that stores the report in a folder of that instance,
-    over WebDAV, instead of downloading it. The file is `eid-usage-<year>-<month>.txt` and is overwritten
-    if it exists.
+    of the admin dashboard offers a second button that stores the report in that instance, over WebDAV,
+    instead of downloading it. The file is `eid-usage-<year>-<month>.txt`. It goes either to a public
+    share, with `NEXTCLOUD_SHARE_TOKEN`, or to a folder of a user, with `NEXTCLOUD_USER`.
 
     Default: empty, the button is not shown.
 
+NEXTCLOUD_SHARE_TOKEN
+    Token of a public share of the instance, the last part of its link `https://cloud.example.se/s/<token>`.
+    A share of the file drop kind is enough: the report is uploaded into it, and nothing is listed or read.
+    When set, the user, password and folder variables below are ignored. What happens to a second upload
+    of the same name is up to the share: a file drop does not let the uploader overwrite, and the instance
+    stores the new file under another name or refuses it.
+
+    Default: empty, the report goes to the folder of `NEXTCLOUD_USER`.
+
+NEXTCLOUD_SHARE_PASSWORD
+    The password of the share, if it has one.
+
+    Default: empty
+
 NEXTCLOUD_USER
-    The Nextcloud user whose files the report is stored in.
+    The Nextcloud user whose files the report is stored in. Not used with `NEXTCLOUD_SHARE_TOKEN`.
 
     Default: empty
 
@@ -513,7 +527,8 @@ NEXTCLOUD_PASSWORD
     Default: empty
 
 NEXTCLOUD_FOLDER
-    Path of the folder under the user's files where the report is stored. It is created if it does not exist.
+    Path of the folder under the user's files where the report is stored. It is created if it does not exist,
+    and the report overwrites an existing file. Not used with `NEXTCLOUD_SHARE_TOKEN`.
 
     Default: `eid-reports`
 
