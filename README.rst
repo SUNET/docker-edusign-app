@@ -505,9 +505,9 @@ NEXTCLOUD_URL
 NEXTCLOUD_SHARE_TOKEN
     Token of a public share of the instance, the last part of its link `https://cloud.example.se/s/<token>`.
     A share of the file drop kind is enough: the report is uploaded into it, and nothing is listed or read.
-    When set, the user, password and folder variables below are ignored. What happens to a second upload
-    of the same name is up to the share: a file drop does not let the uploader overwrite, and the instance
-    stores the new file under another name or refuses it.
+    When set, the user, password and folder variables below are ignored. A file drop does not let the
+    uploader overwrite: a second report for the same month is stored under another name, such as
+    `eid-usage-<year>-<month> (2).txt`. Needs Nextcloud 28 or later.
 
     Default: empty, the report goes to the folder of `NEXTCLOUD_USER`.
 

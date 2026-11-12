@@ -147,6 +147,6 @@ user and folder variables. To use a share:
 
    The report is uploaded into the share as `eid-usage-<year>-<month>.txt`. A
    file drop does not let the uploader overwrite, so a second upload of the
-   same month is handled by the instance, which stores it under another name
-   or refuses it.
+   same month is stored under another name, such as
+   `eid-usage-<year>-<month> (2).txt`. Needs Nextcloud 28 or later.
 
