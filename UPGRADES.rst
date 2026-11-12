@@ -44,6 +44,23 @@ A single-instance deployment is affected by the first two points only.
    `MAIL_DEBUG` is its own variable (default `false`) instead of following
    `DEBUG`; set it explicitly to keep SMTP debugging.
 
+6. The admin dashboard can store the monthly eID usage report in a public
+   share of a Nextcloud instance, for a receiver that hands out a file drop
+   link instead of an account. Set `NEXTCLOUD_URL` on the `edusign-app`
+   container as before, and two new variables:
+
+   * NEXTCLOUD_SHARE_TOKEN: the token of the share, the last part of its link
+     `https://cloud.example.se/s/<token>`. A file drop share is enough. When
+     set, `NEXTCLOUD_USER`, `NEXTCLOUD_PASSWORD` and `NEXTCLOUD_FOLDER` are
+     ignored. Default: empty.
+   * NEXTCLOUD_SHARE_PASSWORD: the password of the share, if it has one.
+     Default: empty.
+
+   The report is uploaded into the share as `eid-usage-<year>-<month>.txt`. A
+   file drop does not let the uploader overwrite, so a second upload of the
+   same month is stored under another name, such as
+   `eid-usage-<year>-<month> (2).txt`. Needs Nextcloud 28 or later.
+
 
 Upgrade from 1.5.2r7 to 1.5.2r22
 --------------------------------
