@@ -103,7 +103,7 @@ services:
     build:
       context: nginx
       args:
-        NGINX_VERSION: ${NGINX_VERSION:-1.29.2}
+        NGINX_VERSION: ${NGINX_VERSION:-1.30.7}
         NODE_MAJOR: ${NODE_MAJOR:-20}
     container_name: edusign-sp
     expose:

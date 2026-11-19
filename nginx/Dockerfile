@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set nginx version (build-time only, overridable via --build-arg)
-ARG NGINX_VERSION=1.29.2
+ARG NGINX_VERSION=1.30.7
 
 # Download and extract nginx
 WORKDIR /tmp
