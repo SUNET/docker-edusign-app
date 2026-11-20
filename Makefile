@@ -12,7 +12,7 @@ VERSION_SP=$(VERSION)
 NAME_SP=edusign-sp
 DIR_SP=nginx
 # Build-time versions baked into the SP image (overridable on the command line).
-NGINX_VERSION=1.29.2
+NGINX_VERSION=1.30.7
 NODE_MAJOR=20
 
 VERSION_APP=$(VERSION)

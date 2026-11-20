@@ -103,7 +103,7 @@ services:
     build:
       context: nginx
       args:
-        NGINX_VERSION: ${NGINX_VERSION:-1.29.2}
+        NGINX_VERSION: ${NGINX_VERSION:-1.30.7}
         NODE_MAJOR: ${NODE_MAJOR:-20}
     expose:
       - 80
@@ -281,6 +281,10 @@ services:
     ports:
       - 443:443
       - 80:80
+    environment:
+      # HTTP/2 off at the edge until nginx-proxy ships on nginx 1.31.9 or
+      # later (CVE-2026-123633, CVE-2026-123007 in ngx_http_v2_module).
+      ENABLE_HTTP2: ${ENABLE_HTTP2:-false}
     volumes:
       - certs:/etc/nginx/certs
       - vhost:/etc/nginx/vhost.d
