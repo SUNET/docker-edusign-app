@@ -285,6 +285,9 @@ services:
       # HTTP/2 off at the edge until nginx-proxy ships on nginx 1.31.9 or
       # later (CVE-2026-123633, CVE-2026-123007 in ngx_http_v2_module).
       ENABLE_HTTP2: ${ENABLE_HTTP2:-false}
+    configs:
+      - source: nginx-proxy-body-size
+        target: /etc/nginx/conf.d/body-size.conf
     volumes:
       - certs:/etc/nginx/certs
       - vhost:/etc/nginx/vhost.d
@@ -304,6 +307,14 @@ services:
       - acme:/etc/acme.sh
     depends_on:
       - nginx-proxy
+
+configs:
+  # Without this, nginx-proxy limits a request body to nginx's default of 1m,
+  # and answers 413 to the upload of a larger document. The limit follows the
+  # one of the sp container. Inline content needs Docker Compose 2.23.1.
+  nginx-proxy-body-size:
+    content: |
+      client_max_body_size ${MAX_FILE_SIZE:-28730982};
 
 volumes:
   # Volume to hold all the interesting logs
