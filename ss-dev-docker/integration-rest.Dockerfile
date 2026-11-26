@@ -4,14 +4,12 @@
 FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /src
 COPY pom.xml .
-# integration-rest master is at 2.4.0-SNAPSHOT but pulls signservice-integration-{xml,impl,pdf}
-# via ${sign.integration.version}, also pinned to 2.4.0-SNAPSHOT. The released 2.4.0 jars are on
-# Maven Central, so override the property to resolve against the release without editing the pom.
-ARG SIGN_INTEGRATION_VERSION=2.4.0
-RUN mvn -B -q -Dsign.integration.version=${SIGN_INTEGRATION_VERSION} dependency:go-offline
+# Since 2.4.1 the pom names release versions only, all on Maven Central, so the
+# build needs no version override.
+RUN mvn -B -q dependency:go-offline
 COPY src src
 COPY scripts scripts
-RUN mvn -B -q -DskipTests -Dsign.integration.version=${SIGN_INTEGRATION_VERSION} package
+RUN mvn -B -q -DskipTests package
 
 FROM eclipse-temurin:21-jre
 RUN useradd --system --uid 10001 signservice
