@@ -61,6 +61,29 @@ A single-instance deployment is affected by the first two points only.
    same month is stored under another name, such as
    `eid-usage-<year>-<month> (2).txt`. Needs Nextcloud 28 or later.
 
+7. Documents above about 15 MB could not be signed, although `MAX_FILE_SIZE_FRONT`
+   allows 20 MiB. A document reaches signservice-integration-rest Base64-encoded
+   as one JSON string value, and the JSON parser limits such a value to
+   20000000 characters. The service answered 400 `Failed to read request`.
+   Version 2.4.1 of signservice-integration-rest makes the limit a setting:
+
+   * signservice.json.max-string-length: the maximum length, in characters, of
+     one JSON string value. Default: `20000000`.
+
+   For users of `docker-compose.yml`: the submodule `ss-dev-src/integration-rest`
+   is now at the tag `2.4.1-release`, and
+   `ss-dev-config/integration-rest/application-dev.properties` sets the value
+   to `40000000`. Run `git submodule update --init` and rebuild the
+   `integration-rest` image.
+
+   For other deployments: run signservice-integration-rest 2.4.1 or later, and
+   set the property, or the environment variable
+   `SIGNSERVICE_JSON_MAX_STRING_LENGTH`. A policy with `stateless=false` needs
+   4/3 of the largest document in bytes, and a policy with `stateless=true`
+   needs 16/9. For 20 MiB these are 27962027 and 37282703, so `40000000`
+   covers both. Raise the value in proportion when `MAX_FILE_SIZE_FRONT` is
+   raised.
+
 
 Upgrade from 1.5.2r7 to 1.5.2r22
 --------------------------------
