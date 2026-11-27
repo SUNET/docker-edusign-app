@@ -77,6 +77,13 @@ if [ ! -f "$KEYDIR/private/shibsp-${SP_HOSTNAME}.key" -o ! -f "$KEYDIR/certs/shi
    mv /tmp/sp-cert.pem "$KEYDIR/certs/shibsp-${SP_HOSTNAME}.crt"
 fi
 
+# shibd reads the SP key as _shibd (supervisord.conf). The key may be mounted
+# from the host, read-only, with an owner id that means something else in
+# here, in a directory _shibd cannot enter (/etc/ssl/private is mode 710,
+# group ssl-cert). So shibd gets its own copy, made by root at every start.
+SP_KEY=/run/shibboleth/sp-key.pem
+install -m 600 -o _shibd -g _shibd "$KEYDIR/private/shibsp-${SP_HOSTNAME}.key" "$SP_KEY"
+
 if [ ! -f "$KEYDIR/private/${CERTNAME}.key" -o ! -f "$KEYDIR/certs/${CERTNAME}.crt" ]; then
    make-ssl-cert generate-default-snakeoil --force-overwrite
    cp /etc/ssl/private/ssl-cert-snakeoil.key "$KEYDIR/private/${CERTNAME}.key"
@@ -200,9 +207,9 @@ cat>/etc/shibboleth/shibboleth2.xml<<EOF
         <AttributeFilter type="XML" validate="true" path="attribute-policy.xml"/>
         <!-- Simple file-based resolvers for separate signing/encryption keys. -->
         <CredentialResolver type="File" use="signing"
-            key="${KEYDIR}/private/shibsp-${SP_HOSTNAME}.key" certificate="${KEYDIR}/certs/shibsp-${SP_HOSTNAME}.crt"/>
+            key="${SP_KEY}" certificate="${KEYDIR}/certs/shibsp-${SP_HOSTNAME}.crt"/>
         <CredentialResolver type="File" use="encryption"
-            key="${KEYDIR}/private/shibsp-${SP_HOSTNAME}.key" certificate="${KEYDIR}/certs/shibsp-${SP_HOSTNAME}.crt"/>
+            key="${SP_KEY}" certificate="${KEYDIR}/certs/shibsp-${SP_HOSTNAME}.crt"/>
         
     </ApplicationDefaults>
     
@@ -428,7 +435,10 @@ cat /etc/nginx/nginx.conf
 # listener socket here. The package's tmpfiles rule would own the
 # directory to _shibd; nothing applies it in the container.
 chown _shibd:_shibd /run/shibboleth
-# The SP key lives under /etc/ssl/private, mode 710 and group ssl-cert.
-usermod -a -G ssl-cert _shibd
+# Its logs and caches: the image owns these directories to the id _shibd had
+# at build time. With /etc/passwd mounted from the host the name has another
+# id, so own them by name. Nothing here writes /etc/passwd or /etc/group,
+# which may be mounted read-only.
+chown -R _shibd:_shibd /var/log/shibboleth /var/cache/shibboleth
 
 exec /usr/bin/supervisord
