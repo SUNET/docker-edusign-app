@@ -45,6 +45,7 @@ relying-party  ──────►  integration-rest  ──── user browse
 │   └── validator/             # sig-validation-base library (upstream of sigval-service; reference only)
 ├── scripts/
 │   ├── gen-keys.sh            # generates dev keys, fetches SWAMID QA trust
+│   ├── gen-sp-host-files.sh   # generates the production-style files mounted into sp
 │   └── fetch-sp-metadata.sh   # pulls the SignService SP metadata for SWAMID upload
 ├── secrets/                   # generated; gitignored
 └── data/signservice/          # SIGNSERVICE_HOME (audit logs, CRL, MDQ cache); gitignored
@@ -73,6 +74,7 @@ cp .env.example .env             # then edit SIGNSERVICE_DOMAIN, SIGNAPI_DOMAIN,
 ./scripts/gen-keys.sh            # generates dev keypairs, fetches SWAMID QA trust
 ./scripts/extract-builtin-ca.sh  # see "sigval trust anchor" below - one-shot extract
 docker compose build             # ~5-10 min first run (downloads Maven deps + sigval jar)
+./scripts/gen-sp-host-files.sh   # needs the built sp image - see "Production-style mounts in sp" below
 docker compose up -d
 docker compose logs -f
 ```
@@ -126,6 +128,26 @@ A full sample-flow request (`prepare` → `create` → user POSTs to signservice
 | signservice issues end-user signer cert | sigval validates the document             | BuiltInCa root (alias `test-ca` in `ss-dev-src/signservice-modules/signservice-app/src/main/resources/config/ca/test-ca.jks`) exported and dropped into `ss-dev-src/sigval/resources/eduSign/trust/sig/`. See [sigval trust anchor](#sigval-trust-anchor) below. |
 | browser ↔ each container (via nginx-proxy) | TLS                                   | Let's Encrypt via `nginx-acme-companion`. For laptop-only dev, hit `127.0.0.1:8443` etc. directly and accept the self-signed cert. |
 | signservice ↔ SWAMID IdPs              | SAML AuthnRequest signing / assertion encryption | `secrets/swamid-saml-sp-{sign,encrypt}.p12` (alias `sign` / `encrypt`, password `changeit`). |
+
+### Production-style mounts in sp
+
+Production mounts `/etc/passwd`, `/etc/group`, and the SP and HTTPS keys and certificates from the host into the `sp` container. The dev stack does the same, all read-only, so that a release which breaks under those mounts breaks in dev first. `scripts/gen-sp-host-files.sh` generates the files into `secrets/sp-host/`:
+
+- `passwd` and `group` are copies of the image's files in which `_shibd` has other ids (4321) than the image was built with.
+- The keys have mode 600 and belong to the host user, so `_shibd` cannot read them directly.
+
+What this catches:
+
+- A start script that writes `/etc/passwd` or `/etc/group` (e.g. `usermod`): the `sp` container exits at start.
+- A shibd that cannot read the SP key: shibd keeps running, and `docker compose ps` shows `sp` as `unhealthy`. The healthcheck requires a `KeyDescriptor` in `/Shibboleth.sso/Metadata`.
+- Anything that relies on the ids `_shibd` had when the image was built.
+
+Notes:
+
+- Run the script before `docker compose up`. For a file that is missing, Docker creates a directory in its place, and `sp` fails to start.
+- The file names follow `SP_HOSTNAME`. The script reads it from the environment, not from `.env`: with another host name than the default, run `SP_HOSTNAME=<host> ./scripts/gen-sp-host-files.sh`.
+- Run it again with `--force` after a change of the base image or of the packages in `nginx/Dockerfile`, since `passwd` and `group` are copies of the image's.
+- The SP key now survives a recreation of the container. `--force` generates a new one, and the SP metadata changes with it.
 
 ### sigval trust anchor
 
