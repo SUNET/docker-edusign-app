@@ -147,6 +147,16 @@ services:
       VIRTUAL_PROTO: ${VIRTUAL_PROTO:-https}
       VIRTUAL_PORT: ${VIRTUAL_PORT:-443}
       LETSENCRYPT_HOST: ${SP_HOSTNAME:-dev.edusign.sunet.se}
+    # Healthy when the generated metadata carries the SP certificate. That
+    # needs nginx, shibresponder and shibd, and a shibd that could load the SP
+    # key. A shibd that cannot read the key logs an error and keeps running;
+    # its metadata then has no KeyDescriptor.
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsk https://localhost/Shibboleth.sso/Metadata | grep -q KeyDescriptor"]
+      interval: 15s
+      timeout: 5s
+      retries: 4
+      start_period: 30s
     depends_on:
       - www
       - nginx-acme-companion
