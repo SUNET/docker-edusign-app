@@ -124,7 +124,8 @@ sessions on networks that change the client address. To upgrade:
 4. In the `edusign-sp` container, shibd now runs as the user `_shibd`. If you
    mount your own SP key at `/etc/ssl/private/shibsp-<SP_HOSTNAME>.key`, it
    must be readable by that user: owned by `_shibd` with mode 600, or group
-   `ssl-cert` with mode 640. A key generated at start already is.
+   `ssl-cert` with mode 640. A key generated at start already is. This holds
+   for 1.5.2r22 to 1.5.2r25 only, see the upgrade to 1.5.2r26 below.
 
 
 Upgrade from 1.5.2r22 to 1.5.2r23
@@ -150,3 +151,28 @@ user and folder variables. To use a share:
    same month is stored under another name, such as
    `eid-usage-<year>-<month> (2).txt`. Needs Nextcloud 28 or later.
 
+
+Upgrade from 1.5.2r25 to 1.5.2r26
+---------------------------------
+
+This upgrade fixes the start of the `edusign-sp` container in a deployment
+that mounts `/etc/passwd`, `/etc/group` or the keys under `/etc/ssl` from the
+host. Versions 1.5.2r23 to 1.5.2r25 added `_shibd` to the group `ssl-cert` at
+each start. That stopped the container when `/etc/group` was mounted, with
+"cannot open /etc/passwd" for a read-only mount and "failure while writing
+changes to /etc/group" for a writable one. Other deployments are not affected.
+
+1. The container no longer writes `/etc/passwd` or `/etc/group`. Both can be
+   mounted from the host, read-only. They must define the user and group
+   `_shibd` and the user `www-data`. `_shibd` does not have to be in the group
+   `ssl-cert`.
+
+2. The SP key at `/etc/ssl/private/shibsp-<SP_HOSTNAME>.key` no longer has to
+   be readable by `_shibd`. At each start the container copies it to
+   `/run/shibboleth/sp-key.pem`, owned by `_shibd` with mode 600, and shibd
+   reads the copy. The key can be mounted read-only, with any owner and mode.
+   Restart the container after replacing the key.
+
+3. With `/etc/ssl` mounted read-only, the SP key and certificate and the HTTPS
+   key and certificate must exist there. A missing one is generated at start,
+   which fails on a read-only mount.

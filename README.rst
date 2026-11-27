@@ -161,8 +161,13 @@ certificates and metadata:
 * SSL certificate for the Shibboleth SP, at
   :code:`sp:/etc/ssl/certs/shibsp-<SP_HOSTNAME>.crt` and
   :code:`sp:/etc/ssl/private/shibsp-<SP_HOSTNAME>.key`. shibd runs as the user
-  :code:`_shibd`, so the key must be readable by it: owned by :code:`_shibd` with mode 600, or
-  group :code:`ssl-cert` with mode 640. A key generated at start already is.
+  :code:`_shibd`. At each start the container copies the key to a file that only :code:`_shibd`
+  can read, so the owner and mode of the key itself do not matter, and it can be mounted
+  read-only. A replaced key is picked up by a restart of the container.
+
+  The container does not write :code:`/etc/passwd` or :code:`/etc/group`, so they can be mounted
+  from the host, read-only. They must then define the user and group :code:`_shibd` and the user
+  :code:`www-data`.
 
 * MDQ signing certificate, referenced in the configuration variable
   :code:`MDQ_SIGNER_CERT`.
